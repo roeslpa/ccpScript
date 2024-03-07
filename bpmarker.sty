@@ -1,0 +1,72 @@
+
+%%%%%% THIS IS EXPERIMENTAL!! %%%%%
+
+% Author: Bertram Poettering @ rub de
+\ProvidesPackage{bpmarker}
+\NeedsTeXFormat{LaTeX2e}
+
+\usepackage{pgfsys}
+
+\newcommand{\markerleft}[1]{{\hspace*{0pt}\pgfsys@markposition{BPMARKER_LEFT_#1}\hspace*{0pt}}}
+\newcommand{\markerright}[1]{{\hspace*{0pt}\pgfsys@markposition{BPMARKER_RIGHT_#1}\hspace*{0pt}}}
+\newcommand{\markersetlen}[2]{\expandafter\newcommand\csname markerlen#1\endcsname{#2}\write\@auxout{\@percentchar BPMARKER_LEN_#1 #2}}
+
+\iffalse
+
+#!/usr/bin/python3
+import sys
+import re
+import math
+
+defaultunit = "pt"
+
+assert len(sys.argv) == 2, "Usage: extract <jobname>.aux"
+fname = sys.argv[1]
+
+lengths = dict()
+units = dict()
+leftx = dict()
+rightx = dict()
+keys = dict()
+
+unitconv = dict()
+unitconv["sp"] = 1/65536.0
+unitconv["pt"] = 1.0
+unitconv["mm"] = 7227.0/2540.0
+unitconv["cm"] = 7227.0/254.0
+unitconv["in"] = 72.27
+       
+with open(fname, mode = "r") as file:
+    for line in file:
+        m = re.match('%BPMARKER_LEN_(\w*) ([0-9\.]*)(\w*)', line)
+        if m:
+            id, length, unit = m.group(1), float(m.group(2)), m.group(3)
+            keys[id], lengths[id], units[id] = True, length, unit
+        m = re.match('\\\pgfsyspdfmark {BPMARKER_LEFT_(\w*)}{(\d*)}{\d*}', line)
+        if m:
+            id, x = m.group(1), int(m.group(2))
+            keys[id], leftx[id] = True, x
+        m = re.match('\\\pgfsyspdfmark {BPMARKER_RIGHT_(\w*)}{(\d*)}{\d*}', line)
+        if m:
+            id, x = m.group(1), int(m.group(2))
+            keys[id], rightx[id] = True, x
+
+for a in keys.keys():
+    assert a in leftx, "No left mark defined for " + a + "!"
+    assert a in rightx, "No right mark defined for " + a + "!"
+    diff = rightx[a] - leftx[a]
+    assert diff >= 0, "Right mark should be right of left mark for " + a + "!"
+
+for a in keys.keys():
+    diff = rightx[a] - leftx[a]
+    if a in lengths.keys():
+        conv = unitconv[units[a]]
+        cd = math.ceil(10 * (diff/65536.0)/conv) / 10
+        if lengths[a] != cd:
+            print("\markersetlen{" + a + "}{" + str(cd) + units[a] + "}%")
+    else:
+        conv = unitconv[defaultunit]
+        cd = math.ceil(10 * (diff/65536.0)/conv) / 10
+        print("\markersetlen{" + a + "}{" + str(cd) + defaultunit + "}%")
+
+\fi

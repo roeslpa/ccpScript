@@ -1,0 +1,34 @@
+%!TEX root=../main.tex
+\markersetlen{ndL}{100pt}%
+\markersetlen{ndR}{100pt}%
+\newcommand{\CM}{\mathit{CM}}%
+\begin{tabular}[t]{ll}
+    \nicodemusbox{\markerlenndL}{%
+        \textbf{Game} $\CORR_{\SYE}(\advA)$
+        \begin{nicodemus}
+            \item $\CM[\cdot]\gets\bot$
+            \item $k\getsr\SYEgen$
+            \item Invoke $\advA$
+            \item Stop with~$0$
+        \end{nicodemus}%
+        \medskip
+        
+        \textbf{Oracle} $\Oenc(m)$
+        \begin{nicodemus}
+            \item Require $m\in\msp$
+            \item $c\getsr\SYEenc(k,m)$
+            \item $\CM[c]\gets m$
+            \item Return~$c$
+        \end{nicodemus}%
+    }%
+    &
+    \nicodemusbox{\markerlenndR}{%
+        \textbf{Oracle} $\Odec(c)$
+        \begin{nicodemus}
+            \item $m'\gets\SYEdec(k,c)$
+            \item If $\CM[c]\notin\{m',\bot\}$:
+            \item \quad Stop with $1$
+            \item Return $m'$
+        \end{nicodemus}%
+    }%
+\end{tabular}%

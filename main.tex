@@ -1,0 +1,244 @@
+\documentclass[a4paper,orivec]{llncs}
+
+\newcommand{\alert}[1]{{\color{red}#1}}
+
+\usepackage{fullpage}
+\pagestyle{plain}
+\setcounter{tocdepth}{2}
+
+\input{packages}
+\input{commands}
+
+\bibliographystyle{alpha}
+
+\makeatletter
+\renewcommand*\l@author[2]{}
+\renewcommand*\l@title[2]{}
+\makeatletter
+\renewcommand{\contentsname}{}
+
+
+\title{Cryptographic Communication Protocols:\\Key Exchange and Channels}
+\author{Paul Rösler}
+
+\institute{FAU Erlangen-Nürnberg}
+
+\begin{document}
+
+\maketitle
+\begin{center}
+    \today
+\end{center}
+
+\begingroup
+\let\clearpage\relax
+\tableofcontents
+\endgroup
+
+\section{Preliminary Remarks}
+This document is not (yet) a full course script.
+Instead, it is meant as an additional resource that systematizes the considered primitives, definitions, and constructions.
+The author invites readers to submit comments or pull requests via the GitHub Repository \url{https://github.com/roeslpa/ccpScript}.
+
+
+\section{Notation}
+
+\section{Game-Based Definitions}
+
+\subsection{Syntax}
+
+\subsection{Correctness}
+
+\subsection{Adversarial Capabilities}
+
+\subsubsection{Typical Capabilities}
+
+\paragraph{Chosen-Plaintext Attacks}
+
+\paragraph{Chosen-Ciphertext Attacks}
+
+\paragraph{Replayable Chosen-Ciphertext Attacks}
+
+\paragraph{Exposure of Secrets}
+
+\paragraph{Compromised Randomness}
+
+\subsection{Adversarial Goal}
+
+\subsubsection{Typical Goals}
+
+\paragraph{One-Way Security}
+
+\paragraph{Indistinguishability of Ciphertexts}
+
+\subsection{Trivial Winning Strategies}
+
+
+\section{Symmetric Primitives}
+
+
+\subsection{Pseudo-Random Generator}
+
+
+\subsection{Pseudo-Random Function}
+
+
+\subsection{Message Authentication Code (MAC)}
+
+
+\subsection{Symmetric Encryption (SE)}
+
+\subsubsection{Probabilistic SE}
+\paragraph{Syntax}
+A symmetric encryption scheme $\SYE=(\SYEgen,\SYEenc,\SYEdec)$ is a tuple of three algorithms with key space~$\ksp$, message space~$\msp$, and ciphertext space~$\csp$:
+
+\begin{itemize}
+    \item $\SYEgen: \emptyset \tor \ksp$
+    \item $\SYEenc: \ksp\times\msp \tor \csp$
+    \item $\SYEgen: \ksp\times\csp \to \msp$
+\end{itemize}
+
+\paragraph{Correctness}
+A symmetric encryption scheme $\SYE$ is correct if $\Pr[\CORR_{\SYE}(\advA)=0]=1$ for all adversaries~$\advA$, where game~$\CORR$ is defined in Figure~\ref{fig:sym:enc:corr:prob}.
+
+\begin{figure}[!ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/sym_enc_corr_prob}%
+        }%
+    }
+    \caption{%
+        Game $\CORR$ for probabilistic encryption scheme~$\SYE$.
+    }
+    \label{fig:sym:enc:corr:prob}
+\end{figure}
+
+\paragraph{Security: One-Wayness under Chosen-Ciphertext Attacks}
+The advantage of an adversary~$\advA$ against symmetric encryption scheme $\SYE$ in game $\OWCCA$ from Figure~\ref{fig:sym:enc:corr:prob} is defined as:\\
+$\Adv_\SYE^\owcca(\advA)\coloneqq\Pr[\OWCCA_{\SYE}(\advA)=1]$.
+
+\begin{figure}[!ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/sym_enc_ow_prob}%
+        }%
+    }
+    \caption{%
+        Game $\OWCCA$ for probabilistic symmetric encryption scheme~$\SYE$.
+    }
+    \label{fig:sym:enc:ow:prob}
+\end{figure}
+
+\paragraph{Security: Indistinguishability under Chosen-Ciphertext Attacks}
+The advantage of an adversary~$\advA$ against symmetric encryption scheme $\SYE$ in game $\INDCCA$ from Figure~\ref{fig:sym:enc:ind:prob} is defined as:\\
+$\Adv_\SYE^\indcca(\advA)\coloneqq\left|\Pr[\INDCCA_{\SYE}^0(\advA)=1]-\Pr[\INDCCA_{\SYE}^1(\advA)=1]\right|$.
+
+\begin{figure}[!ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/sym_enc_ind_prob}%
+        }%
+    }
+    \caption{%
+        Games $\INDCCA$ for probabilistic symmetric encryption scheme~$\SYE$.
+    }
+    \label{fig:sym:enc:ind:prob}
+\end{figure}
+
+
+\subsubsection{Nonce-Based SE}
+
+
+\subsubsection{Authenticated Encryption (AE)}
+
+
+
+\section{Asymmetric Primitives}
+
+
+\subsection{Assumptions}
+
+\subsubsection{Diffie-Hellman (DH)}
+
+\paragraph{Discrete Logarithm}
+
+\paragraph{Computational DH}
+
+\paragraph{Decisional DH}
+
+
+\subsection{Digital Signature}
+
+
+\subsection{Public-Key Encryption (PKE)}
+
+
+\subsection{Key Encapsulation Mechanism (KEM)}
+
+\paragraph{Construction: ElGamal KEM}
+
+
+\subsection{Identity-Based KEM}
+
+
+
+\section{Stateful Primitives}
+
+\subsection{Forward-Secure KEM}
+
+\paragraph{Construction}
+
+
+\subsection{Updatable KEM}
+
+\paragraph{Construction}
+
+
+\subsection{Key Exchange}
+
+\subsubsection{Two-Pass Key Exchange}
+
+\paragraph{Construction: DH Key Exchange}
+
+\paragraph{Construction: X3DH}
+
+\subsubsection{Authenticated Key Exchange}
+
+\paragraph{Construction: Signature-Based Authentication}
+
+\paragraph{Construction: KEM-Based Authentication}
+
+\paragraph{Construction: TLS}
+
+\paragraph{Construction: Noise Framework}
+
+
+\subsection{Ratcheted Key Exchange (RKE)}
+
+\subsubsection{Unidirectional RKE}
+
+\paragraph{Construction}
+
+\subsubsection{Sesquidirectional RKE}
+
+\subsubsection{Bidirectional RKE}
+
+\paragraph{Construction: Double Ratchet}
+
+\subsubsection{Group RKE}
+
+\paragraph{Construction: Sender Key Mechanism}
+
+\paragraph{Construction: Tree-Based DH}
+
+\paragraph{Construction: Tree KEM}
+
+\bibliography{cryptobib/abbrev3,cryptobib/crypto}
+
+\end{document}

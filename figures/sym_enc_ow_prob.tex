@@ -1,0 +1,42 @@
+%!TEX root=../main.tex
+\markersetlen{ndL}{100pt}%
+\markersetlen{ndR}{130pt}%
+\newcommand{\CM}{\mathit{CM}}%
+\begin{tabular}[t]{ll}
+    \nicodemusbox{\markerlenndL}{%
+        \textbf{Game} $\OWCCA_{\SYE}(\advA)$
+        \begin{nicodemus}
+            \item $\CM\gets\emptyset$
+            \item $k\getsr\SYEgen$
+            \item $(c,m)\getsr\advA$
+            \item If $(c,m)\in\CM$:
+            \item \quad Stop with~$1$
+            \item Stop with~$0$
+        \end{nicodemus}%
+        \medskip
+        
+        \textbf{Oracle} $\Oenc(m)$
+        \begin{nicodemus}
+            \item $c\getsr\SYEenc(k,m)$
+            \item Return~$c$
+        \end{nicodemus}%
+    }%
+    &
+    \nicodemusbox{\markerlenndR}{%
+        \textbf{Oracle} $\Ochall()$
+        \begin{nicodemus}
+            \item $m\getsr\msp$
+            \item $c\getsr\SYEenc(k,m)$
+            \item $\CM\gets\CM\cup\{(c,m)\}$
+            \item Return~$c$
+        \end{nicodemus}%
+        \medskip
+
+        \textbf{Oracle} $\Odec(c)$
+        \begin{nicodemus}
+            \item Require $\nexists m':(c,m')\in\CM$
+            \item $m\gets\SYEdec(k,c)$
+            \item Return $m$
+        \end{nicodemus}%
+    }%
+\end{tabular}%
