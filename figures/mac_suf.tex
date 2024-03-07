@@ -1,0 +1,33 @@
+%!TEX root=../main.tex
+\markersetlen{ndL}{110pt}%
+\markersetlen{ndR}{120pt}%
+\newcommand{\MT}{\mathit{MT}}%
+\begin{tabular}[t]{ll}
+    \nicodemusbox{\markerlenndL}{%
+        \textbf{Game} $\SUFCMA_{\MAC}(\advA)$
+        \begin{nicodemus}
+            \item $\MT\gets\emptyset$
+            \item $k\getsr\MACgen$
+            \item Invoke $\advA$
+            \item Stop with~$0$
+        \end{nicodemus}%
+        \medskip
+        
+        \textbf{Oracle} $\Otag(m)$
+        \begin{nicodemus}
+            \item $\mtag\getsr\MACtag(k,m)$
+            \item $\MT\gets\MT\cup\{(m,\mtag)\}$
+            \item Return $\mtag$
+        \end{nicodemus}%
+    }%
+    &
+    \nicodemusbox{\markerlenndR}{%
+        \textbf{Oracle} $\Ovfy(m,\mtag)$
+        \begin{nicodemus}
+            \item $b\gets\MACvfy(k,m,\mtag)$
+            \item If $(m,\mtag)\notin\MT\land b=\T$:
+            \item \quad Stop with~$1$
+            \item Return $b$
+        \end{nicodemus}%
+    }%
+\end{tabular}%

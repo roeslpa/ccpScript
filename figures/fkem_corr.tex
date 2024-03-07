@@ -1,0 +1,34 @@
+%!TEX root=../main.tex
+\markersetlen{ndL}{120pt}%
+\markersetlen{ndR}{130pt}%
+\newcommand{\CK}{\mathit{CK}}%
+\begin{tabular}[t]{ll}
+    \nicodemusbox{\markerlenndL}{%
+        \textbf{Game} $\CORR_{\FKEM}(\advA)$
+        \begin{nicodemus}
+            \item $\CK[\cdot]\gets\bot$
+            \item $(\dk,\ek)\getsr\FKEMgen$
+            \item Invoke $\advA(\ek)$
+            \item Stop with~$0$
+        \end{nicodemus}%
+        \medskip
+        
+        \textbf{Oracle} $\Oenc$
+        \begin{nicodemus}
+            \item $(k,c)\getsr\FKEMenc(\ek)$
+            \item If $\CK[c]\neq\diamond$: $\CK[c]\gets k$
+            \item Return~$c$
+        \end{nicodemus}%
+    }%
+    &
+    \nicodemusbox{\markerlenndR}{%
+        \textbf{Oracle} $\Odec(c)$
+        \begin{nicodemus}
+            \item $(\dk,k')\gets\FKEMdec(\dk,c)$
+            \item If $\CK[c]\notin\{k',\bot,\diamond\}$:
+            \item \quad Stop with $1$
+            \item If $\CK[c]\neq\bot$: $\CK[c]\gets \diamond$
+            \item Return $k'$
+        \end{nicodemus}%
+    }%
+\end{tabular}%

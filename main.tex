@@ -43,6 +43,19 @@ The author invites readers to submit comments or pull requests via the GitHub Re
 
 \section{Notation}
 
+\begin{tabular}{|l|p{13cm}|}\hline
+    \textbf{Symbol} & \textbf{Meaning}\\\hline
+    $\T$ / $\F$ & Boolean values true and false\\
+    $\gets$ / $\to$ & Assigns a constant expression or a deterministic algorithm\\
+    $\getsr$ / $\tor$ & Assigns a random value uniformly sampled from a finite set or the output of a probabilistic algorithm\\
+    $\PS(X)$ & Power set of set~$X$\\
+    $(X)^+$ & Set of non-trivial concatenations of elements from set~$X$\\
+    $X[\cdot]\gets x$ & Assigns all entries of array~$X$ with default value~$x$\\
+    Invoke $X$ & Executes algorithm $X$\\
+    Stop with $x$ & Terminates the running experiment with final output~$x$\\
+    Require $x$ & Ends the algorithm, resp.~oracle, if expression~$x=\T$\\\hline
+\end{tabular}
+
 \section{Game-Based Definitions}
 
 \subsection{Syntax}
@@ -80,26 +93,79 @@ The author invites readers to submit comments or pull requests via the GitHub Re
 \subsection{Pseudo-Random Generator}
 
 
+\paragraph{Syntax}
+A pseudo-random generator $\PRG=\PRGf$ is an algorithm with key space~$\ksp$ and output space~$\rsp$:
+
+\begin{itemize}
+    \item $\PRGf: \ksp \to \rsp$
+\end{itemize}
+
 \subsection{Pseudo-Random Function}
 
+\paragraph{Syntax}
+A pseudo-random function $\PRF=\PRFf$ is an algorithm with key space~$\ksp$, input space~$\msp$ and output space~$\rsp$:
+
+\begin{itemize}
+    \item $\PRGf: \ksp\times\msp \to \rsp$
+\end{itemize}
 
 \subsection{Message Authentication Code (MAC)}
+
+\paragraph{Syntax}
+A message authentication code $\MAC=(\MACgen,\MACtag,\MACvfy)$ is a tuple of three algorithms with key space~$\ksp$, message space~$\msp$, and tag space~$\tsp$:
+
+\begin{itemize}
+    \item $\MACgen: \emptyset \tor \ksp$
+    \item $\MACtag: \ksp\times\msp \tor \tsp$
+    \item $\MACvfy: \ksp\times\msp\times\tsp \to \Bool$
+\end{itemize}
+
+\paragraph{Correctness}
+A message authentication code $\MAC$ is correct if
+\[
+\Pr[\MACvfy(k,m,\MACtag(k,m))=\T\mid k\getsr\MACgen,m\getsr\msp]=1\text{.}
+\]
+
+\paragraph{Security: Strong Existential Unforgeability under Chosen-Message Attacks}
+The advantage of an adversary~$\advA$ against message authentication code $\MAC$ in game $\SUFCMA$ from Figure~\ref{fig:mac:suf} is defined as:
+\[
+\Adv_\MAC^\sufcma(\advA)\coloneqq\Pr[\SUFCMA_{\MAC}(\advA)=1]\text{.}
+\]
+
+\begin{figure}[!ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/mac_suf}%
+        }%
+    }
+    \caption{%
+        Game $\SUFCMA$ for message authentication code~$\MAC$.
+    }
+    \label{fig:mac:suf}
+\end{figure}
 
 
 \subsection{Symmetric Encryption (SE)}
 
 \subsubsection{Probabilistic SE}
+
 \paragraph{Syntax}
-A symmetric encryption scheme $\SYE=(\SYEgen,\SYEenc,\SYEdec)$ is a tuple of three algorithms with key space~$\ksp$, message space~$\msp$, and ciphertext space~$\csp$:
+A probabilistic symmetric encryption scheme $\SYE=(\SYEgen,\SYEenc,\SYEdec)$ is a tuple of three algorithms with key space~$\ksp$, message space~$\msp$, and ciphertext space~$\csp$:
 
 \begin{itemize}
     \item $\SYEgen: \emptyset \tor \ksp$
     \item $\SYEenc: \ksp\times\msp \tor \csp$
-    \item $\SYEgen: \ksp\times\csp \to \msp$
+    \item $\SYEdec: \ksp\times\csp \to \msp$
 \end{itemize}
 
 \paragraph{Correctness}
-A symmetric encryption scheme $\SYE$ is correct if $\Pr[\CORR_{\SYE}(\advA)=0]=1$ for all adversaries~$\advA$, where game~$\CORR$ is defined in Figure~\ref{fig:sym:enc:corr:prob}.
+A symmetric encryption scheme $\SYE$ is correct if 
+\[
+\Pr[\SYEdec(k,\SYEenc(k,m))=m\mid k\getsr\SYEgen,m\getsr\msp]=1\text{.}
+\]
+Equivalently, a symmetric encryption scheme $\SYE$ is correct if $\Pr[\CORR_{\SYE}(\advA)=0]=1$ for all adversaries~$\advA$, where game~$\CORR$ is defined in Figure~\ref{fig:sym:enc:corr:prob}.
 
 \begin{figure}[!ht]
     \centering
@@ -116,8 +182,10 @@ A symmetric encryption scheme $\SYE$ is correct if $\Pr[\CORR_{\SYE}(\advA)=0]=1
 \end{figure}
 
 \paragraph{Security: One-Wayness under Chosen-Ciphertext Attacks}
-The advantage of an adversary~$\advA$ against symmetric encryption scheme $\SYE$ in game $\OWCCA$ from Figure~\ref{fig:sym:enc:corr:prob} is defined as:\\
-$\Adv_\SYE^\owcca(\advA)\coloneqq\Pr[\OWCCA_{\SYE}(\advA)=1]$.
+The advantage of an adversary~$\advA$ against symmetric encryption scheme $\SYE$ in game $\OWCCA$ from Figure~\ref{fig:sym:enc:ow:prob} is defined as:
+\[
+\Adv_\SYE^\owcca(\advA)\coloneqq\Pr[\OWCCA_{\SYE}(\advA)=1]\text{.}
+\]
 
 \begin{figure}[!ht]
     \centering
@@ -134,8 +202,10 @@ $\Adv_\SYE^\owcca(\advA)\coloneqq\Pr[\OWCCA_{\SYE}(\advA)=1]$.
 \end{figure}
 
 \paragraph{Security: Indistinguishability under Chosen-Ciphertext Attacks}
-The advantage of an adversary~$\advA$ against symmetric encryption scheme $\SYE$ in game $\INDCCA$ from Figure~\ref{fig:sym:enc:ind:prob} is defined as:\\
-$\Adv_\SYE^\indcca(\advA)\coloneqq\left|\Pr[\INDCCA_{\SYE}^0(\advA)=1]-\Pr[\INDCCA_{\SYE}^1(\advA)=1]\right|$.
+The advantage of an adversary~$\advA$ against symmetric encryption scheme $\SYE$ in game $\INDCCA$ from Figure~\ref{fig:sym:enc:ind:prob} is defined as:
+\[
+\Adv_\SYE^\indcca(\advA)\coloneqq\left|\Pr[\INDCCA_{\SYE}^0(\advA)=1]-\Pr[\INDCCA_{\SYE}^1(\advA)=1]\right|\text{.}
+\]
 
 \begin{figure}[!ht]
     \centering
@@ -152,12 +222,6 @@ $\Adv_\SYE^\indcca(\advA)\coloneqq\left|\Pr[\INDCCA_{\SYE}^0(\advA)=1]-\Pr[\INDC
 \end{figure}
 
 
-\subsubsection{Nonce-Based SE}
-
-
-\subsubsection{Authenticated Encryption (AE)}
-
-
 
 \section{Asymmetric Primitives}
 
@@ -165,37 +229,233 @@ $\Adv_\SYE^\indcca(\advA)\coloneqq\left|\Pr[\INDCCA_{\SYE}^0(\advA)=1]-\Pr[\INDC
 \subsection{Assumptions}
 
 \subsubsection{Diffie-Hellman (DH)}
+Let $\DHgr=(\DHg,\DHp)$ be a group of prime order~$\DHp$ with generator~$\DHg$.
 
 \paragraph{Discrete Logarithm}
+The advantage of an adversary~$\advA$ against the discrete logarithm problem in group~$\DHgr$ is defined as:
+\[
+\Adv_\DHgr^\dlp(\advA)\coloneqq\Pr[\advA(\DHg,\DHp,\DHg^x)=x\mid x\getsr\ZZ_\DHp^*]\text{.}
+\]
+
 
 \paragraph{Computational DH}
+The advantage of an adversary~$\advA$ against the computational Diffie-Hellman problem in group~$\DHgr$ is defined as:
+\[
+\Adv_\DHgr^\cdh(\advA)\coloneqq\Pr[\advA(\DHg,\DHp,\DHg^x,\DHg^y)=,\DHg^{xy}\mid (x,y)\getsr(\ZZ_\DHp^*)^2]\text{.}
+\]
 
 \paragraph{Decisional DH}
-
+The advantage of an adversary~$\advA$ against the decicional Diffie-Hellman problem in group~$\DHgr$ is defined as:
+\begin{align*}
+    \Adv_\DHgr^\ddh(\advA)\coloneqq|&\Pr[\advA(\DHg,\DHp,\DHg^x,\DHg^y,\DHg^{xy})=1\mid (x,y)\getsr(\ZZ_\DHp^*)^2]\\
+    &-\Pr[\advA(\DHg,\DHp,\DHg^x,\DHg^y,\DHg^z)=1\mid (x,y,z)\getsr(\ZZ_\DHp^*)^3]|\text{.}
+\end{align*}
 
 \subsection{Digital Signature}
 
+\paragraph{Syntax}
+A digital signature scheme $\SIG=(\SIGgen,\SIGsig,\SIGvfy)$ is a tuple of three algorithms with signing key space~$\sksp$, verification key space~$\vksp$, message space~$\msp$, and signature space~$\sigsp$:
+
+\begin{itemize}
+    \item $\SIGgen: \emptyset \tor \sksp\times\vksp$
+    \item $\SIGsig: \sksp\times\msp \tor \sigsp$
+    \item $\SIGvfy: \vksp\times\msp\times\sigsp \to \Bool$
+\end{itemize}
+
+\paragraph{Correctness}
+A digital signature scheme $\SIG$ is correct if
+\[
+\Pr[\SIGvfy(\vk,m,\SIGsig(\sk,m))=\T\mid (\sk,\vk)\getsr\SIGgen,m\getsr\msp]=1\text{.}
+\]
+
+\paragraph{Security}
+The advantage of an adversary~$\advA$ against digital signature scheme $\SIG$ in game $\SUFCMA$ from Figure~\ref{fig:sig:suf} is defined as:
+\[
+\Adv_\SIG^\sufcma(\advA)\coloneqq\Pr[\SUFCMA_{\SIG}(\advA)=1]\text{.}
+\]
+
+\begin{figure}[!ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/sig_suf}%
+        }%
+    }
+    \caption{%
+        Game $\SUFCMA$ for digital signature scheme~$\SIG$.
+    }
+    \label{fig:sig:suf}
+\end{figure}
 
 \subsection{Public-Key Encryption (PKE)}
 
+\paragraph{Syntax}
+A public-key encryption scheme $\PKE=(\PKEgen,\PKEenc,\PKEdec)$ is a tuple of three algorithms with encryption key space~$\eksp$, decryption key space~$\dksp$, message space~$\msp$, and ciphertext space~$\csp$:
+
+\begin{itemize}
+    \item $\PKEgen: \emptyset \tor \dksp\times\eksp$
+    \item $\PKEenc: \eksp\times\msp \tor \csp$
+    \item $\PKEdec: \dksp\times\csp \to \msp$
+\end{itemize}
+
+\paragraph{Correctness}
+A public-key encryption scheme $\PKE$ is correct if
+\[
+\Pr[\PKEdec(\dk,\PKEenc(\ek,m))=m\mid (\dk,\ek)\getsr\PKEgen,m\getsr\msp]=1\text{.}
+\]
+
+\paragraph{Security}
+The advantage of an adversary~$\advA$ against public-key encryption scheme $\PKE$ in game $\INDCCA$ from Figure~\ref{fig:pke:ind} is defined as:
+\[
+\Adv_\PKE^\indcca(\advA)\coloneqq\left|\Pr[\INDCCA_{\PKE}^0(\advA)=1]-\Pr[\INDCCA_{\PKE}^1(\advA)=1]\right|\text{.}
+\]
+
+\begin{figure}[!ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/pke_ind}%
+        }%
+    }
+    \caption{%
+        Games $\INDCCA$ for public-key encryption scheme~$\PKE$.
+    }
+    \label{fig:pke:ind}
+\end{figure}
 
 \subsection{Key Encapsulation Mechanism (KEM)}
+
+\paragraph{Syntax}
+A key encapsulation mechanism $\KEM=(\KEMgen,\KEMenc,\KEMdec)$ is a tuple of three algorithms with encapsulation key space~$\eksp$, decapsulation key space~$\dksp$, ciphertext space~$\csp$, and symmetric key space~$\ksp$:
+
+\begin{itemize}
+    \item $\KEMgen: \emptyset \tor \dksp\times\eksp$
+    \item $\KEMenc: \eksp \tor \ksp\times\csp$
+    \item $\KEMdec: \dksp\times\csp \to \ksp$
+\end{itemize}
+
+\paragraph{Correctness}
+A key encapsulation mechanism $\KEM$ is correct if
+\[
+\Pr[\KEMdec(\dk,c)=k\mid (\dk,\ek)\getsr\KEMgen,(k,c)\getsr\KEMenc(\ek))=m]=1\text{.}
+\]
+Equivalently, a key encapsulation mechanism $\KEM$ is correct if $\Pr[\CORR_{\KEM}(\advA)=0]=1$ for all adversaries~$\advA$, where game~$\CORR$ is defined in Figure~\ref{fig:kem:corr}.
+
+\begin{figure}[!ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/kem_corr}%
+        }%
+    }
+    \caption{%
+        Game $\CORR$ for key encapsulation mechanism~$\KEM$.
+    }
+    \label{fig:kem:corr}
+\end{figure}
+
+\paragraph{Security}
+The advantage of an adversary~$\advA$ against key encapsulation mechanism $\KEM$ in game $\INDCCA$ from Figure~\ref{fig:kem:ind} is defined as:
+\[
+\Adv_\KEM^\indcca(\advA)\coloneqq\left|\Pr[\INDCCA_{\KEM}^0(\advA)=1]-\Pr[\INDCCA_{\KEM}^1(\advA)=1]\right|\text{.}
+\]
+
+\begin{figure}[!ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/kem_ind}%
+        }%
+    }
+    \caption{%
+        Games $\INDCCA$ for key encapsulation mechanism~$\KEM$.
+    }
+    \label{fig:kem:ind}
+\end{figure}
 
 \paragraph{Construction: ElGamal KEM}
 
 
 \subsection{Identity-Based KEM}
 
+\paragraph{Syntax}
+An identity-based KEM $\IKEM=(\IKEMgen,\IKEMenc,\IKEMdel,\IKEMdec)$ is a tuple of four algorithms with encapsulation key space~$\eksp$, decapsulation key space~$\dksp$, identity space~$\idsp$, ciphertext space~$\csp$, and symmetric key space~$\ksp$:
+
+\begin{itemize}
+    \item $\IKEMgen: \emptyset \tor \dksp\times\eksp$
+    \item $\IKEMenc: \eksp\times(\idsp)^+ \tor \ksp\times\csp$
+    \item $\IKEMdel: \dksp\times\idsp \tor \dksp$
+    \item $\IKEMdec: \dksp\times\csp \to \ksp$
+\end{itemize}
 
 
 \section{Stateful Primitives}
 
 \subsection{Forward-Secure KEM}
 
+\paragraph{Syntax}
+A forward-secure KEM $\FKEM=(\FKEMgen,\FKEMenc,\FKEMdec)$ is a tuple of three algorithms with encapsulation key space~$\eksp$, decapsulation key space~$\dksp$, ciphertext space~$\csp$, and symmetric key space~$\ksp$:
+
+\begin{itemize}
+    \item $\FKEMgen: \emptyset \tor \dksp\times\eksp$
+    \item $\FKEMenc: \eksp \tor \ksp\times\csp$
+    \item $\FKEMdec: \dksp\times\csp \to \dksp\times\ksp$
+\end{itemize}
+
+\paragraph{Correctness}
+A forward-secure KEM $\FKEM$ is correct if $\Pr[\CORR_{\FKEM}(\advA)=0]=1$ for all adversaries~$\advA$, where game~$\CORR$ is defined in Figure~\ref{fig:fkem:corr}.
+
+\begin{figure}[!ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/fkem_corr}%
+        }%
+    }
+    \caption{%
+        Game $\CORR$ for forward-secure KEM~$\FKEM$.
+    }
+    \label{fig:fkem:corr}
+\end{figure}
+
+\paragraph{Security}
+The advantage of an adversary~$\advA$ against forward-secure KEM $\FKEM$ in game $\INDCCA$ from Figure~\ref{fig:fkem:ind} is defined as:
+\[
+\Adv_\FKEM^\indcca(\advA)\coloneqq\left|\Pr[\INDCCA_{\FKEM}^0(\advA)=1]-\Pr[\INDCCA_{\FKEM}^1(\advA)=1]\right|\text{.}
+\]
+
+\begin{figure}[!ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/fkem_ind}%
+        }%
+    }
+    \caption{%
+        Games $\INDCCA$ for forward-secure KEM~$\FKEM$.
+    }
+    \label{fig:fkem:ind}
+\end{figure}
+
 \paragraph{Construction}
 
 
 \subsection{Updatable KEM}
+
+\paragraph{Syntax}
+An updatable KEM $\UKEM=(\UKEMgen,\UKEMenc,\UKEMdec)$ is a tuple of three algorithms with encapsulation key space~$\eksp$, decapsulation key space~$\dksp$, ciphertext space~$\csp$, and symmetric key space~$\ksp$:
+
+\begin{itemize}
+    \item $\UKEMgen: \emptyset \tor \dksp\times\eksp$
+    \item $\UKEMenc: \eksp \tor \eksp\times\ksp\times\csp$
+    \item $\UKEMdec: \dksp\times\csp \to \dksp\times\ksp$
+\end{itemize}
 
 \paragraph{Construction}
 
@@ -204,11 +464,31 @@ $\Adv_\SYE^\indcca(\advA)\coloneqq\left|\Pr[\INDCCA_{\SYE}^0(\advA)=1]-\Pr[\INDC
 
 \subsubsection{Two-Pass Key Exchange}
 
+\paragraph{Syntax}
+A two-pass key exchange $\TKE=(\TKEsnd,\TKErsp,\TKErcv)$ is a tuple of three algorithms with state space~$\stsp$, initial ciphertext space~$\csp_I$, response ciphertext space~$\csp_R$, and symmetric key space~$\ksp$:
+
+\begin{itemize}
+    \item $\TKEsnd: \emptyset \tor \stsp\times\csp_I$
+    \item $\TKErsp: \csp_I \tor \ksp\times\csp_R$
+    \item $\TKErcv: \stsp\times\csp_R \to \ksp$
+\end{itemize}
+
 \paragraph{Construction: DH Key Exchange}
 
 \paragraph{Construction: X3DH}
 
 \subsubsection{Authenticated Key Exchange}
+
+\paragraph{Syntax}
+An authenticated key exchange $\AKE=(\AKEgen,\allowbreak\AKEsnd,\allowbreak\AKErsp_R,\allowbreak\AKErsp_I,\allowbreak\AKErcv)$ is a tuple of five algorithms with secret key space~$\sksp$, public key space~$\pksp$, state space~$\stsp$, ciphertext space~$\csp$, and symmetric key space~$\ksp$:
+
+\begin{itemize}
+    \item $\AKEgen: \emptyset \tor \sksp\times\pksp$
+    \item $\AKEsnd: \sksp\times\pksp \tor \stsp\times\csp$
+    \item $\AKErsp_R: \sksp\times\csp \tor \stsp\times\csp$
+    \item $\AKErsp_I: \sksp\times\stsp\times\csp \tor \ksp\times\csp$
+    \item $\AKErcv: \sksp\times\stsp\times\csp \to \pksp\times\ksp$
+\end{itemize}
 
 \paragraph{Construction: Signature-Based Authentication}
 
@@ -222,6 +502,15 @@ $\Adv_\SYE^\indcca(\advA)\coloneqq\left|\Pr[\INDCCA_{\SYE}^0(\advA)=1]-\Pr[\INDC
 \subsection{Ratcheted Key Exchange (RKE)}
 
 \subsubsection{Unidirectional RKE}
+
+\paragraph{Syntax}
+A unidirectional key exchange $\URKE=(\URKEinit,\URKEsnd,\URKErcv)$ is a tuple of three algorithms with state space~$\stsp$, ciphertext space~$\csp$, and symmetric key space~$\ksp$:
+
+\begin{itemize}
+    \item $\URKEinit: \emptyset \tor \stsp\times\stsp$
+    \item $\URKEsnd: \stsp \tor \stsp\times\ksp\times\csp$
+    \item $\URKErcv: \stsp\times\csp \to \ksp$
+\end{itemize}
 
 \paragraph{Construction}
 

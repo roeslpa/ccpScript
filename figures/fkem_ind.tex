@@ -1,0 +1,41 @@
+%!TEX root=../main.tex
+\markersetlen{ndL}{130pt}%
+\markersetlen{ndR}{130pt}%
+\newcommand{\CC}{\mathit{CC}}%
+\begin{tabular}[t]{ll}
+    \nicodemusbox{\markerlenndL}{%
+        \textbf{Game} $\INDCCA_{\FKEM}^b(\advA)$
+        \begin{nicodemus}
+            \item $\CC\gets\emptyset$
+            \item $(\dk,\ek)\getsr\FKEMgen$
+            \item $b'\getsr\advA(\ek)$
+            \item Stop with~$b'$
+        \end{nicodemus}%
+        \medskip
+        
+        \textbf{Oracle} $\Ochall$
+        \begin{nicodemus}
+            \item $(k_0,c)\getsr\FKEMenc(\ek)$
+            \item $k_1\getsr\ksp$
+            \item $\CC\gets\CC\cup\{c\}$
+            \item Return~$(k_b,c)$
+        \end{nicodemus}%
+    }%
+    &
+    \nicodemusbox{\markerlenndR}{%
+        \textbf{Oracle} $\Odec(c)$
+        \begin{nicodemus}
+            \item $(\dk,k)\gets\FKEMdec(\dk,c)$
+            \item If $c\in\CC$: $k\gets\bot$
+            \item $\CC\gets\CC\setminus\{c\}$
+            \item Return $k$
+        \end{nicodemus}%
+        \medskip
+        
+        \textbf{Oracle} $\Ocorrupt$
+        \begin{nicodemus}
+            \item Require $\CC=\emptyset$
+            \item Return~$\dk$
+        \end{nicodemus}%
+    }%
+\end{tabular}%

@@ -1,0 +1,33 @@
+%!TEX root=../main.tex
+\markersetlen{ndL}{110pt}%
+\markersetlen{ndR}{100pt}%
+\newcommand{\CK}{\mathit{CK}}%
+\begin{tabular}[t]{ll}
+    \nicodemusbox{\markerlenndL}{%
+        \textbf{Game} $\CORR_{\KEM}(\advA)$
+        \begin{nicodemus}
+            \item $\CK[\cdot]\gets\bot$
+            \item $(\dk,\ek)\getsr\KEMgen$
+            \item Invoke $\advA(\ek)$
+            \item Stop with~$0$
+        \end{nicodemus}%
+        \medskip
+        
+        \textbf{Oracle} $\Oenc$
+        \begin{nicodemus}
+            \item $(k,c)\getsr\KEMenc(\ek)$
+            \item $\CK[c]\gets k$
+            \item Return~$c$
+        \end{nicodemus}%
+    }%
+    &
+    \nicodemusbox{\markerlenndR}{%
+        \textbf{Oracle} $\Odec(c)$
+        \begin{nicodemus}
+            \item $k'\gets\KEMdec(\dk,c)$
+            \item If $\CK[c]\notin\{k',\bot\}$:
+            \item \quad Stop with $1$
+            \item Return $k'$
+        \end{nicodemus}%
+    }%
+\end{tabular}%

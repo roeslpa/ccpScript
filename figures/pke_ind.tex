@@ -1,0 +1,33 @@
+%!TEX root=../main.tex
+\markersetlen{ndL}{110pt}%
+\markersetlen{ndR}{120pt}%
+\newcommand{\CC}{\mathit{CC}}%
+\begin{tabular}[t]{ll}
+    \nicodemusbox{\markerlenndL}{%
+        \textbf{Game} $\INDCCA_{\PKE}^b(\advA)$
+        \begin{nicodemus}
+            \item $\CC\gets\emptyset$
+            \item $(\dk,\ek)\getsr\PKEgen$
+            \item $b'\getsr\advA(\ek)$
+            \item Stop with~$b'$
+        \end{nicodemus}%
+    }%
+    &
+    \nicodemusbox{\markerlenndR}{%
+        \textbf{Oracle} $\Ochall(m_0,m_1)$
+        \begin{nicodemus}
+            \item Require $\{m_0,m_1\}\subseteq\msp$
+            \item $c\getsr\PKEenc(\ek,m_b)$
+            \item $\CC\gets\CC\cup\{c\}$
+            \item Return~$c$
+        \end{nicodemus}%
+        \medskip
+        
+        \textbf{Oracle} $\Odec(c)$
+        \begin{nicodemus}
+            \item Require $c\notin\CC$
+            \item $m\gets\PKEdec(\dk,c)$
+            \item Return $m$
+        \end{nicodemus}%
+    }%
+\end{tabular}%

@@ -1,0 +1,33 @@
+%!TEX root=../main.tex
+\markersetlen{ndL}{110pt}%
+\markersetlen{ndR}{120pt}%
+\newcommand{\MS}{\mathit{MS}}%
+\begin{tabular}[t]{ll}
+    \nicodemusbox{\markerlenndL}{%
+        \textbf{Game} $\SUFCMA_{\SIG}(\advA)$
+        \begin{nicodemus}
+            \item $\MS\gets\emptyset$
+            \item $(\sk,\vk)\getsr\SIGgen$
+            \item Invoke $\advA(\vk)$
+            \item Stop with~$0$
+        \end{nicodemus}%
+        \medskip
+        
+        \textbf{Oracle} $\Osig(m)$
+        \begin{nicodemus}
+            \item $\sig\getsr\SIGsig(\sk,m)$
+            \item $\MS\gets\MS\cup\{(m,\sig)\}$
+            \item Return $\sig$
+        \end{nicodemus}%
+    }%
+    &
+    \nicodemusbox{\markerlenndR}{%
+        \textbf{Oracle} $\Ovfy(m,\sig)$
+        \begin{nicodemus}
+            \item $b\gets\SIGvfy(k,m,\sig)$
+            \item If $(m,\sig)\notin\MS\land b=\T$:
+            \item \quad Stop with~$1$
+            \item Return $b$
+        \end{nicodemus}%
+    }%
+\end{tabular}%

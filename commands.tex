@@ -3,41 +3,49 @@
 \newcommand{\getsr}{\gets_\$}
 \newcommand{\tor}{\to_\$}
 \newcommand{\es}{\epsilon}
+\newcommand{\T}{\mathtt{tru}}
+\newcommand{\F}{\mathtt{fal}}
 
 \newcommand{\ZZ}{\mathbb{Z}}
 \newcommand{\BB}{\{0,1\}}
+\newcommand{\Bool}{\{\T,\F\}}
 \newcommand{\NN}{\mathbb{N}}
 \newcommand{\PS}{\mathcal{P}}
 
 \newcommand{\advA}{\mathcal{A}}
 \newcommand{\Adv}{\mathrm{Adv}}
 
-\newcommand{\SIG}{\mathrm{SIG}}
-\newcommand{\MAC}{\mathrm{MAC}}
-\newcommand{\PKE}{\mathrm{PKE}}
 \newcommand{\APKE}{\mathrm{APKE}}
 \renewcommand{\AE}{\mathrm{AE}}
-\newcommand{\KEM}{\mathrm{KEM}}
 \newcommand{\IKE}{\mathrm{IKE}}
-\newcommand{\PRF}{\mathrm{F}}
-\newcommand{\URKE}{\mathrm{URKE}}
 
+
+%VARIABLES
 \newcommand{\sk}{\mathit{sk}}
 \newcommand{\st}{\mathit{st}}
 \newcommand{\vk}{\mathit{vk}}
 \newcommand{\pk}{\mathit{pk}}
 \newcommand{\ek}{\mathit{ek}}
 \newcommand{\dk}{\mathit{dk}}
+\newcommand{\mtag}{\tau}
+\newcommand{\sig}{\sigma}
 
+%SPACES
 \newcommand{\sksp}{\mathcal{SK}}
 \newcommand{\pksp}{\mathcal{PK}}
 \newcommand{\vksp}{\mathcal{VK}}
+\newcommand{\eksp}{\mathcal{EK}}
+\newcommand{\dksp}{\mathcal{DK}}
+\newcommand{\stsp}{\mathcal{ST}}
 \newcommand{\ksp}{\mathcal{K}}
 \newcommand{\rsp}{\mathcal{R}}
 \newcommand{\msp}{\mathcal{M}}
 \newcommand{\csp}{\mathcal{C}}
 \newcommand{\tsp}{\mathcal{T}}
+\newcommand{\sigsp}{\Sigma}
+\newcommand{\idsp}{\mathcal{ID}}
 
+%ORACLES
 \newcommand{\ROh}{\mathrm{H}}
 
 \newcommand{\CORR}{\mathrm{CORR}}
@@ -45,6 +53,8 @@
 \newcommand{\indcca}{{\mathrm{ind}\text{-}\mathrm{cca}}}
 \newcommand{\OWCCA}{{\mathrm{OW}\text{-}\mathrm{CCA}}}
 \newcommand{\owcca}{{\mathrm{ow}\text{-}\mathrm{cca}}}
+\newcommand{\SUFCMA}{{\mathrm{SUF}\text{-}\mathrm{CMA}}}
+\newcommand{\sufcma}{{\mathrm{suf}\text{-}\mathrm{cma}}}
 \newcommand{\ANON}{\mathrm{ANON}}
 
 \newcommand{\Ogen}{\mathrm{Gen}}
@@ -52,13 +62,18 @@
 \newcommand{\Oenc}{\mathrm{Enc}}
 \newcommand{\Odec}{\mathrm{Dec}}
 \newcommand{\Oup}{\mathrm{Up}}
+\newcommand{\Otag}{\mathrm{Tag}}
+\newcommand{\Osig}{\mathrm{Sign}}
+\newcommand{\Ovfy}{\mathrm{Vfy}}
 
 \newcommand{\Osnd}{\mathrm{Snd}}
 \newcommand{\Orcv}{\mathrm{Rcv}}
 \newcommand{\Ochall}{\mathrm{Chall}}
+
+\newcommand{\Ocorrupt}{\mathrm{Corrupt}}
+\newcommand{\Oexp}{\mathrm{Expose}}
 \newcommand{\Oreveal}{\mathrm{Reveal}}
 
-\newcommand{\Oexp}{\mathrm{Expose}}
 
 
 \iffalse
@@ -69,16 +84,83 @@
 \newcommand{\getsconcat}{\overset{\raisebox{-1pt}{\tiny$\;\shortparallel$}}{\gets}} % "concat assignment"
 
 \newcommand{\bO}{\mathcal{O}}
-\newcommand{\T}{\mathtt{tru}}
-\newcommand{\F}{\mathtt{fal}}
 \newcommand{\secp}{\lambda}
 
 \fi
 
-%SYMMETRIC ENCRYPTION
+%DH
+\newcommand{\DHgr}{\mathbb{G}}
+\newcommand{\DHg}{g}
+\newcommand{\DHp}{p}
 
+\newcommand{\dlp}{\mathrm{dlp}}
+\newcommand{\cdh}{\mathrm{cdh}}
+\newcommand{\ddh}{\mathrm{ddh}}
+
+%PRG and PRF
+\newcommand{\PRF}{\mathrm{PRF}}
+\newcommand{\PRG}{\mathrm{PRG}}
+
+\newcommand{\PRGf}{\PRG.\mathrm{f}}
+\newcommand{\PRFf}{\PRF.\mathrm{f}}
+
+%MAC and DIGITAL SIGNATURE
+\newcommand{\MAC}{\mathrm{MAC}}
+\newcommand{\SIG}{\mathrm{SIG}}
+
+\newcommand{\MACgen}{\MAC.\mathrm{gen}}
+\newcommand{\MACtag}{\MAC.\mathrm{tag}}
+\newcommand{\MACvfy}{\MAC.\mathrm{vfy}}
+
+\newcommand{\SIGgen}{\SIG.\mathrm{gen}}
+\newcommand{\SIGsig}{\SIG.\mathrm{sig}}
+\newcommand{\SIGvfy}{\SIG.\mathrm{vfy}}
+
+%SYMMETRIC ENCRYPTION, PUBLIC-KEY ENCRYPTION, various KEMs, and KEY EXCHANGE
 \newcommand{\SYE}{\mathrm{SE}}
+\newcommand{\PKE}{\mathrm{PKE}}
+\newcommand{\KEM}{\mathrm{KEM}}
+\newcommand{\IKEM}{\mathrm{IKEM}}
+\newcommand{\FKEM}{\mathrm{FKEM}}
+\newcommand{\UKEM}{\mathrm{UKEM}}
+\newcommand{\TKE}{\mathrm{TKE}}
+\newcommand{\AKE}{\mathrm{AKE}}
+\newcommand{\URKE}{\mathrm{URKE}}
 
 \newcommand{\SYEgen}{\SYE.\mathrm{gen}}
 \newcommand{\SYEenc}{\SYE.\mathrm{enc}}
 \newcommand{\SYEdec}{\SYE.\mathrm{dec}}
+
+\newcommand{\PKEgen}{\PKE.\mathrm{gen}}
+\newcommand{\PKEenc}{\PKE.\mathrm{enc}}
+\newcommand{\PKEdec}{\PKE.\mathrm{dec}}
+
+\newcommand{\KEMgen}{\KEM.\mathrm{gen}}
+\newcommand{\KEMenc}{\KEM.\mathrm{enc}}
+\newcommand{\KEMdec}{\KEM.\mathrm{dec}}
+
+\newcommand{\IKEMgen}{\IKEM.\mathrm{gen}}
+\newcommand{\IKEMenc}{\IKEM.\mathrm{enc}}
+\newcommand{\IKEMdel}{\IKEM.\mathrm{del}}
+\newcommand{\IKEMdec}{\IKEM.\mathrm{dec}}
+
+\newcommand{\UKEMgen}{\UKEM.\mathrm{gen}}
+\newcommand{\UKEMenc}{\UKEM.\mathrm{enc}}
+\newcommand{\UKEMdec}{\UKEM.\mathrm{dec}}
+
+\newcommand{\FKEMgen}{\FKEM.\mathrm{gen}}
+\newcommand{\FKEMenc}{\FKEM.\mathrm{enc}}
+\newcommand{\FKEMdec}{\FKEM.\mathrm{dec}}
+
+\newcommand{\TKEsnd}{\TKE.\mathrm{snd}}
+\newcommand{\TKErsp}{\TKE.\mathrm{rsp}}
+\newcommand{\TKErcv}{\TKE.\mathrm{rcv}}
+
+\newcommand{\AKEgen}{\AKE.\mathrm{gen}}
+\newcommand{\AKEsnd}{\AKE.\mathrm{snd}}
+\newcommand{\AKErsp}{\AKE.\mathrm{rsp}}
+\newcommand{\AKErcv}{\AKE.\mathrm{rcv}}
+
+\newcommand{\URKEinit}{\URKE.\mathrm{init}}
+\newcommand{\URKEsnd}{\URKE.\mathrm{snd}}
+\newcommand{\URKErcv}{\URKE.\mathrm{rcv}}
