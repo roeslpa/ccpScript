@@ -46,15 +46,204 @@ The author invites readers to submit comments or pull requests via the GitHub Re
 \begin{tabular}{|l|p{13cm}|}\hline
     \textbf{Symbol} & \textbf{Meaning}\\\hline
     $\T$ / $\F$ & Boolean values true and false\\
-    $\gets$ / $\to$ & Assigns a constant expression or a deterministic algorithm\\
+    $\gets$ / $\to$ & Assigns a constant expression or the output of a deterministic algorithm\\
     $\getsr$ / $\tor$ & Assigns a random value uniformly sampled from a finite set or the output of a probabilistic algorithm\\
     $\PS(X)$ & Power set of set~$X$\\
     $(X)^+$ & Set of non-trivial concatenations of elements from set~$X$\\
     $X[\cdot]\gets x$ & Assigns all entries of array~$X$ with default value~$x$\\
     Invoke $X$ & Executes algorithm $X$\\
     Stop with $x$ & Terminates the running experiment with final output~$x$\\
-    Require $x$ & Ends the algorithm, resp.~oracle, if expression~$x=\T$\\\hline
+    Require $x$ & Ends the algorithm, resp.~oracle, if expression~$x=\F$\\\hline
 \end{tabular}
+
+\section{Overview}
+
+The goal of this course is to \emph{understand how to analyze the security of real-world protocols}.
+\emph{Analyzing} comprises
+\begin{enumerate}
+    \item Methodically Defining Security
+    \item Identifying the Cryptographic Core of Protocols
+    \item Systematically Finding Attacks against Protocols
+    \item Formally Proving Security of Protocols
+\end{enumerate}
+This course focuses on the following classes of \emph{real-world protocols} and their main building blocks:
+\begin{itemize}
+    \item Key Exchange Protocols
+    \item Simple Communication Channels
+    \item Messaging Protocols
+    \item Group Membership Management Protocols
+\end{itemize}
+
+\subsection{First Informal Example: Diffie-Hellman Key Exchange}
+Let $\DHgr=(\DHg,\DHp)$ be a group of prime order~$\DHp$ with generator~$\DHg$.
+Then, the Diffie-Hellman Key Exchange~(DHKE)~\cite{DifHel76} between two users Alice and Bob works as follows:
+\begin{enumerate}
+    \item Alice samples $x\getsr\ZZ_\DHp^*$, locally stores $x$, and sends $X\gets(\DHg^x\mod\DHp)$ to Bob
+    \item Bob samples $y\getsr\ZZ_\DHp^*$, computes $k\gets(X^y\mod\DHp)$, and sends $Y\gets(\DHg^y\mod\DHp)$ to Alice
+    \item Alice computes $k\gets(Y^x\mod\DHp)$, and forgets $x$.
+\end{enumerate}
+Since $k\equiv X^y\equiv\DHg^{xy}\equiv Y^x\equiv k\mod \DHp$, Alice and Bob compute the same shared key.
+
+\begin{figure}
+    \centering
+    \begin{tabular}{lC{3cm}l}
+         \textbf{Alice} & & \textbf{Bob}\\
+         $x\getsr\ZZ_\DHp^*$ & &\\
+         $X\gets\DHg^x\mod\DHp$ & $\xrightarrow{X}$ & $y\getsr\ZZ_\DHp^*$\\
+         & $\xleftarrow{Y}$ & $Y\gets \DHg^y\mod\DHp$\\
+         $k\gets Y^x\mod\DHp$ & & $k\gets X^y\mod\DHp$\\
+    \end{tabular}
+    \caption{Diffie-Hellman Key Exchange.}
+    \label{fig:dhke}
+\end{figure}
+
+\paragraph{Security of DHKE}
+To prove security of the DHKE protocol, we use the \emph{Decisional Diffie-Hellman}~(DDH) problem.
+The advantage of an adversary~$\advA$ against the DDH problem in group~$\DHgr$ is defined as:
+\begin{align*}
+    \Adv_\DHgr^\ddh(\advA)\coloneqq|&\Pr[\advA(\DHg,\DHp,\DHg^x,\DHg^y,\DHg^{xy})=1\mid (x,y)\getsr(\ZZ_\DHp^*)^2]\\
+    &-\Pr[\advA(\DHg,\DHp,\DHg^x,\DHg^y,\DHg^z)=1\mid (x,y,z)\getsr(\ZZ_\DHp^*)^3]|\text{.}
+\end{align*}
+Intuitively, adversary~$\advA$ plays a game in which it sees both Diffie-Hellman shares $\DHg^x$ and $\DHg^y$ as well as either the real key~$\DHg^{xy}$ or a random group element~$\DHg^z$.
+To win this game, the adversary has to \emph{decide} which of the two views they saw.
+The advantage $\Adv_\DHgr^\ddh(\advA)$ denotes the probability of $\advA$ winning this game beyond pure guessing.
+
+We define the \emph{Computational DH}~(CDH) and the \emph{Discrete Logarithm}~(DLog) problems for prime-order groups in Section~\ref{sec:asym:assumptions:dh}.
+
+Based on the hardness of the best known attacks against the DDH problem from the long history of work in number theory, we assume that the DDH problem is \emph{hard} for security parameter~$\secp$.
+This means that $\Adv_\DHgr^\ddh(\advA)$ is \emph{negligible} for all adversaries~$\advA$ that can be specified as \emph{probabilistic polynomial-time Turing machines} (PPT).
+
+\paragraph{Simplifications}
+For simplicity and clarity, we refrain from considering concrete group generation algorithms and we do not elaborate on hardness analyses of the DDH problem.
+Furthermore, instead of treating security \emph{asymptotically} with respect to a security parameter~$\secp$, using the definitions of ``negligible'' and ``PPT adversaries'', we consider security \emph{concretely} in this document.
+This means that all our reductionist security proofs provide concrete relations between the security of the analyzed protocols and the hardness of the underlying assumptions.
+
+\paragraph{Real-World Remarks}
+In practice, Elliptic Curves are often used to instantiate prime-order groups~$\DHgr$.
+While the DHKE is one of the most widely used key exchange protocols in the real world, we want to mention that Shor's algorithm~\cite{FOCS:Shor94} solves the DDH problem in polynomial time using a quantum computer.
+Thus, we only use the DHKE as a simple, introductory real-world example.
+
+\paragraph{Intuitive Security Definition: Passive Adversaries}
+A passive adversary~$\advA$ against the DHKE protocol is \emph{capable} of seeing the transcript of the interaction between Alice and Bob: $X=\DHg^x$ and $Y=\DHg^y$.
+The \emph{goal} of the adversary is to derive information about the exchanged key~$k=\DHg^{xy}$ from that seen transcript.
+To capture this goal, we challenge~$\advA$ eventually on key~$k$:
+$\advA$ either sees the real key~$k_0=k=\DHg^{xy}$ or a randomly sampled element from the key space~$k_1\getsr\ksp$, where $k_1\gets\DHg^z$ and $z\getsr\ZZ_\DHp^*$.
+If the adversary can distinguish these two cases, this is considered a \emph{successful} attack against the key exchange protocol.
+In contrast, if we can prove that distinguishing the real key from a random key is hard, then we can treat the real key as if it was sampled randomly from a uniform distribution;
+more intuitively, then we know that the adversary has no information about the real key, even when observing the interaction between Alice and Bob.
+
+We emphasize that the above intuitive description of the adversarial capabilities, the attack goal, and the success criteria should only sketch the expected security requirements for the DHKE protocol.
+As we will see, \emph{good} security definitions should not be specified with a concrete protocol design in mind.
+
+\paragraph{Sketch of Security Proof}
+The above described passive adversary~$\advA$ against DHKE obtains inputs $(X,Y)$ and $k_b$, where $X=\DHg^x$, $Y=\DHg^y$, $k_0=k=\DHg^{xy}$, $k_1=\DHg^z$, $(x,y,z)\in\ZZ_\DHp^*$, and $b\in\BB$.
+If $\advA$, upon processing these inputs, outputs $b'$ such that $b=b'$, $\advA$ breaks the required security goal.
+
+\begin{figure}
+    \centering
+    \input{figures/dhke_reduction}
+    \caption{Sketch of reduction from Diffie-Hellman key exchange to DDH problem.}
+    \label{fig:dhke:reduction}
+\end{figure}
+
+The primary proof method in this course is based on reductions via sequences of games~\cite{EPRINT:Shoup04} that we will specify in pseudo-code~\cite{EC:BelRog06}.
+However, for the proof sketch of our simple example in which we reduce the security of DHKE to the hardness of the DDH problem, the schematic overview of reduction $\advB^\ddh$ in Figure~\ref{fig:dhke:reduction} suffices:
+The reduction uses its DDH-challenge~$Z$ as the challenge key~$k$.
+Once the DHKE-adversary~$\advA$ solves this challenge by successfully guessing bit~$b'$, the reduction can use this guess to break the DDH-challenge via bit~$b''$.
+A formal proof remains a task for the interested reader.
+
+\subsection{Second Example: Public-Key Encryption (PKE)}
+
+\paragraph{Syntax}
+A public-key encryption scheme $\PKE=(\PKEgen,\PKEenc,\PKEdec)$ is a tuple of three algorithms with encryption key space~$\eksp$, decryption key space~$\dksp$, message space~$\msp$, and ciphertext space~$\csp$:
+
+\begin{itemize}
+    \item $\PKEgen: \emptyset \tor \dksp\times\eksp$
+    \item $\PKEenc: \eksp\times\msp \tor \csp$
+    \item $\PKEdec: \dksp\times\csp \to \msp$
+\end{itemize}
+
+\paragraph{Correctness}
+A public-key encryption scheme $\PKE$ is correct if
+\[
+\Pr[\PKEdec(\dk,\PKEenc(\ek,m))=m\mid (\dk,\ek)\getsr\PKEgen,m\getsr\msp]=1\text{.}
+\]
+
+\paragraph{Passive Security}
+We begin with a notion of passive security for PKE that is called \emph{Indistinguishability of Ciphertexts under Chosen Plaintext Attacks} (IND-CPA).
+This models that adversaries only eavesdrop victims' ciphertexts for adversarially chosen messages---hence, \emph{chosen plaintext attacks}.
+However, the adversary never observes the decryption of ciphertexts that were not created by the victims themselves.
+The goal of the adversary is to decide which of two possible messages was encrypted in a challenge ciphertext---hence, \emph{indistinguishability of ciphertext}.
+
+We introduce this passive notion of security mainly for didactic reasons.
+Yet, we want to mention that the Fujisaki-Okamoto transform~\cite{C:FujOka99} lifts passively secure PKE schemes to actively secure ones.
+Hence, this notion is indeed relevant in practice.
+
+The advantage of an adversary~$\advA$ against public-key encryption scheme $\PKE$ in game $\INDCPA$ from Figure~\ref{fig:pke:ind:cpa} is defined as:
+\[
+\Adv_\PKE^\indcpa(\advA)\coloneqq\left|\Pr[\INDCPA_{\PKE}^0(\advA)=1]-\Pr[\INDCPA_{\PKE}^1(\advA)=1]\right|\text{.}
+\]
+
+\begin{figure}[!ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/pke_ind_cpa}%
+        }%
+    }
+    \caption{%
+        Games $\INDCPA$ for public-key encryption scheme~$\PKE$.
+    }
+    \label{fig:pke:ind:cpa}
+\end{figure}
+
+\paragraph{Active Security}
+The ability to actively manipulate ciphertexts and observe the victims' reaction on the decryption is modeled by providing a decryption oracle.
+This additional oracle returns decrypted messages for all ciphertext queries except for those that correspond to challenge ciphertexts.
+If also decryptions of challenge ciphertexts were given to the adversary, the adversary could trivially win the game for any functional PKE construction.
+Therefore, we call such attack strategies \emph{trivial attacks} or \emph{trivial winning conditions}.
+
+\begin{figure}[!ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/pke_ind}%
+        }%
+    }
+    \caption{%
+        Games $\INDCCA$ for public-key encryption scheme~$\PKE$.
+    }
+    \label{fig:pke:ind}
+\end{figure}
+
+The advantage of an adversary~$\advA$ against public-key encryption scheme $\PKE$ in game $\INDCCA$ from Figure~\ref{fig:pke:ind} is defined as:
+\[
+\Adv_\PKE^\indcca(\advA)\coloneqq\left|\Pr[\INDCCA_{\PKE}^0(\advA)=1]-\Pr[\INDCCA_{\PKE}^1(\advA)=1]\right|\text{.}
+\]
+
+\paragraph{ElGamal Encryption}
+As shown in Figure~\ref{fig:pke:const:elgamal}, the ElGamal public-key encryption scheme~\cite{ElGamal85} at its core uses the Diffie-Hellman key exchange.
+Intuitively, the ElGamal PKE key pair~$(\dk,\ek)$ is Alice's key pair in the DHKE.
+For ElGamal encryption, one samples a fresh, ephemeral DHKE key pair, which corresponds to Bob's key in the DHKE.
+Using Alice's DHKE public key and Bob's DHKE secret key, one computes the shared key and multiplies the message to that shared key.
+On ElGamal decryption, the same shared key is computed and, by multiplying with its inverse, the original, encrypted message is derived.
+
+\begin{figure}[!ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/pke_const_elgamal}%
+        }%
+    }
+    \caption{%
+        ElGamal public-key encryption scheme~$\PKE$~\cite{ElGamal85}.
+    }
+    \label{fig:pke:const:elgamal}
+\end{figure}
+
 
 \section{Game-Based Definitions}
 
@@ -224,11 +413,13 @@ The advantage of an adversary~$\advA$ against symmetric encryption scheme $\SYE$
 
 
 \section{Asymmetric Primitives}
-
+\label{sec:asym}
 
 \subsection{Assumptions}
+\label{sec:asym:assumptions}
 
 \subsubsection{Diffie-Hellman (DH)}
+\label{sec:asym:assumptions:dh}
 Let $\DHgr=(\DHg,\DHp)$ be a group of prime order~$\DHp$ with generator~$\DHg$.
 
 \paragraph{Discrete Logarithm}
@@ -245,7 +436,7 @@ The advantage of an adversary~$\advA$ against the computational Diffie-Hellman p
 \]
 
 \paragraph{Decisional DH}
-The advantage of an adversary~$\advA$ against the decicional Diffie-Hellman problem in group~$\DHgr$ is defined as:
+The advantage of an adversary~$\advA$ against the decisional Diffie-Hellman problem in group~$\DHgr$ is defined as:
 \begin{align*}
     \Adv_\DHgr^\ddh(\advA)\coloneqq|&\Pr[\advA(\DHg,\DHp,\DHg^x,\DHg^y,\DHg^{xy})=1\mid (x,y)\getsr(\ZZ_\DHp^*)^2]\\
     &-\Pr[\advA(\DHg,\DHp,\DHg^x,\DHg^y,\DHg^z)=1\mid (x,y,z)\getsr(\ZZ_\DHp^*)^3]|\text{.}
@@ -286,43 +477,6 @@ The advantage of an adversary~$\advA$ against digital signature scheme $\SIG$ in
         Game $\SUFCMA$ for digital signature scheme~$\SIG$.
     }
     \label{fig:sig:suf}
-\end{figure}
-
-\subsection{Public-Key Encryption (PKE)}
-
-\paragraph{Syntax}
-A public-key encryption scheme $\PKE=(\PKEgen,\PKEenc,\PKEdec)$ is a tuple of three algorithms with encryption key space~$\eksp$, decryption key space~$\dksp$, message space~$\msp$, and ciphertext space~$\csp$:
-
-\begin{itemize}
-    \item $\PKEgen: \emptyset \tor \dksp\times\eksp$
-    \item $\PKEenc: \eksp\times\msp \tor \csp$
-    \item $\PKEdec: \dksp\times\csp \to \msp$
-\end{itemize}
-
-\paragraph{Correctness}
-A public-key encryption scheme $\PKE$ is correct if
-\[
-\Pr[\PKEdec(\dk,\PKEenc(\ek,m))=m\mid (\dk,\ek)\getsr\PKEgen,m\getsr\msp]=1\text{.}
-\]
-
-\paragraph{Security}
-The advantage of an adversary~$\advA$ against public-key encryption scheme $\PKE$ in game $\INDCCA$ from Figure~\ref{fig:pke:ind} is defined as:
-\[
-\Adv_\PKE^\indcca(\advA)\coloneqq\left|\Pr[\INDCCA_{\PKE}^0(\advA)=1]-\Pr[\INDCCA_{\PKE}^1(\advA)=1]\right|\text{.}
-\]
-
-\begin{figure}[!ht]
-    \centering
-    \nicoresetlinenr%
-    \fbox{%
-        \scalebox{\codescalefactor}{%
-            \input{figures/pke_ind}%
-        }%
-    }
-    \caption{%
-        Games $\INDCCA$ for public-key encryption scheme~$\PKE$.
-    }
-    \label{fig:pke:ind}
 \end{figure}
 
 \subsection{Key Encapsulation Mechanism (KEM)}

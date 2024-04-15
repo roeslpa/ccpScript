@@ -1,10 +1,19 @@
 %!TEX root=main.tex
 
+\let\oldparagraph=\paragraph
+\renewcommand\paragraph[1]{\oldparagraph{#1.}}
+
+\newcolumntype{C}[1]{>{\centering\arraybackslash\hspace{0pt}}p{#1}}
+
+\newcommand{\algbox}[2]{\fbox{\parbox{#1}{#2}}}
+\newcommand{\arrbox}[2]{\parbox{#1}{\centering#2}}
+
 \newcommand{\getsr}{\gets_\$}
 \newcommand{\tor}{\to_\$}
 \newcommand{\es}{\epsilon}
 \newcommand{\T}{\mathtt{tru}}
 \newcommand{\F}{\mathtt{fal}}
+\newcommand{\secp}{\kappa}
 
 \newcommand{\ZZ}{\mathbb{Z}}
 \newcommand{\BB}{\{0,1\}}
@@ -13,6 +22,8 @@
 \newcommand{\PS}{\mathcal{P}}
 
 \newcommand{\advA}{\mathcal{A}}
+\newcommand{\advB}{\mathcal{B}}
+\newcommand{\advC}{\mathcal{C}}
 \newcommand{\Adv}{\mathrm{Adv}}
 
 \newcommand{\APKE}{\mathrm{APKE}}
@@ -51,6 +62,8 @@
 \newcommand{\CORR}{\mathrm{CORR}}
 \newcommand{\INDCCA}{{\mathrm{IND}\text{-}\mathrm{CCA}}}
 \newcommand{\indcca}{{\mathrm{ind}\text{-}\mathrm{cca}}}
+\newcommand{\INDCPA}{{\mathrm{IND}\text{-}\mathrm{CPA}}}
+\newcommand{\indcpa}{{\mathrm{ind}\text{-}\mathrm{cpa}}}
 \newcommand{\OWCCA}{{\mathrm{OW}\text{-}\mathrm{CCA}}}
 \newcommand{\owcca}{{\mathrm{ow}\text{-}\mathrm{cca}}}
 \newcommand{\SUFCMA}{{\mathrm{SUF}\text{-}\mathrm{CMA}}}

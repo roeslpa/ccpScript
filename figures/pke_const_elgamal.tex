@@ -1,0 +1,34 @@
+%!TEX root=../main.tex
+\markersetlen{ndL}{110pt}%
+\markersetlen{ndM}{120pt}%
+\markersetlen{ndR}{120pt}%
+\begin{tabular}[t]{lll}
+    \nicodemusbox{\markerlenndL}{%
+        \textbf{Proc} $\PKEgen$
+        \begin{nicodemus}
+            \item $\dk\getsr\ZZ_\DHp^*$
+            \item $\ek\gets\DHg^\dk$
+            \item Return $(\dk,\ek)$
+        \end{nicodemus}%
+    }%
+    &
+    \nicodemusbox{\markerlenndM}{%
+        \textbf{Proc} $\PKEenc(\ek,m)$
+        \begin{nicodemus}
+            \item $x\getsr\ZZ_\DHp^*$
+            \item $c_1\gets\DHg^x$
+            \item $c_2\gets\ek^x\cdot m$
+            \item $c\gets(c_1,c_2)$
+            \item Return~$c$
+        \end{nicodemus}%
+    }%
+    &
+    \nicodemusbox{\markerlenndR}{%
+        \textbf{Proc} $\PKEdec(\dk,c)$
+        \begin{nicodemus}
+            \item $(c_1,c_2)\gets c$
+            \item $m\gets c_2/c_1^\dk$
+            \item Return $m$
+        \end{nicodemus}%
+    }%
+\end{tabular}%
