@@ -1,0 +1,18 @@
+\procedure[colspace=-1cm]{KEM-based Authentication}{
+        \textbf{Alice} \>\> \textbf{Bob} \\[0.1\baselineskip][\hline]
+        \> \\[-0.5\baselineskip]
+        K_1, c_1 \sample enc(pk_B) \\
+        (sk', pk') \sample gen  \\
+        \>\sendmessageright*{c_1, pk'} \\
+        \>\> K_1 \gets dec(sk_B, c_1) \\
+        \>\>(K_2, c_2) \sample enc(pk_A) \\
+        \>\>(K_3, c_3) \sample enc(pk') \\
+        \>\> (\tau_B, K_B) \gets PRF(K_1, tag=(c_1, pk', c_2, c_3)) \\
+        \> \sendmessageleft*{c_2, c_3, \tau_B} \\
+        K_2 \gets dec(sk_A, c_2) \\
+        K_3 \gets dec(sk', c_3) \\
+        (\tau_B, K_B) \gets PRF(K_1, tag=(c_1, pk', c_2, c_3)) \\
+        (K, \tau_A) \gets PRF(K_B, K_2, K_3) 
+        \>\> (K, \tau_A) \gets PRF(K_B, K_2, K_3) \\
+        \>\sendmessageright*{\tau_A} \\
+}

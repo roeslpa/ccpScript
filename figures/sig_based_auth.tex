@@ -1,0 +1,9 @@
+\procedure[]{Signature-Based Authentication}{
+    a \sample \mathbb{Z}_p^* \\
+    \> \sendmessageright*{g^a} \\
+    \>\> b \sample \mathbb{Z}_p^* \\
+    \>\> \sigma_B \gets sig(sk_B, g^a || g^b) \\
+    \> \sendmessageleft*{g^b, \sigma_B} \\
+    \sigma_A \gets sig(sk_A, g^a || g^b || \sigma_B) \\
+    \>\sendmessageright*{\sigma_A} \\
+}
