@@ -1,0 +1,9 @@
+\procedure{}{
+    \textbf{Alice} \>\> \textbf{Bob} \\[0.1\baselineskip][\hline]\\[0.1\baselineskip]
+    \> K \leftarrow \fbox{\textit{Initial Key Exchange}} \rightarrow K \> \pclb
+    \pcintertext[dotted]{}
+    st_A, \_ \gets init(K) \>\> \_, st_B \gets init(K) \\
+    (st_A, k, c) \sample snd(st_A) \\
+    \>\sendmessageright*{c} \\
+    \>\> st_B, k \gets rcv(st_B, c) \pclb
+}
