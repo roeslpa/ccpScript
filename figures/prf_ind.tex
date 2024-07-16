@@ -1,0 +1,25 @@
+%!TEX root=../main.tex
+\markersetlen{ndL}{110pt}%
+\markersetlen{ndR}{120pt}%
+\newcommand{\CC}{\mathit{CC}}%
+\begin{tabular}[t]{ll}
+    \nicodemusbox{\markerlenndL}{%
+        \textbf{Game} $\IND_{\PRG}^b(\advA)$
+        \begin{nicodemus}
+            \item $R[\cdot]\gets\bot$
+            \item $k\getsr\ksp$
+            \item $b'\getsr\advA$
+            \item Stop with~$b'$
+        \end{nicodemus}%
+    }%
+    &
+    \nicodemusbox{\markerlenndR}{%
+        \textbf{Oracle} $\Ochall(m)$
+        \begin{nicodemus}
+            \item $r_0\gets\PRFf(k,m)$
+            \item If $R[m]=\bot$: $R[m]\getsr\rsp$
+            \item $r_1\gets R[m]$
+            \item Return~$r_b$
+        \end{nicodemus}%
+    }%
+\end{tabular}%

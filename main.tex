@@ -56,214 +56,145 @@ The author invites readers to submit comments or pull requests via the GitHub Re
     Require $x$ & Ends the algorithm, resp.~oracle, if expression~$x=\F$\\\hline
 \end{tabular}
 
-\section{Overview}
 
-The goal of this course is to \emph{understand how to analyze the security of real-world protocols}.
-\emph{Analyzing} comprises
-\begin{enumerate}
-    \item Methodically Defining Security
-    \item Identifying the Cryptographic Core of Protocols
-    \item Systematically Finding Attacks against Protocols
-    \item Formally Proving Security of Protocols
-\end{enumerate}
-This course focuses on the following classes of \emph{real-world protocols} and their main building blocks:
-\begin{itemize}
-    \item Key Exchange Protocols
-    \item Simple Communication Channels
-    \item Messaging Protocols
-    \item Group Membership Management Protocols
-\end{itemize}
-
-\subsection{First Informal Example: Diffie-Hellman Key Exchange}
-Let $\DHgr=(\DHg,\DHp)$ be a group of prime order~$\DHp$ with generator~$\DHg$.
-Then, the Diffie-Hellman Key Exchange~(DHKE)~\cite{DifHel76} between two users Alice and Bob works as follows:
-\begin{enumerate}
-    \item Alice samples $x\getsr\ZZ_\DHp^*$, locally stores $x$, and sends $X\gets(\DHg^x\mod\DHp)$ to Bob
-    \item Bob samples $y\getsr\ZZ_\DHp^*$, computes $k\gets(X^y\mod\DHp)$, and sends $Y\gets(\DHg^y\mod\DHp)$ to Alice
-    \item Alice computes $k\gets(Y^x\mod\DHp)$, and forgets $x$.
-\end{enumerate}
-Since $k\equiv X^y\equiv\DHg^{xy}\equiv Y^x\equiv k\mod \DHp$, Alice and Bob compute the same shared key.
-
-\begin{figure}
-    \centering
-    \begin{tabular}{lC{3cm}l}
-         \textbf{Alice} & & \textbf{Bob}\\
-         $x\getsr\ZZ_\DHp^*$ & &\\
-         $X\gets\DHg^x\mod\DHp$ & $\xrightarrow{X}$ & $y\getsr\ZZ_\DHp^*$\\
-         & $\xleftarrow{Y}$ & $Y\gets \DHg^y\mod\DHp$\\
-         $k\gets Y^x\mod\DHp$ & & $k\gets X^y\mod\DHp$\\
-    \end{tabular}
-    \caption{Diffie-Hellman Key Exchange.}
-    \label{fig:dhke}
-\end{figure}
-
-\paragraph{Security of DHKE}
-To prove security of the DHKE protocol, we use the \emph{Decisional Diffie-Hellman}~(DDH) problem.
-The advantage of an adversary~$\advA$ against the DDH problem in group~$\DHgr$ is defined as:
-\begin{align*}
-    \Adv_\DHgr^\ddh(\advA)\coloneqq|&\Pr[\advA(\DHg,\DHp,\DHg^x,\DHg^y,\DHg^{xy})=1\mid (x,y)\getsr(\ZZ_\DHp^*)^2]\\
-    &-\Pr[\advA(\DHg,\DHp,\DHg^x,\DHg^y,\DHg^z)=1\mid (x,y,z)\getsr(\ZZ_\DHp^*)^3]|\text{.}
-\end{align*}
-Intuitively, adversary~$\advA$ plays a game in which it sees both Diffie-Hellman shares $\DHg^x$ and $\DHg^y$ as well as either the real key~$\DHg^{xy}$ or a random group element~$\DHg^z$.
-To win this game, the adversary has to \emph{decide} which of the two views they saw.
-The advantage $\Adv_\DHgr^\ddh(\advA)$ denotes the probability of $\advA$ winning this game beyond pure guessing.
-
-We define the \emph{Computational DH}~(CDH) and the \emph{Discrete Logarithm}~(DLog) problems for prime-order groups in Section~\ref{sec:asym:assumptions:dh}.
-
-Based on the hardness of the best known attacks against the DDH problem from the long history of work in number theory, we assume that the DDH problem is \emph{hard} for security parameter~$\secp$.
-This means that $\Adv_\DHgr^\ddh(\advA)$ is \emph{negligible} for all adversaries~$\advA$ that can be specified as \emph{probabilistic polynomial-time Turing machines} (PPT).
-
-\paragraph{Simplifications}
-For simplicity and clarity, we refrain from considering concrete group generation algorithms and we do not elaborate on hardness analyses of the DDH problem.
-Furthermore, instead of treating security \emph{asymptotically} with respect to a security parameter~$\secp$, using the definitions of ``negligible'' and ``PPT adversaries'', we consider security \emph{concretely} in this document.
-This means that all our reductionist security proofs provide concrete relations between the security of the analyzed protocols and the hardness of the underlying assumptions.
-
-\paragraph{Real-World Remarks}
-In practice, Elliptic Curves are often used to instantiate prime-order groups~$\DHgr$.
-While the DHKE is one of the most widely used key exchange protocols in the real world, we want to mention that Shor's algorithm~\cite{FOCS:Shor94} solves the DDH problem in polynomial time using a quantum computer.
-Thus, we only use the DHKE as a simple, introductory real-world example.
-
-\paragraph{Intuitive Security Definition: Passive Adversaries}
-A passive adversary~$\advA$ against the DHKE protocol is \emph{capable} of seeing the transcript of the interaction between Alice and Bob: $X=\DHg^x$ and $Y=\DHg^y$.
-The \emph{goal} of the adversary is to derive information about the exchanged key~$k=\DHg^{xy}$ from that seen transcript.
-To capture this goal, we challenge~$\advA$ eventually on key~$k$:
-$\advA$ either sees the real key~$k_0=k=\DHg^{xy}$ or a randomly sampled element from the key space~$k_1\getsr\ksp$, where $k_1\gets\DHg^z$ and $z\getsr\ZZ_\DHp^*$.
-If the adversary can distinguish these two cases, this is considered a \emph{successful} attack against the key exchange protocol.
-In contrast, if we can prove that distinguishing the real key from a random key is hard, then we can treat the real key as if it was sampled randomly from a uniform distribution;
-more intuitively, then we know that the adversary has no information about the real key, even when observing the interaction between Alice and Bob.
-
-We emphasize that the above intuitive description of the adversarial capabilities, the attack goal, and the success criteria should only sketch the expected security requirements for the DHKE protocol.
-As we will see, \emph{good} security definitions should not be specified with a concrete protocol design in mind.
-
-\paragraph{Sketch of Security Proof}
-The above described passive adversary~$\advA$ against DHKE obtains inputs $(X,Y)$ and $k_b$, where $X=\DHg^x$, $Y=\DHg^y$, $k_0=k=\DHg^{xy}$, $k_1=\DHg^z$, $(x,y,z)\in\ZZ_\DHp^*$, and $b\in\BB$.
-If $\advA$, upon processing these inputs, outputs $b'$ such that $b=b'$, $\advA$ breaks the required security goal.
-
-\begin{figure}
-    \centering
-    \input{figures/dhke_reduction}
-    \caption{Sketch of reduction from Diffie-Hellman key exchange to DDH problem.}
-    \label{fig:dhke:reduction}
-\end{figure}
-
-The primary proof method in this course is based on reductions via sequences of games~\cite{EPRINT:Shoup04} that we will specify in pseudo-code~\cite{EC:BelRog06}.
-However, for the proof sketch of our simple example in which we reduce the security of DHKE to the hardness of the DDH problem, the schematic overview of reduction $\advB^\ddh$ in Figure~\ref{fig:dhke:reduction} suffices:
-The reduction uses its DDH-challenge~$Z$ as the challenge key~$k$.
-Once the DHKE-adversary~$\advA$ solves this challenge by successfully guessing bit~$b'$, the reduction can use this guess to break the DDH-challenge via bit~$b''$.
-A formal proof remains a task for the interested reader.
-
-\subsection{Second Example: Public-Key Encryption (PKE)}
-
-\paragraph{Syntax}
-A public-key encryption scheme $\PKE=(\PKEgen,\PKEenc,\PKEdec)$ is a tuple of three algorithms with encryption key space~$\eksp$, decryption key space~$\dksp$, message space~$\msp$, and ciphertext space~$\csp$:
-
-\begin{itemize}
-    \item $\PKEgen: \emptyset \tor \dksp\times\eksp$
-    \item $\PKEenc: \eksp\times\msp \tor \csp$
-    \item $\PKEdec: \dksp\times\csp \to \msp$
-\end{itemize}
-
-\paragraph{Correctness}
-A public-key encryption scheme $\PKE$ is correct if
-\[
-\Pr[\PKEdec(\dk,\PKEenc(\ek,m))=m\mid (\dk,\ek)\getsr\PKEgen,m\getsr\msp]=1\text{.}
-\]
-
-\paragraph{Passive Security}
-We begin with a notion of passive security for PKE that is called \emph{Indistinguishability of Ciphertexts under Chosen Plaintext Attacks} (IND-CPA).
-This models that adversaries only eavesdrop victims' ciphertexts for adversarially chosen messages---hence, \emph{chosen plaintext attacks}.
-However, the adversary never observes the decryption of ciphertexts that were not created by the victims themselves.
-The goal of the adversary is to decide which of two possible messages was encrypted in a challenge ciphertext---hence, \emph{indistinguishability of ciphertext}.
-
-We introduce this passive notion of security mainly for didactic reasons.
-Yet, we want to mention that the Fujisaki-Okamoto transform~\cite{C:FujOka99} lifts passively secure PKE schemes to actively secure ones.
-Hence, this notion is indeed relevant in practice.
-
-The advantage of an adversary~$\advA$ against public-key encryption scheme $\PKE$ in game $\INDCPA$ from Figure~\ref{fig:pke:ind:cpa} is defined as:
-\[
-\Adv_\PKE^\indcpa(\advA)\coloneqq\left|\Pr[\INDCPA_{\PKE}^0(\advA)=1]-\Pr[\INDCPA_{\PKE}^1(\advA)=1]\right|\text{.}
-\]
-
-\begin{figure}[!ht]
-    \centering
-    \nicoresetlinenr%
-    \fbox{%
-        \scalebox{\codescalefactor}{%
-            \input{figures/pke_ind_cpa}%
-        }%
-    }
-    \caption{%
-        Games $\INDCPA$ for public-key encryption scheme~$\PKE$.
-    }
-    \label{fig:pke:ind:cpa}
-\end{figure}
-
-\paragraph{Active Security}
-The ability to actively manipulate ciphertexts and observe the victims' reaction on the decryption is modeled by providing a decryption oracle.
-This additional oracle returns decrypted messages for all ciphertext queries except for those that correspond to challenge ciphertexts.
-If also decryptions of challenge ciphertexts were given to the adversary, the adversary could trivially win the game for any functional PKE construction.
-Therefore, we call such attack strategies \emph{trivial attacks} or \emph{trivial winning conditions}.
-
-\begin{figure}[!ht]
-    \centering
-    \nicoresetlinenr%
-    \fbox{%
-        \scalebox{\codescalefactor}{%
-            \input{figures/pke_ind}%
-        }%
-    }
-    \caption{%
-        Games $\INDCCA$ for public-key encryption scheme~$\PKE$.
-    }
-    \label{fig:pke:ind}
-\end{figure}
-
-The advantage of an adversary~$\advA$ against public-key encryption scheme $\PKE$ in game $\INDCCA$ from Figure~\ref{fig:pke:ind} is defined as:
-\[
-\Adv_\PKE^\indcca(\advA)\coloneqq\left|\Pr[\INDCCA_{\PKE}^0(\advA)=1]-\Pr[\INDCCA_{\PKE}^1(\advA)=1]\right|\text{.}
-\]
-
-\paragraph{ElGamal Encryption}
-As shown in Figure~\ref{fig:pke:const:elgamal}, the ElGamal public-key encryption scheme~\cite{ElGamal85} at its core uses the Diffie-Hellman key exchange.
-Intuitively, the ElGamal PKE key pair~$(\dk,\ek)$ is Alice's key pair in the DHKE.
-For ElGamal encryption, one samples a fresh, ephemeral DHKE key pair, which corresponds to Bob's key in the DHKE.
-Using Alice's DHKE public key and Bob's DHKE secret key, one computes the shared key and multiplies the message to that shared key.
-On ElGamal decryption, the same shared key is computed and, by multiplying with its inverse, the original, encrypted message is derived.
-
-\begin{figure}[!ht]
-    \centering
-    \nicoresetlinenr%
-    \fbox{%
-        \scalebox{\codescalefactor}{%
-            \input{figures/pke_const_elgamal}%
-        }%
-    }
-    \caption{%
-        ElGamal public-key encryption scheme~$\PKE$~\cite{ElGamal85}.
-    }
-    \label{fig:pke:const:elgamal}
-\end{figure}
+\input{sections/overview}
 
 
 \section{Game-Based Definitions}
+As one can see from the minimal differences between the \emph{passive} security definition and the \emph{active} security definition for PKE from Section~\ref{sec:overview:pke}, definitions of security can be modular with respect to a pattern that is based on a small core.
+We will use the example of \emph{Key Encapsulation Mechanisms}~(KEM) to introduce a methodology for defining security systematically.
+This methodology is closely related to a concept called \emph{Indistinguishability up to Correctness} by Rogaway and Zhang~\cite{C:RogZha18}.
 
 \subsection{Syntax}
+The first step to formally consider a cryptographic primitive is defining its \emph{syntax}.
+The syntax specifies the algorithms of a primitive by defining their inputs and outputs.
+
+A key encapsulation mechanism $\KEM=(\KEMgen,\KEMenc,\KEMdec)$ is a tuple of three algorithms with encapsulation key space~$\eksp$, decapsulation key space~$\dksp$, ciphertext space~$\csp$, and symmetric key space~$\ksp$:
+\begin{itemize}
+    \item $\KEMgen: \emptyset \tor \dksp\times\eksp$
+    \item $\KEMenc: \eksp \tor \ksp\times\csp$
+    \item $\KEMdec: \dksp\times\csp \to \ksp$
+\end{itemize}
+
+Intuitively a KEM can be considered a special case of PKE that is limited to always encrypt (aka.\@ encapsulate) fresh symmetric keys.
+Instead of taking the symmetric keys as input, the encapsulation algorithm of a KEM generates them internally.
+
+\paragraph{Construction: ElGamal KEM}
+For illustration, we give the ElGamal KEM as a simple example of a KEM in Figure~\ref{fig:kem:const:elgamal}.
+
+\begin{figure}[!ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/kem_const_elgamal}%
+        }%
+    }
+    \caption{%
+        ElGamal key encapsulation mechanism~$\KEM$~\cite{ElGamal85}.
+    }
+    \label{fig:kem:const:elgamal}
+\end{figure}
 
 \subsection{Correctness}
+Before specifying the expected security guarantees, we define the \emph{correctness} requirements.
+Typically, these requirements capture the functionality that a primitive should offer when being executed in an \emph{honest} environment in which all traffic is delivered as intended.
+The literature on distributed systems developed two complementary notions of correctness:
+\begin{itemize}
+    \item \textbf{Safety:} Nothing ``bad'' should happen (e.g., encapsulation and decapsulation for the same ciphertext should not compute different symmetric keys)
+    \item \textbf{Liveness:} The ``good'' event always happens (e.g., encapsulation and decapsulation always output a non-trivial key)
+\end{itemize}
+
+A correctness definition in the sense of \emph{safety} typically suffices for the ultimate goal of defining and analyzing security.
+Furthermore, specifying \emph{liveness} requirements for sophisticated primitives sometimes leads to complex, incomprehensible definitions.
+
+A key encapsulation mechanism $\KEM$ is correct if
+\[
+\Pr[\KEMdec(\dk,c)=k\mid (\dk,\ek)\getsr\KEMgen,(k,c)\getsr\KEMenc(\ek))=m]=1\text{.}
+\]
+Equivalently, a key encapsulation mechanism $\KEM$ is correct if $\Pr[\CORR_{\KEM}(\advA)=0]=1$ for all adversaries~$\advA$, where game~$\CORR$ is defined in Figure~\ref{fig:kem:corr}.
+
+\begin{figure}[!ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/kem_corr}%
+        }%
+    }
+    \caption{%
+        Game $\CORR$ for key encapsulation mechanism~$\KEM$.
+    }
+    \label{fig:kem:corr}
+\end{figure}
 
 \subsection{Adversarial Capabilities}
+Defining \emph{security} can be divided into three components:
+modeling the \emph{capabilities of adversaries},
+specifying the \emph{adversaries' goal}, and
+identifying attack strategies that are \emph{trivially} successful against every possible construction.
+The former two components are typically influenced by intuitive purpose of the considered primitive and how this primitive is used in practice;
+the latter one is almost entirely determined by all remaining definitional steps.
 
 \subsubsection{Typical Capabilities}
+We begin with considering typical adversarial capabilities against KEMs:
+\begin{itemize}
+    \item \textbf{Chosen-Plaintext Attacks:}
+    The adversary can see the ciphertexts of encapsulated keys
+    \item \textbf{Chosen-Ciphertext Attacks:}
+    The adversary can see the decapsulated keys for chosen ciphertexts
+    \item \textbf{Secret Key Corruption:}
+    The adversary can learn the entire decapsulation key
+    \item \textbf{Leakage of Information during Algorithm Execution:}
+    The adversary can learn secret bits of variables processed by the encapsulation or decapsulation algorithm
+    \item \textbf{Subversion of Algorithms:}
+    The adversary can modify the encapsulation or decapsulation algorithm
+    \item Etc.
+\end{itemize}
 
 \paragraph{Chosen-Plaintext Attacks}
+The most standard adversarial capabilities that are considered realistic and defendable for KEMs are chosen-plaintext and chosen-ciphertext attacks (CPA resp.\@ CCA).
+
+
+These notions are essentially the same except that the latter provides an additional decapsulation oracle via which the adversary can query ciphertexts to obtain the encapsulated symmetric keys.
+
+
 
 \paragraph{Chosen-Ciphertext Attacks}
+To exemplify CPA and CCA definitions, we 
 
-\paragraph{Replayable Chosen-Ciphertext Attacks}
+The advantage of an adversary~$\advA$ against key encapsulation mechanism $\KEM$ in game $\INDCCA$ from Figure~\ref{fig:kem:ind} is defined as:
+\[
+\Adv_\KEM^\indcca(\advA)\coloneqq\left|\Pr[\INDCCA_{\KEM}^0(\advA)=1]-\Pr[\INDCCA_{\KEM}^1(\advA)=1]\right|\text{.}
+\]
 
-\paragraph{Exposure of Secrets}
+\begin{figure}[!ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/kem_ind}%
+        }%
+    }
+    \caption{%
+        Games $\INDCCA$ for key encapsulation mechanism~$\KEM$.
+    }
+    \label{fig:kem:ind}
+\end{figure}
 
-\paragraph{Compromised Randomness}
+\begin{figure}[!ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/kem_ind_mi_corrupt}%
+        }%
+    }
+    \caption{%
+        Multi-instance games $\INDCCA$ for key encapsulation mechanism~$\KEM$.
+    }
+    \label{fig:kem:ind:mi:corrupt}
+\end{figure}
 
 \subsection{Adversarial Goal}
 
@@ -289,14 +220,54 @@ A pseudo-random generator $\PRG=\PRGf$ is an algorithm with key space~$\ksp$ and
     \item $\PRGf: \ksp \to \rsp$
 \end{itemize}
 
+\paragraph{Security}
+The advantage of an adversary~$\advA$ against pseudo-random generator $\PRG$ in game $\IND$ from Figure~\ref{fig:prg:ind} is defined as:
+\[
+\Adv_\PRG^\ind(\advA)\coloneqq\left|\Pr[\IND_{\PRG}^0(\advA)=1]-\Pr[\IND_{\PRG}^1(\advA)=1]\right|\text{.}
+\]
+
+\begin{figure}[!ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/prg_ind}%
+        }%
+    }
+    \caption{%
+        Games $\IND$ for pseudo-random generator~$\PRG$.
+    }
+    \label{fig:prg:ind}
+\end{figure}
+
 \subsection{Pseudo-Random Function}
 
 \paragraph{Syntax}
 A pseudo-random function $\PRF=\PRFf$ is an algorithm with key space~$\ksp$, input space~$\msp$ and output space~$\rsp$:
 
 \begin{itemize}
-    \item $\PRGf: \ksp\times\msp \to \rsp$
+    \item $\PRFf: \ksp\times\msp \to \rsp$
 \end{itemize}
+
+\paragraph{Security}
+The advantage of an adversary~$\advA$ against pseudo-random function $\PRF$ in game $\IND$ from Figure~\ref{fig:prf:ind} is defined as:
+\[
+\Adv_\PRF^\ind(\advA)\coloneqq\left|\Pr[\IND_{\PRF}^0(\advA)=1]-\Pr[\IND_{\PRF}^1(\advA)=1]\right|\text{.}
+\]
+
+\begin{figure}[!ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/prf_ind}%
+        }%
+    }
+    \caption{%
+        Games $\IND$ for pseudo-random function~$\PRF$.
+    }
+    \label{fig:prf:ind}
+\end{figure}
 
 \subsection{Message Authentication Code (MAC)}
 
@@ -411,6 +382,82 @@ The advantage of an adversary~$\advA$ against symmetric encryption scheme $\SYE$
 \end{figure}
 
 
+\subsubsection{Authenticated Encryption with Associated Data}
+
+\paragraph{Syntax}
+An authenticated encryption scheme with associated data $\AEAD=(\AEADgen,\AEADenc,\AEADdec)$ is a tuple of three algorithms with key space~$\ksp$, message space~$\msp$, associated-data space~$\adsp$, and ciphertext space~$\csp$:
+
+\begin{itemize}
+    \item $\AEADgen: \emptyset \tor \ksp$
+    \item $\AEADenc: \ksp\times\msp\times\adsp \tor \csp$
+    \item $\AEADdec: \ksp\times\adsp\times\csp \to \msp\cup\{\bot\}$
+\end{itemize}
+
+\paragraph{Correctness}
+An authenticated encryption scheme with associated data $\AEAD$ is correct if 
+\[
+\Pr[\AEADdec(k,\ad,\AEADenc(k,m,\ad))=m\mid k\getsr\SYEgen,m\getsr\msp,\ad\getsr\adsp]=1\text{.}
+\]
+Equivalently, an authenticated encryption scheme with associated data $\AEAD$ is correct if $\Pr[\CORR_{\AEAD}(\advA)=0]=1$ for all adversaries~$\advA$, where game~$\CORR$ is defined in Figure~\ref{fig:sym:aenc:corr}.
+
+We use the standard security definitions $\INDD$ and $\SUFCMA$ adapted from the seminal work by Rogaway~\cite{CCS:Rogaway02}.
+
+\begin{figure}[!ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/sym_aenc_corr}%
+        }%
+    }
+    \caption{%
+        Game $\CORR$ for authenticated encryption scheme with associated data~$\AEAD$.
+    }
+    \label{fig:sym:aenc:corr}
+\end{figure}
+
+\paragraph{Security: Indistinguishability of Ciphertexts from Randomness under Chosen-Plaintext Attacks}
+The advantage of an adversary~$\advA$ against authenticated encryption scheme with associated data $\AEAD$ in game $\INDD$ from Figure~\ref{fig:sym:aenc:indd} is defined as:
+\[
+\Adv_\AEAD^\indd(\advA)\coloneqq\left|\Pr[\INDD_{\AEAD}^0(\advA)=1]-\Pr[\INDD_{\AEAD}^1(\advA)=1]\right|\text{.}
+\]
+
+\begin{figure}[!ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/sym_aenc_indd}%
+        }%
+    }
+    \caption{%
+        Games $\INDD$ for authenticated encryption scheme with associated data~$\AEAD$.
+    }
+    \label{fig:sym:aenc:indd}
+\end{figure}
+
+\paragraph{Security: Strong Existential Unforgeability under Chosen-Message Attacks}
+The advantage of an adversary~$\advA$ against authenticated encryption scheme with associated data $\AEAD$ in game $\SUFCMA$ from Figure~\ref{fig:sym:aenc:suf} is defined as:
+\[
+\Adv_\AEAD^\sufcma(\advA)\coloneqq\Pr[\SUFCMA_{\AEAD}^0(\advA)=1]\text{.}
+\]
+
+\begin{figure}[!ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/sym_aenc_suf}%
+        }%
+    }
+    \caption{%
+        Game $\SUFCMA$ for authenticated encryption scheme with associated data~$\AEAD$.
+    }
+    \label{fig:sym:aenc:suf}
+\end{figure}
+
+
+
 
 \section{Asymmetric Primitives}
 \label{sec:asym}
@@ -478,61 +525,6 @@ The advantage of an adversary~$\advA$ against digital signature scheme $\SIG$ in
     }
     \label{fig:sig:suf}
 \end{figure}
-
-\subsection{Key Encapsulation Mechanism (KEM)}
-
-\paragraph{Syntax}
-A key encapsulation mechanism $\KEM=(\KEMgen,\KEMenc,\KEMdec)$ is a tuple of three algorithms with encapsulation key space~$\eksp$, decapsulation key space~$\dksp$, ciphertext space~$\csp$, and symmetric key space~$\ksp$:
-
-\begin{itemize}
-    \item $\KEMgen: \emptyset \tor \dksp\times\eksp$
-    \item $\KEMenc: \eksp \tor \ksp\times\csp$
-    \item $\KEMdec: \dksp\times\csp \to \ksp$
-\end{itemize}
-
-\paragraph{Correctness}
-A key encapsulation mechanism $\KEM$ is correct if
-\[
-\Pr[\KEMdec(\dk,c)=k\mid (\dk,\ek)\getsr\KEMgen,(k,c)\getsr\KEMenc(\ek))=m]=1\text{.}
-\]
-Equivalently, a key encapsulation mechanism $\KEM$ is correct if $\Pr[\CORR_{\KEM}(\advA)=0]=1$ for all adversaries~$\advA$, where game~$\CORR$ is defined in Figure~\ref{fig:kem:corr}.
-
-\begin{figure}[!ht]
-    \centering
-    \nicoresetlinenr%
-    \fbox{%
-        \scalebox{\codescalefactor}{%
-            \input{figures/kem_corr}%
-        }%
-    }
-    \caption{%
-        Game $\CORR$ for key encapsulation mechanism~$\KEM$.
-    }
-    \label{fig:kem:corr}
-\end{figure}
-
-\paragraph{Security}
-The advantage of an adversary~$\advA$ against key encapsulation mechanism $\KEM$ in game $\INDCCA$ from Figure~\ref{fig:kem:ind} is defined as:
-\[
-\Adv_\KEM^\indcca(\advA)\coloneqq\left|\Pr[\INDCCA_{\KEM}^0(\advA)=1]-\Pr[\INDCCA_{\KEM}^1(\advA)=1]\right|\text{.}
-\]
-
-\begin{figure}[!ht]
-    \centering
-    \nicoresetlinenr%
-    \fbox{%
-        \scalebox{\codescalefactor}{%
-            \input{figures/kem_ind}%
-        }%
-    }
-    \caption{%
-        Games $\INDCCA$ for key encapsulation mechanism~$\KEM$.
-    }
-    \label{fig:kem:ind}
-\end{figure}
-
-\paragraph{Construction: ElGamal KEM}
-
 
 \subsection{Identity-Based KEM}
 

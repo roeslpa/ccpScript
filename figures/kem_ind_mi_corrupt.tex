@@ -1,0 +1,53 @@
+%!TEX root=../main.tex
+\markersetlen{ndL}{130pt}%
+\markersetlen{ndR}{120pt}%
+\newcommand{\CC}{\mathit{CC}}%
+\newcommand{\CR}{\mathit{CR}}%
+\begin{tabular}[t]{ll}
+    \nicodemusbox{\markerlenndL}{%
+        \textbf{Game} $\INDCCA_{\KEM}^b(\advA)$
+        \begin{nicodemus}
+            \item $n\gets0$
+            \item $\CR\gets\emptyset$
+            \item $b'\getsr\advA$
+            \item Require $\forall i\in\CR:\CC_i=\emptyset$
+            \item Stop with~$b'$
+        \end{nicodemus}%
+        \medskip
+        
+        \textbf{Oracle} $\Ogen$
+        \begin{nicodemus}
+            \item $\CC_n\gets\emptyset$
+            \item $(\dk_n,\ek_n)\getsr\KEMgen$
+            \item $n\gets n+1$
+            \item Return $\ek_{n-1}$
+        \end{nicodemus}%
+    }%
+    &
+    \nicodemusbox{\markerlenndR}{%
+        \textbf{Oracle} $\Ochall(i)$
+        \begin{nicodemus}
+            \item Require $i\in[n]$
+            \item $(k_0,c)\getsr\KEMenc(\ek_i)$
+            \item $k_1\getsr\ksp$
+            \item $\CC_i\gets\CC_i\cup\{c\}$
+            \item Return~$(k_b,c)$
+        \end{nicodemus}%
+        \medskip
+        
+        \textbf{Oracle} $\Odec(i,c)$
+        \begin{nicodemus}
+            \item Require $i\in[n]\land c\notin\CC_i$
+            \item $k\gets\KEMdec(\dk_i,c)$
+            \item Return $k$
+        \end{nicodemus}%
+        \medskip
+        
+        \textbf{Oracle} $\Ocorrupt(i)$
+        \begin{nicodemus}
+            \item Require $i\in[n]$
+            \item $\CR\gets\CR\cup i$
+            \item Return $\dk$
+        \end{nicodemus}%
+    }%
+\end{tabular}%

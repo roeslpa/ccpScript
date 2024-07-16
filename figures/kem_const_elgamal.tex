@@ -1,0 +1,32 @@
+%!TEX root=../main.tex
+\markersetlen{ndL}{110pt}%
+\markersetlen{ndM}{120pt}%
+\markersetlen{ndR}{120pt}%
+\begin{tabular}[t]{lll}
+    \nicodemusbox{\markerlenndL}{%
+        \textbf{Proc} $\KEMgen$
+        \begin{nicodemus}
+            \item $\dk\getsr\ZZ_\DHp^*$
+            \item $\ek\gets\DHg^\dk$
+            \item Return $(\dk,\ek)$
+        \end{nicodemus}%
+    }%
+    &
+    \nicodemusbox{\markerlenndM}{%
+        \textbf{Proc} $\KEMenc(\ek)$
+        \begin{nicodemus}
+            \item $x\getsr\ZZ_\DHp^*$
+            \item $k\gets\ek^x$
+            \item $c\gets\DHg^x$
+            \item Return~$(k,c)$
+        \end{nicodemus}%
+    }%
+    &
+    \nicodemusbox{\markerlenndR}{%
+        \textbf{Proc} $\KEMdec(\dk,c)$
+        \begin{nicodemus}
+            \item $k\gets c^\dk$
+            \item Return $k$
+        \end{nicodemus}%
+    }%
+\end{tabular}%

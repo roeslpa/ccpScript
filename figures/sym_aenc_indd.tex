@@ -1,0 +1,30 @@
+%!TEX root=../main.tex
+\markersetlen{ndL}{120pt}%
+\markersetlen{ndR}{120pt}%
+\begin{tabular}[t]{ll}
+    \nicodemusbox{\markerlenndL}{%
+        \textbf{Game} $\INDD_{\AEAD}^b(\advA)$
+        \begin{nicodemus}
+            \item $k\getsr\AEADgen$
+            \item $b'\getsr\advA$
+            \item Stop with~$b'$
+        \end{nicodemus}%
+        \medskip
+        
+        \textbf{Oracle} $\Oenc(m,\ad)$
+        \begin{nicodemus}
+            \item $c\getsr\AEADenc(k,m,\ad)$
+            \item Return~$c$
+        \end{nicodemus}%
+    }%
+    &
+    \nicodemusbox{\markerlenndR}{%
+        \textbf{Oracle} $\Ochall(m,\ad)$
+        \begin{nicodemus}
+            \item Require $m\in\msp$
+            \item $c_0\getsr\AEADenc(k,m,\ad)$
+            \item $c_1\getsr\BB^{|c_0|}$
+            \item Return~$c_b$
+        \end{nicodemus}%
+    }%
+\end{tabular}%

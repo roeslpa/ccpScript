@@ -1,0 +1,33 @@
+%!TEX root=../main.tex
+\markersetlen{ndL}{120pt}%
+\markersetlen{ndR}{130pt}%
+\newcommand{\MC}{\mathit{MC}}%
+\begin{tabular}[t]{ll}
+    \nicodemusbox{\markerlenndL}{%
+        \textbf{Game} $\SUFCMA_{\AEAD}(\advA)$
+        \begin{nicodemus}
+            \item $\MC\gets\emptyset$
+            \item $k\getsr\AEADgen$
+            \item Invoke $\advA$
+            \item Stop with~$0$
+        \end{nicodemus}%
+        \medskip
+        
+        \textbf{Oracle} $\Oenc(m,\ad)$
+        \begin{nicodemus}
+            \item $c\getsr\AEADenc(k,m,\ad)$
+            \item $\MC\gets\MC\cup\{(m,\ad,c)\}$
+            \item Return $c$
+        \end{nicodemus}%
+    }%
+    &
+    \nicodemusbox{\markerlenndR}{%
+        \textbf{Oracle} $\Odec(\ad,c)$
+        \begin{nicodemus}
+            \item $m\gets\AEADdec(k,\ad,c)$
+            \item If $(m,\ad,c)\notin\MC\land m\neq\bot$:
+            \item \quad Stop with~$1$
+            \item Return $m$
+        \end{nicodemus}%
+    }%
+\end{tabular}%
