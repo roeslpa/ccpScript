@@ -1,0 +1,45 @@
+%\drawframe{no}
+%\begin{msc}{name}
+%    \declinst{A}{}{Alice}
+%    \advinst
+%    \declinst{B}{}{Bob}
+%    \inlinestart[left inline overlap=0.1cm, right inline overlap=0.1cm]{exp1}{initial key exchange}{A}{B}
+%    \nextlevel
+%    \nextlevel
+%    \mess{}{A}{B}
+%    \nextlevel
+%    \mess{}{B}{A}
+%    \nextlevel
+%    \mess{}{A}{B}
+%    \nextlevel
+%    \lost[side=right]{}{k}{B}
+%    \lost{}{k}{A}
+%    \nextlevel
+%    \inlineend{exp1}
+%    \nextlevel
+%    \inlinestart[left inline overlap=0.1cm, right inline overlap=0.1cm]{exp2}{Encryption}{A}{B}
+%    \nextlevel
+%    \action[action width=2.4cm]{$c \leftarrow Enc_k(m)$}{A}
+%    \nextlevel
+%    \mess{}{A}{B}
+%    \nextlevel
+%    \mess{}{B}{A}
+%    \nextlevel
+%    \mess{}{A}{B}
+%    \nextlevel
+%    \lost[side=right]{}{k}{B}
+%    \lost{}{k}{A}
+%    \nextlevel
+%    \inlineend{exp2}
+%\end{msc}
+\begin{tikzpicture}
+    \begin{umlseqdiag}
+        \umlobject[class=A]{a}
+        \umlobject[class=B]{b}
+        \umlobject[class=C]{c}
+        \begin{umlcall}{a}{b}
+            \begin{umlcall}{b}{c}
+            \end{umlcall}
+        \end{umlcall}
+    \end{umlseqdiag}
+\end{tikzpicture}

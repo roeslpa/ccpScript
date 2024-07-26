@@ -1,8 +1,8 @@
 \section{Overview}
 \label{sec:overview}
 
-The goal of this course is to \emph{understand how to analyze the security of real-world protocols}.
-\emph{Analyzing} comprises
+The goal of this course is to \emph{understand how to analyze the security of real-world protocols}.\\
+\emph{Analyzing} comprises:
 \begin{enumerate}
     \item Methodically Defining Security
     \item Identifying the Cryptographic Core of Protocols
@@ -16,6 +16,22 @@ This course focuses on the following classes of \emph{real-world protocols} and 
     \item Messaging Protocols
     \item Group Membership Management Protocols
 \end{itemize}
+Generally, we want to achieve the security goal in fig. \ref{fig:intro-msg-exch}, which illustrates the communication of Alice and Bob on the public internet.
+Seeing that the internet is public and hence there exist many attackers ($\advA$) it is the challenge to keep the communication channel between Alice and Bob protected.
+\begin{figure}
+    \centering
+    \input{figures/intro-msg-exch}
+    \caption{Typical Model of Message Exchange on the Public Internet}
+    \label{fig:intro-msg-exch}
+\end{figure}
+%To achieve this notion of security, we will use the main building blocks from above to construct a secure protocol, fig.\ \ref{fig:simplified_secure_protocol} shows a simplified example of this.
+
+\begin{figure}
+    \centering
+    \input{figures/simplified_secure_protocol}
+    \caption{}
+    \label{fig:simplified_secure_protocol}
+\end{figure}
 
 \subsection{First Informal Example: Diffie-Hellman Key Exchange}
 \label{sec:overview:dhke}
