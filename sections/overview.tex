@@ -24,17 +24,21 @@ Seeing that the internet is public and hence there exist many attackers ($\advA$
     \caption{Typical Model of Message Exchange on the Public Internet}
     \label{fig:intro-msg-exch}
 \end{figure}
-%To achieve this notion of security, we will use the main building blocks from above to construct a secure protocol, fig.\ \ref{fig:simplified_secure_protocol} shows a simplified example of this.
-
 \begin{figure}
     \centering
     \input{figures/simplified_secure_protocol}
-    \caption{}
-    \label{fig:simplified_secure_protocol}
+    \caption{General Simplified Model of Modern Message Encryption}
+    \label{fig:simplified:secure:protocol}
 \end{figure}
+To achieve this notion of security, we will use the main building blocks from above to construct a secure protocol, \cref{fig:simplified:secure:protocol} shows a simplified example of this.
+Notice that after the initial key exchange and sending of some messages, Bob and Alice both update their keys used for encryption and decryption.
+In practice, keys that are used for messaging are often kept for a long time (multiple years on smartphones) and would not be updated otherwise.
+Therefore, modern messaging protocols aim to update and use new encryption keys regularly, these key exchange protocols are also a primary focus of this lecture.
 
 \subsection{First Informal Example: Diffie-Hellman Key Exchange}
 \label{sec:overview:dhke}
+
+\cbnote{History:\\}{W. Diffie and M. Hellman wrote "New Directions in Cryptography"~\cite{DifHel76} in which the Diffie-Hellman Key Exchange (DHKE) was the most important contribution. However, they were not the first to introduce the DHKE, yet they were the first that did so publicly. In 1969 James H. Ellis, Clifford Cocks and Malcom J. Williamson at GCHQ already found the functionality of the DHKE, their work at GCHQ (being confidential) remained unpublished at the time.} % TODO insert RSA part 45:00 lecture 1
 
 Let $\DHgr=(\DHg,\DHp)$ be a group of prime order~$\DHp$ with generator~$\DHg$.
 Then, the Diffie-Hellman Key Exchange~(DHKE)~\cite{DifHel76} between two users Alice and Bob works as follows:
