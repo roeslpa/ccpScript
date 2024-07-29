@@ -1,0 +1,12 @@
+\begin{tikzpicture}[people/.style={minimum width=1.5cm}]
+    \node[people, alice] (alice) {Alice};
+    \node[people, devil, right=of alice, xshift=2cm] (adv) {Adversiary ($\advA$)};
+    \node[people, bob, right=of adv, mirrored, xshift=2cm] (bob) {Bob};
+
+    \node[cylinder, below=of adv, draw,minimum height=8cm,minimum width=1.5cm,cylinder uses custom fill,cylinder body fill = darkblue,cylinder end fill = darkblue!80,text=white] (chn) {Channel};
+
+    \draw[->] ([yshift=0.25cm, xshift=-1cm]chn.west) coordinate (l1)--(l1-|chn.west) node[midway, above]{$m_0$};
+    \draw[<-] ([yshift=-0.25cm, xshift=-1cm]chn.west) coordinate (l1)--(l1-|chn.west) node[midway, above]{$m_1$};
+    \draw[<-] ([yshift=0.25cm, xshift=1cm]chn.east) coordinate (l2)--(l2-|chn.east) node[midway, above]{$m_0$};
+    \draw[->] ([yshift=-0.25cm, xshift=1cm]chn.east) coordinate (l2)--(l2-|chn.east) node[midway, above]{$m_1$};
+\end{tikzpicture}

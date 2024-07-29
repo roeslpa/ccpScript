@@ -1,0 +1,27 @@
+\begin{sequencediagram}
+    \setumlstyle
+    \newinst[]{A}{Alice}{}
+    \node[right=of inst1, fill=white, yshift=-0.5cm, xshift=0.75cm] (kb) {$\advA$};
+    \newinst[4]{B}{Bob}{}
+    \begin{sdblock}{Initial Key Exchange}{}
+        \prelevel
+        \mess{A}{}{B}
+        \mess{B}{}{A}
+        \mess{A}{}{B}
+        \node[anchor=north, draw=black, below=of mess to, yshift=1cm, fill=white] (kb) {$k \leftarrow \dots$};
+        \node[anchor=north, draw=black, below=of mess from, yshift=1cm, fill=white] (ka) {$k \leftarrow \dots$};
+    \end{sdblock}
+    \begin{sdblock}{Encryption}{}
+        \mess{A}{c}{B}
+        \node[anchor=south, draw=black, above=of mess from, yshift=-1cm, fill=white] (ka) {$c \leftarrow \Oenc_k(m)$};
+        \node[anchor=north, draw=black, below=of mess to, yshift=1cm, fill=white] (ka) {$m \leftarrow \Odec_k(c)$};
+    \end{sdblock}
+    \begin{sdblock}{Continous Key Updates}{}
+        \begin{call}{B}{update_key()}{B}{$k'$}
+        \end{call}
+        \prelevel
+        \prelevel
+        \begin{call}{A}{update_key()}{A}{$k'$}
+        \end{call}
+    \end{sdblock}
+\end{sequencediagram}
