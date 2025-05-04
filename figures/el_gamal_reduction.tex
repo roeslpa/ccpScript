@@ -1,0 +1,28 @@
+%!TEX root=../main.tex
+\begin{tabular}{lllll}
+    \algbox{4cm}{%
+        \textbf{Challenger} $\advC_{\DHgr=(\DHg,\DHp)}^{\ddh,b}$:\\
+        $x,y,z\getsr(\ZZ_\DHp^*)^3$\\
+        $X\gets\DHg^x,Y\gets\DHg^y, Z_0\gets\DHg^{xy}$\\
+        $Z_1\gets\DHg^z, Z\gets Z_{b'}$\\~\\~\\
+        Return $b''$
+        }&
+    \arrbox{2cm}{%
+        $\xrightarrow{(\DHg,\DHp,X,Y,Z)}$\\~\\~\\
+        $\xleftarrow{b''}$}&
+    \algbox{3cm}{%
+        \textbf{Reduction} $\advB^\ddh$:\\
+        $\pk\gets X$\\
+        $c_1\gets Y, c_2^1\gets Z$\\
+        $c_2\gets c_2^1\cdot m_b$\\
+        $c^*\gets(c_1,c_2)$\\
+        $b''\gets d$\\
+        Return $b''$}&
+    \arrbox{2cm}{%
+        $\xrightarrow{\pk}$\\
+        $\xleftarrow{m_0,m_1}$\\
+        $\xrightarrow{c^*}$\\
+        $\xleftarrow{d}$}&
+    \algbox{3cm}{%
+        \textbf{Adversary} $\advD$\\~\\~\\~\\~\\~\\} 
+\end{tabular}

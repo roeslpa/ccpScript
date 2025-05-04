@@ -1,0 +1,14 @@
+%!TEX root=../main.tex
+\begin{tabular}{lll}
+    \algbox{4.5cm}{%
+        \textbf{DDH}$^b_{g,p}$\\
+        $x,y,z \getsr \ZZ_p^*$\\
+        $X\gets g^x, Y\gets g^y,Z_0\gets g^{xy}$\\
+        $Z_1\gets g^z$\\~\\
+        Return $b'$}&
+    \arrbox{2cm}{%    
+        ~\\~\\$\xrightarrow{(\DHg,\DHp,X,Y,Z_p)}$\\~\\
+        $\xleftarrow{b'}$}&
+    \algbox{3cm}{%
+        \textbf{Adversary} $\advA$:\\~\\~\\~\\~\\}
+\end{tabular}
