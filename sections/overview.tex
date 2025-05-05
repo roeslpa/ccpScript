@@ -21,7 +21,14 @@ This course focuses on the following classes of \emph{real-world protocols} and 
 \label{sec:overview:dhke}
 
 Let $\DHgr=(\DHg,\DHp)$ be a group of prime order~$\DHp$ with generator~$\DHg$.
-Then, the Diffie-Hellman Key Exchange~(DHKE)~\cite{DifHel76} between two users Alice and Bob works as follows:
+That is, $\DHgr$ is a set with a multiplicativly written operation $\cdot$. A
+simple example is the Group $\DHgr=(\ZZ_5^*,\cdot)$, where $\ZZ_5^* =
+\{1,2,3,4\}$. Then a generator for $\DHgr$ is $\DHg=2$, since $2^0=1$, $2^1=2$,
+$2^2=4$, $2^3=8\equiv3\mod 5$, and $2^4=16\equiv 1\mod 5$. (Applying the
+group operation to the generator $\DHg$ multiple times gives all group elements.)
+
+Then, the Diffie-Hellman Key Exchange~(DHKE)~\cite{DifHel76}
+between two users Alice and Bob works as follows:
 \begin{enumerate}
     \item Alice samples $x\getsr\ZZ_\DHp^*$, locally stores $x$, and sends $X\gets(\DHg^x\mod\DHp)$ to Bob
     \item Bob samples $y\getsr\ZZ_\DHp^*$, computes $k\gets(X^y\mod\DHp)$, and sends $Y\gets(\DHg^y\mod\DHp)$ to Alice
@@ -43,13 +50,22 @@ Since $k\equiv X^y\equiv\DHg^{xy}\equiv Y^x\equiv k\mod \DHp$, Alice and Bob com
 \end{figure}
 
 \paragraph{Security of DHKE}
-To prove security of the DHKE protocol, we use the \emph{Decisional Diffie-Hellman}~(DDH) problem.
+To prove security of the DHKE protocol, we use the \emph{Decisional Diffie-Hellman}~(DDH) problem (See figure \ref{fig:ddh_assumption}).
 The advantage of an adversary~$\advA$ against the DDH problem in group~$\DHgr$ is defined as:
-\begin{align*}
-    \Adv_\DHgr^\ddh(\advA)\coloneqq|&\Pr[\advA(\DHg,\DHp,\DHg^x,\DHg^y,\DHg^{xy})=1\mid (x,y)\getsr(\ZZ_\DHp^*)^2]\\
-    &-\Pr[\advA(\DHg,\DHp,\DHg^x,\DHg^y,\DHg^z)=1\mid (x,y,z)\getsr(\ZZ_\DHp^*)^3]|\text{.}
-\end{align*}
-Intuitively, adversary~$\advA$ plays a game in which it sees both Diffie-Hellman shares $\DHg^x$ and $\DHg^y$ as well as either the real key~$\DHg^{xy}$ or a random group element~$\DHg^z$.
+% \begin{align*}
+%     \Adv_\DHgr^\ddh(\advA)\coloneqq|&\Pr[\advA(\DHg,\DHp,\DHg^x,\DHg^y,\DHg^{xy})=1\mid (x,y)\getsr(\ZZ_\DHp^*)^2]\\
+%     &-\Pr[\advA(\DHg,\DHp,\DHg^x,\DHg^y,\DHg^z)=1\mid (x,y,z)\getsr(\ZZ_\DHp^*)^3]|\text{.}
+% \end{align*}
+%new advantage definition to be consistent with the lecture
+\[\Adv_{\DHgr}^\ddh(\advA)\coloneqq\left|\Pr[\text{DDH}^0_{g,p}(\advA)=1]-\Pr[\text{DDH}^1_{g,p}(\advA)=1]\right|\]
+\begin{figure}[t]
+    \centering
+    \input{figures/ddh_assumption.tex}
+    \caption{The Decisional Diffie-Hellman~(DDH) problem.}
+    \label{fig:ddh_assumption}
+\end{figure}
+Or 
+Intuitively, adversary~$\advA$ plays a game in which it sees both Diffie-Hellman shares $\DHg^x$ and $\DHg^y$ as well as either the real key~$\DHg^{xy}$~$(Z_0)$ or a random group element~$\DHg^z$~$(Z_1)$.
 To win this game, the adversary has to \emph{decide} which of the two views they saw.
 The advantage $\Adv_\DHgr^\ddh(\advA)$ denotes the probability of $\advA$ winning this game beyond pure guessing.
 
@@ -176,6 +192,8 @@ For ElGamal encryption, one samples a fresh, ephemeral DHKE key pair, which corr
 Using Alice's DHKE public key and Bob's DHKE secret key, one computes the shared key and multiplies the message to that shared key.
 On ElGamal decryption, the same shared key is computed and, by multiplying with its inverse, the original, encrypted message is derived.
 
+That decryption yields the original message can be seen from the following equation:
+\[m\gets\frac{c_2}{c_1^\dk}=\frac{\ek^x\cdot m}{(g^x)^\dk}=\frac{g^{x\dk}\cdot m}{g^{x\dk}}=m\]
 \begin{figure}[!ht]
     \centering
     \nicoresetlinenr%
@@ -189,3 +207,25 @@ On ElGamal decryption, the same shared key is computed and, by multiplying with 
     }
     \label{fig:pke:const:elgamal}
 \end{figure}
+
+\paragraph{Security of ElGamal}
+IND-CPA-security of the ElGamal encryption scheme can be shown by using \emph{sequences of games} to reduce it to the underlying DDH-problem.
+For this consider a slight modification of the ElGamal PKE scheme $\PKE'=(\PKEgen,\PKEenc',\PKEdec)$, where $\PKE'.\text{gen}$ and $\PKE'.\text{dec}$ are the same procedures as in the ElGamal PKE scheme.
+$\PKE'.\text{enc}'$ is similar to the ElGamal $\PKEenc$, with exception of $c_2\gets g^z$ for a $z\gets\ZZ_p^*$.
+
+Now consider the game $\INDCPA_{\PKE'}^b$ over the construction $\PKE'$.
+There is no adversary that can win this game with non-negligible advantage, because all inputs to the adversary are independent of $b$.
+For $\pk$ and $c_1$ this is obvious and because $z$ is uniformly sampled from $\ZZ_p^*$ the element $g^z$ and therefore $c_2$ are also random.
+We could add another game $G'$ where $c_2\gets g^z$, which is indistinguishable from $\INDCPA_{\PKE'}^b$.
+
+Let $\advD$ be a distinguisher for $\PKE$ and $\PKE'$. That is, $\advD$ outputs $d\gets\{0,1\}$ depending on which construction $\advD$ interacts with.
+Then the reduction $\advB^{\ddh}$ (figure \ref{fig:elgamal:reduction}) reduces every successful distinguisher to a successful adversary against the DDH game.
+
+Intuitively, this is because $c_2^1$ is either $g^{xy}$ or $g^z$ and therefore $\advB^\ddh$ perfectly simulates either $\INDCPA_\PKE^b$ or $\INDCPA_{\PKE'}^b$. 
+\begin{figure}[!ht]
+    \centering
+    \input{figures/el_gamal_reduction.tex}
+    \caption{Sketch of reduction from distinguisher $\advD$ to DDH problem.}
+    \label{fig:elgamal:reduction}
+\end{figure}
+
