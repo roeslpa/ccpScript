@@ -25,6 +25,7 @@
 
 \begin{document}
 
+
 \maketitle
 \begin{center}
     \today
@@ -641,7 +642,21 @@ An authenticated key exchange $\AKE=(\AKEgen,\allowbreak\AKEsnd,\allowbreak\AKEr
 
 \paragraph{Construction: Signature-Based Authentication}
 
+\begin{figure}[!ht]
+      \centering
+      \fbox{\scalebox{\codescalefactor}{\input{figures/sig_based_auth}}}
+      \caption{Construction for Signature-based Authentication.}
+      \label{fig:sig_based_auth}
+\end{figure}
+
 \paragraph{Construction: KEM-Based Authentication}
+
+\begin{figure}[!ht]
+     \centering
+     \fbox{\scalebox{\codescalefactor}{\input{figures/kem_based_auth}}}
+     \caption{Construction for KEM-based Authentication.}
+     \label{fig:kem_based_auth}
+\end{figure}
 
 \paragraph{Construction: TLS}
 
@@ -660,6 +675,13 @@ A unidirectional key exchange $\URKE=(\URKEinit,\URKEsnd,\URKErcv)$ is a tuple o
     \item $\URKEsnd: \stsp \tor \stsp\times\ksp\times\csp$
     \item $\URKErcv: \stsp\times\csp \to \ksp$
 \end{itemize}
+
+\begin{figure}[!ht]
+    \centering
+    \fbox{\scalebox{\codescalefactor}{\input{figures/unidirectional_rke}}}
+    \caption{Construction for Unidirectional Ratcheted Key Exchange}
+    \label{fig:rke:unidirectional}
+\end{figure}
 
 \paragraph{Construction}
 
