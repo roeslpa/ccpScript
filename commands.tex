@@ -189,3 +189,53 @@
 \newcommand{\URKEinit}{\URKE.\mathrm{init}}
 \newcommand{\URKEsnd}{\URKE.\mathrm{snd}}
 \newcommand{\URKErcv}{\URKE.\mathrm{rcv}}
+
+%MSC
+\newcommand{\advinst}{\dummyinst{adv}\node[] (tmp) at (msc@nodeadv) {$\advA$};}
+
+%pgf-umsld
+
+% new an instance
+% Example:
+% \newinst[edge distance]{var}{name:class}
+\renewcommand{\newinst}[3][0.2]{
+    \stepcounter{instnum}
+    \path (inst\thepreinst.east)+(#1,0) node[inststyle] (inst\theinstnum)
+        {\ifpgfumlsdunderline
+    #3
+    \else
+    #3
+    \fi};
+    \path (inst\theinstnum)+(0,-0.5*\unitfactor) node (#2) {};
+    \tikzstyle{instcolor#2}=[]
+    \stepcounter{preinst}
+}
+
+\newcommand{\setumlstyle}{\tikzstyle{inststyle}=[rectangle, draw, anchor=west, minimum height=0.8cm, minimum width=1.6cm, fill=white]}
+
+%Highlight Boxes
+\tcbset{textmarker/.style={%
+enhanced,
+parbox=false,boxrule=0mm,boxsep=0mm,arc=0mm,
+outer arc=0mm,left=6mm,right=3mm,top=7pt,bottom=7pt,
+toptitle=1mm,bottomtitle=1mm,oversize}}
+
+
+% define new colorboxes
+\newtcolorbox{infoBox}{textmarker,
+    borderline west={6pt}{0pt}{darkblue},
+    colback=darkblue!10!white}
+\newtcolorbox{hintBox}{textmarker,
+    borderline west={6pt}{0pt}{yellow},
+    colback=yellow!10!white}
+\newtcolorbox{importantBox}{textmarker,
+    borderline west={6pt}{0pt}{red},
+    colback=red!10!white}
+\newtcolorbox{noteBox}{textmarker,
+    borderline west={6pt}{0pt}{green},
+    colback=green!10!white}
+
+% define commands for easy access
+\newcommand{\cbnote}[2]{\begin{infoBox} \textbf{#1} #2 \end{infoBox}}
+\newcommand{\cbwarning}[1]{\begin{hintBox} \textbf{Warning:} #1 \end{hintBox}}
+\newcommand{\cbimportant}[1]{\begin{importantBox} \textbf{Important:} #1 \end{importantBox}}
