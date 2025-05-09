@@ -21,11 +21,11 @@ This course focuses on the following classes of \emph{real-world protocols} and 
 \label{sec:overview:dhke}
 
 Let $\DHgr=(\DHg,\DHp)$ be a group of prime order~$\DHp$ with generator~$\DHg$.
-That is, $\DHgr$ is a set with a multiplicativly written operation $\cdot$. A
+That is, $\DHgr$ is a set with a multiplicativly written operation~$\cdot$. A
 simple example is the Group $\DHgr=(\ZZ_5^*,\cdot)$, where $\ZZ_5^* =
 \{1,2,3,4\}$. Then a generator for $\DHgr$ is $\DHg=2$, since $2^0=1$, $2^1=2$,
 $2^2=4$, $2^3=8\equiv3\mod 5$, and $2^4=16\equiv 1\mod 5$. (Applying the
-group operation to the generator $\DHg$ multiple times gives all group elements.)
+group operation to the generator~$\DHg$ multiple times gives all group elements.)
 
 Then, the Diffie-Hellman Key Exchange~(DHKE)~\cite{DifHel76}
 between two users Alice and Bob works as follows:
@@ -50,7 +50,7 @@ Since $k\equiv X^y\equiv\DHg^{xy}\equiv Y^x\equiv k\mod \DHp$, Alice and Bob com
 \end{figure}
 
 \paragraph{Security of DHKE}
-To prove security of the DHKE protocol, we use the \emph{Decisional Diffie-Hellman}~(DDH) problem (See figure \ref{fig:ddh_assumption}).
+To prove security of the DHKE protocol, we use the \emph{Decisional Diffie-Hellman}~(DDH) problem (See Figure~\ref{fig:ddh_assumption}).
 The advantage of an adversary~$\advA$ against the DDH problem in group~$\DHgr$ is defined as:
 % \begin{align*}
 %     \Adv_\DHgr^\ddh(\advA)\coloneqq|&\Pr[\advA(\DHg,\DHp,\DHg^x,\DHg^y,\DHg^{xy})=1\mid (x,y)\getsr(\ZZ_\DHp^*)^2]\\
@@ -209,22 +209,34 @@ That decryption yields the original message can be seen from the following equat
 \end{figure}
 
 \paragraph{Security of ElGamal}
-IND-CPA-security of the ElGamal encryption scheme can be shown by using \emph{sequences of games} to reduce it to the underlying DDH-problem.
-For this consider a slight modification of the ElGamal PKE scheme $\PKE'=(\PKEgen,\PKEenc',\PKEdec)$, where $\PKE'.\text{gen}$ and $\PKE'.\text{dec}$ are the same procedures as in the ElGamal PKE scheme.
-$\PKE'.\text{enc}'$ is similar to the ElGamal $\PKEenc$, with exception of $c_2\gets g^z$ for a $z\gets\ZZ_p^*$.
+To prove IND-CPA security of the ElGamal encryption scheme, we assume that there is a successful adversary~$\advA$ against the IND-CPA security of $\PKE$ (Figure~\ref{fig:elgamal:ind}).
+We then construct another game $G_1^b$ (Figure~\ref{fig:elgamal:g1}) that is a small modification of the ElGamal IND-CPA game.
+There can be no adversary against $G_1^b$ that does better than just guessing the bit $b$.
+This is because every value exposed to the adversary is independent of $b$.
+For $\pk$ and $c_1$ this is obvious and since $z$ is uniformly sampled from $\ZZ_p^*$ $c_2$ is also random.
 
-Now consider the game $\INDCPA_{\PKE'}^b$ over the construction $\PKE'$.
-There is no adversary that can win this game with non-negligible advantage, because all inputs to the adversary are independent of $b$.
-For $\pk$ and $c_1$ this is obvious and because $z$ is uniformly sampled from $\ZZ_p^*$ the element $g^z$ and therefore $c_2$ are also random.
-We could add another game $G'$ where $c_2\gets g^z$, which is indistinguishable from $\INDCPA_{\PKE'}^b$.
+To show that games $G_1^b$ and $\INDCPA_\PKE^b$ are indistinguishable, we turn every successful distinguisher~$\advD$ into a successful adversary against the DDH problem (Figure~\ref{fig:elgamal:reduction}).
+The distinguisher~$\advD$ is an algorithm that outputs $d\gets\{0,1\}$ depending on which game ($\INDCPA_\PKE^b$ or $G_1^b$) it is playing against.
 
-Let $\advD$ be a distinguisher for $\PKE$ and $\PKE'$. That is, $\advD$ outputs $d\gets\{0,1\}$ depending on which construction $\advD$ interacts with.
-Then the reduction $\advB^{\ddh}$ (figure \ref{fig:elgamal:reduction}) reduces every successful distinguisher to a successful adversary against the DDH game.
-
-Intuitively, this is because $c_2^1$ is either $g^{xy}$ or $g^z$ and therefore $\advB^\ddh$ perfectly simulates either $\INDCPA_\PKE^b$ or $\INDCPA_{\PKE'}^b$. 
 \begin{figure}[!ht]
     \centering
-    \input{figures/el_gamal_reduction.tex}
+    \begin{minipage}{0.49\textwidth}
+        \centering
+        \input{figures/elgamal_ind.tex}
+        \caption{Game $\INDCPA_\PKE^b$}
+        \label{fig:elgamal:ind}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.49\textwidth}
+        \centering
+        \input{figures/elgamal_g1.tex}
+        \caption{Game $G_1^b$}
+        \label{fig:elgamal:g1}
+    \end{minipage}
+\end{figure}
+\begin{figure}[!ht]
+    \centering
+    \input{figures/elgamal_reduction.tex}
     \caption{Sketch of reduction from distinguisher $\advD$ to DDH problem.}
     \label{fig:elgamal:reduction}
 \end{figure}
