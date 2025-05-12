@@ -1,0 +1,34 @@
+%!TEX root=../main.tex
+\markersetlen{ndL}{110pt}%
+\markersetlen{ndR}{120pt}%
+\newcommand{\CC}{\mathit{CC}}%
+\begin{tabular}[t]{ll}
+    \nicodemusbox{\markerlenndL}{%
+        \textbf{Game} $\OWCCA_{\KEM}(\advA)$
+        \begin{nicodemus}
+            \item $\CC\gets\emptyset$
+            \item $K\gets\emptyset$
+            \item $(\dk,\ek)\getsr\KEMgen$
+            \item $k'\getsr\advA(\ek)$
+            \item Stop with~$k'\in K$
+        \end{nicodemus}%
+    }%
+    &
+    \nicodemusbox{\markerlenndR}{%
+        \textbf{Oracle} $\Ochall$
+        \begin{nicodemus}
+            \item $(k,c)\getsr\KEMenc(\ek)$
+            \item $K\gets K\cup\{k\}$
+            \item $\CC\gets\CC\cup\{c\}$
+            \item Return~$(c)$
+        \end{nicodemus}%
+        \medskip
+        
+        \textbf{Oracle} $\Odec(c)$
+        \begin{nicodemus}
+            \item Require $c\notin\CC$
+            \item $k\gets\KEMdec(\dk,c)$
+            \item Return $k$
+        \end{nicodemus}%
+    }%
+\end{tabular}%

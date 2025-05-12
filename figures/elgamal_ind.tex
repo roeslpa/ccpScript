@@ -1,0 +1,18 @@
+%!TEX root=../main.tex
+\begin{tabular}{lll}
+    \algbox{3.5cm}{%
+        \textbf{Game} $\INDCPA_\PKE^b$:\\
+        $\dk\gets\ZZ_p^*,\pk\gets\DHg^\dk$\\
+        $y\getsr\ZZ_p^*$\\
+        $c_1\gets\DHg^y, c_2^1\gets\DHg^{\dk\cdot y}$\\
+        $c_2\gets c_2^1\cdot m_b$\\
+        $c^*\gets(c_1,c_2)$\\
+        Return $b'$}&
+    \arrbox{1cm}{%
+        $\xrightarrow{\pk}$\\   
+        $\xleftarrow{m_0,m_1}$\\
+        $\xrightarrow{c^*}$\\
+        $\xleftarrow{b'}$}&
+    \algbox{2.5cm}{%
+        \textbf{Adversary} $\advA$\\~\\~\\~\\~\\~\\}
+\end{tabular}

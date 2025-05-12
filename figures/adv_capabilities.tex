@@ -1,0 +1,7 @@
+%!TEX root=../main.tex
+\begin{tabular}{lcl}
+    \underline{Alice} & \underline{$\advA$} & \underline{Bob}\\
+    $(k,c)\getsr\KEMenc(\ek)$ & \arrbox{2cm}{$\xleftarrow{\dbox{$\ek$}}$} & $(\dk,\ek)\getsr\KEMgen$\\
+    & $\xrightarrow{\dbox{$c$}}$ & $k\gets\KEMdec(\dk,c)$\\
+    & {\color{red}$\xrightarrow{c'}$} & $\dbox{$k'$}\gets\KEMdec(\dk,c')$
+\end{tabular}
