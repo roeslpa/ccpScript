@@ -14,7 +14,7 @@ A key encapsulation mechanism $\KEM=(\KEMgen,\KEMenc,\KEMdec)$ is a tuple of thr
     \item $\KEMdec: \dksp\times\csp \to \ksp$
 \end{itemize}
 
-Intuitively a KEM can be considered a special case of PKE that is limited to always encrypt (aka.\@ encapsulate) fresh symmetric keys.
+Intuitively a KEM can be considered a special case of PKE that is limited to always encrypt (aka.\ encapsulate) fresh symmetric keys.
 Instead of taking the symmetric keys as input, the encapsulation algorithm of a KEM generates them internally.
 
 \paragraph{Construction: ElGamal KEM}
@@ -91,7 +91,7 @@ We begin with considering typical adversarial capabilities against KEMs:
 \end{itemize}
 
 \paragraph{Chosen-Plaintext Attacks}
-The most standard adversarial capabilities that are considered realistic and defendable for KEMs are chosen-plaintext and chosen-ciphertext attacks (CPA resp.\@ CCA).
+The most standard adversarial capabilities that are considered realistic and defendable for KEMs are chosen-plaintext and chosen-ciphertext attacks (CPA resp.\ CCA).
 
 Consider the adversarial capabilities shown in Figure~\ref{fig:adv_capabilities}.
 Here, the adversary can see the values in the dashed boxes, as well as send values (in red).
@@ -159,7 +159,7 @@ The reason for this is that it gives us a stronger security guarantee.
 Namely, if a construction is IND secure, the adversary is unable to learn a single bit of the secret.
 The $\INDCCA$ game is defined in Figure~\ref{fig:kem:ind}
 
-\subsection{Trivial Winning Strategies}
+\subsection{Trivial Winning Strategies}\label{sec:kem:trivial_attacks}
 So far, we have done some unexplained bookkeeping in our security games. The reason for that are \emph{trivial winning strategies}.
 These are strategies or attacks that work against every correct construction, simply because the constructions have to give sensible responses.
 For our KEM there are two trivial winning conditions we need to guard against (Figure~\ref{kem:triv}).
@@ -167,7 +167,7 @@ For our KEM there are two trivial winning conditions we need to guard against (F
 \begin{figure}[!ht]%
     \centering
     \input{figures/kem_triv.tex}
-    \caption{Trivial winning strategies against $\OWCCA$ and $\INDCCA$ $\KEM$ games}
+    \caption{Trivial winning strategies against $\OWCCA$ and $\INDCCA$ $\KEM$ games.}
     \label{kem:triv}
 \end{figure}
 
