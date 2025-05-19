@@ -1,0 +1,35 @@
+% !TeX root = ..\main.tex
+\begin{tikzpicture}
+    \node (A) at (0,0) {\underline{Alice}};
+    \node (DENIC) at (7.5,0){\underline{DENIC}};
+
+    \node [below = .5cm of DENIC, anchor=north](DE) {\texttt{.de}};
+    \node [anchor=east] (KEYGEN) at ($ (DENIC)!.5!(DE) $) {$(\sk,\pk)\getsr\HIBEgen$}; %place at the middle of DENIC and DE
+
+    \node (ENC) at (2, -1){$(k,c)\getsr\HIBEenc(\pk,\text{''}\texttt{bob@chaac.tf.fau.de}\text{''})$};
+
+    \node [below left = .5cm and .5cm of DE, anchor=north] (ROESLPA) {\texttt{.roeslpa.de}};
+    \node [below right =.5cm and .5cm of DE, anchor=north] (FAU) {\texttt{.fau.de}};
+
+    \node [below left = .5cm and .5cm of FAU, anchor=north] (MED) {\texttt{.med.fau.de}};
+    \node [below right = .5cm and .5cm of FAU, anchor=north] (TF) {\texttt{.tf.fau.de}};
+
+    \node [below = of TF, anchor=north] (BOB) {Bob: ''\texttt{bob@chaac.tf.fau.de}''};
+
+    \node [below = 3.75cm of KEYGEN] (DEC) {$k\gets\HIBEdec(\sk'''',c)$};
+
+    %ARROWS
+    %DE
+    \draw [->] (KEYGEN) -- ({0,0} |- KEYGEN) node [midway, above] {$\pk$}; %draw from keygen to (0,keygen.y) using intersection
+    \draw (DE) -- (ROESLPA);
+    \draw (DE) -- (FAU) node [midway, right] {$\sk'\gets\HIBEdel(\sk,\text{''fau''})$};
+    
+    %FAU
+    \draw (FAU) -- (MED);
+    \draw (FAU) -- (TF) node [midway, right] {$\sk''\gets\HIBEdel(\sk',\text{''tf''})$};
+
+    %TF
+    \draw[densely dotted] (TF) -- (BOB) node [midway, right] {$\sk''''\gets\HIBEdel(\sk''',\text{''bob''})$};
+
+    \draw[->] (0,-1.5) -- (DEC) node [midway, above] {$c$};
+\end{tikzpicture}

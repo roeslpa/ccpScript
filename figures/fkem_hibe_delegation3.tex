@@ -1,0 +1,13 @@
+% !TeX root = ..\main.tex
+\begin{tikzpicture}[
+    level 1/.style = {level distance = .75cm, sibling distance = 2cm},
+    level 2/.style = {level distance = .75cm, sibling distance = 1.25cm}]
+    \node at (0,0) {$\sk_\epsilon$}
+        child  {node {$\sk_{0}$}                            
+            child {node[orange] {$\sk_{00}$}}                       
+            child {node {$\sk_{01}$}
+                child[dotted] {node {$\sk_{01\dots1}$}
+                    child[solid] {node {$\sk_{01\dots10}$}}
+                    child[solid] {node[orange] {$\sk_{01\dots11}$}}}}}
+        child  {node[orange] {$\sk_{1}$}};
+\end{tikzpicture}

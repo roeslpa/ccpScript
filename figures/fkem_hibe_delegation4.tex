@@ -1,0 +1,15 @@
+% !TeX root = ..\main.tex
+\begin{tikzpicture}[
+    level 1/.style = {level distance = .75cm, sibling distance = 2cm},
+    level 2/.style = {level distance = .75cm, sibling distance = 1.25cm}]
+    \node[cross out, draw, inner sep=0pt, red, text=black] at (0,0) {$\sk_\epsilon$}
+        child  {node[cross out, draw, inner sep=0pt, red, text=black] {$\sk_{0}$}                            
+            child {node {$\sk_{00}$}}                       
+            child {node[cross out, draw, inner sep=0pt, red, text=black] {$\sk_{01}$}
+                child[dotted] {node[solid, cross out, draw, inner sep=0pt, red, text=black] {$\sk_{01\dots1}$}
+                    child[solid] {node[cross out, draw, inner sep=0pt, red, text=black] {$\sk_{01\dots10}$}}
+                    child[solid] {node {$\sk_{01\dots11}$}}}}}
+        child  {node {$\sk_{1}$}
+            child {node {$\sk_{10}$}}
+            child {node {$\sk_{11}$}}};
+\end{tikzpicture}

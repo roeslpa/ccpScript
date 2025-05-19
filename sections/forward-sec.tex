@@ -29,22 +29,6 @@ The forward-secure KEM $\FKEM=(\FKEMgen,\FKEMenc,\FKEMdec)$ is a tuple of three 
 
 \paragraph{Correctness} A forward-secure KEM $\FKEM$ is correct if $\Pr[\CORR_{\FKEM}(\advA)=0]=1$ for all adversaries~$\advA$, where game~$\CORR$ is defined in Figure~\ref{fig:fkem:corr}.
 
-\begin{figure}[!ht]
-    \centering
-    \nicoresetlinenr%
-    \fbox{%
-        \scalebox{\codescalefactor}{%
-            \input{figures/fkem_corr}%
-        }%
-    }
-    \caption{%
-        Game $\CORR$ for forward-secure KEM~$\FKEM$.
-    }
-    \label{fig:fkem:corr}
-\end{figure}
-
-
-
 \paragraph{Security}
 The advantage of an adversary~$\advA$ against forward-secure KEM $\FKEM$ in game $\INDCCA$ from Figure~\ref{fig:fkem:ind} is defined as:
 \[
@@ -52,17 +36,34 @@ The advantage of an adversary~$\advA$ against forward-secure KEM $\FKEM$ in game
 \]
 
 \begin{figure}[!ht]
-    \centering
-    \nicoresetlinenr%
-    \fbox{%
-        \scalebox{\codescalefactor}{%
-            \input{figures/fkem_ind.tex}%
-        }%
-    }
-    \caption{%
-        Games $\INDCCA$ for forward-secure KEM~$\FKEM$.
-    }
-    \label{fig:fkem:ind}
+    \begin{subfigure}{.49\textwidth}
+        \centering
+        \nicoresetlinenr%
+        \fbox{%
+            \scalebox{\codescalefactor}{%
+                \input{figures/fkem_corr}%
+            }%
+        }
+        \caption{%
+            $\CORR$ game.
+        }
+        \label{fig:fkem:corr}    
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{.49\textwidth}
+        \centering
+        \nicoresetlinenr%
+        \fbox{%
+            \scalebox{\codescalefactor}{%
+                \input{figures/fkem_ind.tex}%
+            }%
+        }
+        \caption{%
+            $\INDCCA$ game.
+        }
+        \label{fig:fkem:ind}
+    \end{subfigure}
+    \caption{Games for forward-secure KEM~$\FKEM$.}
 \end{figure}
 
 \paragraph{Trivial winning strategies} In addition to the trivial winning strategies for Game~$\INDCCA^b_\KEM$ from Section~\ref{sec:kem:trivial_attacks}, two new trivial attacks have to be considered (Figure~\ref{fig:fkem:triv}).
@@ -72,4 +73,154 @@ The advantage of an adversary~$\advA$ against forward-secure KEM $\FKEM$ in game
     \input{figures/fkem_triv.tex}
     \caption{Additional Trivial winning strategies for forward-secure KEMs.}
     \label{fig:fkem:triv}
+\end{figure}
+
+\subsubsection{Hierarchical Identity-Based Encryption}
+
+To construct a forward-secure KEM, we can use \emph{Hierarchical Identity-Based Encryption}~($\HIBE$) schemes.
+A $\HIBE$ scheme consists of the following algorithms: $\HIBE = (\HIBEgen,\HIBEenc,\HIBEdec, \HIBEdel)$.
+
+We motivate $\HIBE$ with the example of domain based infrastructure.
+Due to its inefficiency, $\HIBE$ is not used in practice for this, but it is a good example to understand the concept.
+In our example Alice wants to send a key to Bob to use with public encryption.
+Ideally, Alice would not have to know Bob's public key, but only the public key of the top domain (i.e.\ \texttt{.de}).
+Through a series of delegations~($\HIBEdel$) Bob's secret key~$\sk''''$ is derived from the top domain's secret key~$\sk$.
+
+\begin{figure}[!ht]
+    \centering
+    \input{figures/hibe_example}
+    \caption{Using $\HIBE$ for domain based key infrastructure.}
+    \label{fig:hibe:example}
+\end{figure}
+
+\paragraph{Syntax} Concretely, a $\HIBE$ scheme is defined as follows:
+\begin{itemize}
+    \item $\HIBEgen : \emptyset \tor \sksp\times\pksp$
+    \item $\HIBEenc: \pksp\times\{0,1\}^{l\cdot\lambda} \tor \csp\times\ksp$
+    \item $\HIBEdec: \sksp\times\csp \to \ksp$
+    \item $\HIBEdel: \sksp\times\{0,1\}^\lambda \to \sksp$
+\end{itemize}
+
+\paragraph{Correctness} A $\HIBE$ scheme is correct if the secret key $\sk$ delegated to string $\mathit{id}=\mathit{id}_1||\dots||\mathit{id}_l$ can decapsulate the ciphertext $c$ in $(k,c) \gets \HIBEenc(\pk,mathit{id})$.
+For brevity, we do not give a formal definition of correctness.
+% \[\Pr[\HIBEdec(\sk, c)=k \mid \HIBEenc(\pk, \mathit{id})\tor(k,c), \HIBEgen\tor(\sk_0,\pk)]=1\]
+% where there is a chain of delegations $\HIBEdel(\sk_0,\mathit{id_1})\to\sk_1,\dots,\HIBEdel(\sk_{l-1},\mathit{id_l})\to\sk$
+
+\paragraph{Security} Once again, we only give an informal definition:
+A $\HIBE$ scheme is secure if $k$ is indistinguishable from a random key, with $(k,c)\getsr\HIBEenc(\pk,\mathit{id})$, as long as none of the secret keys delegated to prefixes of $\mathit{id}$ are corrupted.
+
+\subsubsection{Construction of a forward-secure KEM from HIBE}
+
+An overview of how a construction of a forward-secure KEM from $\HIBE$ works is shown in Figure~\ref{fig:fkem:hibe:interaction}.
+The $\mathit{nonce}$ is a random number with bit length $l$ and serves as the identity for the $\HIBE$ scheme. 
+The $\mathit{nonce}$ should be unique for every encapsulation, i.e.\ it should be only used once.
+
+\begin{figure}[!ht]
+    \centering
+    \input{figures/fkem_hibe_interaction}
+    \caption{Overview of the interaction between Alice and Bob in a $\FKEM$ exchange.}
+    \label{fig:fkem:hibe:interaction}
+\end{figure}
+
+\paragraph{Delegation} In Figure~\ref{fig:fkem:hibe:interaction}, the delegation of the secret key $\sk_{\mathit{nonce}}$ from $\sk$ still needs to be addressed.
+As an example, let $\mathit{nonce}=01\dots10$. The delegation is done in 5 steps:
+\begin{enumerate}
+    \item Delegate along path of $\mathit{nonce}$~(Figure~\ref{fig:fkem:hibe:delegation1})\\
+        This gives the secret key $\sk_{01\dots10}$.
+    \item Decapsulate $c$ with resulting secret key $\sk_{\mathit{nonce}}$
+    \item Delegate co-path of $\mathit{nonce}$~(Figure~\ref{fig:fkem:hibe:delegation3})\\
+        The co-path contains all siblings of nodes on the original path.
+    \item Remove secret keys on the path of $\mathit{nonce}$~(Figure~\ref{fig:fkem:hibe:delegation4})\\
+        The keys $(\sk_\epsilon,\sk_0,\sk_{01},\sk_{01\dots1},\sk_{01\dots10})$ are removed.
+    \item Remember only secret keys on co-path\\
+        The new secret keys are $(\sk_1,\sk_{00},\sk_{01\dots11})$ and those along the co-path of $\sk_{01}$ and $\sk_{01\dots1}$.
+\end{enumerate}
+
+It should be noted, that the number of secret keys grows logarithmically in the number of decryptions, which makes these $\HIBE$ constructions inefficient. 
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}{.33\textwidth}
+        \centering
+        \input{figures/fkem_hibe_delegation1}
+        \caption{Delegating $\sk_\mathit{nonce}$}
+        \label{fig:fkem:hibe:delegation1}
+    \end{subfigure}\hfill
+    \begin{subfigure}{.33\textwidth}
+        \centering
+        \input{figures/fkem_hibe_delegation3}
+        \caption{Delegating co-path}
+        \label{fig:fkem:hibe:delegation3}
+    \end{subfigure}\hfill
+    \begin{subfigure}{.33\textwidth}
+        \centering
+        \input{figures/fkem_hibe_delegation4}
+        \caption{Deleting path}
+        \label{fig:fkem:hibe:delegation4}
+    \end{subfigure}
+    \caption{Delegation of the secret key $\sk_{\mathit{nonce}}$}
+    \label{fig:fkem:hibe:delegation}
+\end{figure}
+
+\paragraph{Example} We provide a short example of how a $\FKEM_\HIBE$ can be used to decapsulate two messages.
+
+Let Bob receive two messages $c_1=(c_1',``10")$ and $c_2=(c_2',``00")$ in that order.
+For this, he sets the $\FKEM$~$\sk$ to the $\sk_\epsilon$ generated by the $\HIBEgen$ algorithm.
+He then delegates $\sk_\epsilon$ to $\sk_{10}$ using the five steps described above:
+\begin{enumerate}
+    \item Delegate along path of $\mathit{nonce}_1=10$\\
+        This results in the tree shown in Figure~\ref{fig:fkem:hibe:example1-1} and the secret key $\sk_{10}$.
+    \item Decapsulate $c_1$ with resulting secret key $\sk_{10}$\\
+        This gives the encapsulated key $k_1$.
+    \item Delegate co-path of $10$\\
+        This results in the tree shown in Figure~\ref{fig:fkem:hibe:example1-3} and the secret keys $\sk_{00}$.
+    \item Remove the secret keys on the path of $10$\\
+        The secret keys $\sk_\epsilon$, $\sk_0$, $\sk_{10}$ are removed (Figure~\ref{fig:fkem:hibe:example1-4}).
+    \item The new secret keys are $\sk_0$, and $\sk_{11}$.
+\end{enumerate}
+
+If Bob wants to decapsulate $c_2$ now, he uses the secret key that corresponds to the longest prefix of $\mathit{nonce}$.
+Here, this is $\sk_0$.
+He then repeats the five steps for decapsulation, which yield the encapsulated key $k_2$ and the new secret keys $(\sk_{01},\sk_{11})$ (figures~\ref{fig:fkem:hibe:example2-1}-\ref{fig:fkem:hibe:example2-4}).
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}{.33\textwidth}
+        \centering
+        \input{figures/fkem_hibe_example1-1}
+        \caption{Delegating $\sk_{10}$}
+        \label{fig:fkem:hibe:example1-1}
+    \end{subfigure}\hfill
+    \begin{subfigure}{.33\textwidth}
+        \centering
+        \input{figures/fkem_hibe_example1-3}
+        \caption{Delegating co-path}
+        \label{fig:fkem:hibe:example1-3}
+    \end{subfigure}
+    \begin{subfigure}{.33\textwidth}
+        \centering
+        \input{figures/fkem_hibe_example1-4}
+        \caption{Removing used secret keys}
+        \label{fig:fkem:hibe:example1-4}
+    \end{subfigure}
+    %
+    \begin{subfigure}{.33\textwidth}
+        \centering
+        \input{figures/fkem_hibe_example2-1}
+        \caption{Delegating $\sk_{00}$}
+        \label{fig:fkem:hibe:example2-1}
+    \end{subfigure}\hfill
+    \begin{subfigure}{.33\textwidth}
+        \centering
+        \input{figures/fkem_hibe_example2-3}
+        \caption{Delegating co-path}
+        \label{fig:fkem:hibe:example2-3}
+    \end{subfigure}
+    \begin{subfigure}{.33\textwidth}
+        \centering
+        \input{figures/fkem_hibe_example2-4}
+        \caption{Removing used secret keys}
+        \label{fig:fkem:hibe:example2-4}
+    \end{subfigure}
+    \caption{Delegation for $c_1$~(\subref{fig:fkem:hibe:example1-1}-\subref{fig:fkem:hibe:example1-4}) and $c_2$~(\subref{fig:fkem:hibe:example2-1}-\subref{fig:fkem:hibe:example2-4})}
 \end{figure}
