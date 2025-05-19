@@ -6,6 +6,7 @@
     \nicodemusbox{\markerlenndL}{%
         \textbf{Game} $\INDCCA_{\FKEM}^b(\advA)$
         \begin{nicodemus}
+            \item $x\gets 0$
             \item $\CC\gets\emptyset$
             \item $(\dk,\ek)\getsr\FKEMgen$
             \item $b'\getsr\advA(\ek)$
@@ -15,6 +16,7 @@
         
         \textbf{Oracle} $\Ochall$
         \begin{nicodemus}
+            \item If $x=1$: Return $\bot$
             \item $(k_0,c)\getsr\FKEMenc(\ek)$
             \item $k_1\getsr\ksp$
             \item $\CC\gets\CC\cup\{c\}$

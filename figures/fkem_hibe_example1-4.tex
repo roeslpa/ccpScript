@@ -1,0 +1,10 @@
+% !TeX root = ..\main.tex
+\begin{tikzpicture}[
+    level 1/.style = {level distance = .75cm, sibling distance = 2cm},
+    level 2/.style = {level distance = .75cm, sibling distance = 1.25cm}]
+    \node[cross out, draw, inner sep=0pt, red, text=black] at (0,0) {$\sk_\epsilon$}
+        child  {node {$\sk_0$}}              
+        child  {node[cross out, draw, inner sep=0pt, red, text=black] {$\sk_1$}
+            child {node[cross out, draw, inner sep=0pt, red, text=black] {$\sk_{10}$}}
+        child {node {$\sk_{11}$}}};
+\end{tikzpicture}

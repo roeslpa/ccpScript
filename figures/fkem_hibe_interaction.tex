@@ -1,0 +1,10 @@
+%!TEX root=../main.tex
+\begin{tabular}{lcl}
+    \underline{Alice} &  & \underline{Bob}\\
+    $\FKEMenc(\pk):$ & \arrbox{2cm}{$\xlongleftarrow{\pk}$} & $\FKEMgen:$\\
+    \qquad $\mathit{nonce}\getsr\{0,1\}^l$ & & \qquad $(\sk,\pk)\getsr\HIBEgen$\\
+    \qquad $\mathit{nonce} \gets b_0||\dots||b_{l-1}$ & &\qquad Return $(\sk,\pk)$\\
+    \qquad $(k,c)\getsr\HIBEenc(\pk,\mathit{nonce})$  & & \\
+    \qquad $c \gets (\mathit{nonce}, c)$ & & \\
+    & $\xlongrightarrow{c}$ & $(\sk, k)\gets\FKEMdec(\sk_{\mathit{nonce}},c)$
+\end{tabular}

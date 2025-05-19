@@ -64,6 +64,8 @@ The author invites readers to submit comments or pull requests via the GitHub Re
 
 \input{sections/game-based-sec.tex}
 
+\input{sections/forward-sec.tex}
+
 \section{Symmetric Primitives}
 
 
@@ -400,53 +402,6 @@ An identity-based KEM $\IKEM=(\IKEMgen,\IKEMenc,\IKEMdel,\IKEMdec)$ is a tuple o
 
 \subsection{Forward-Secure KEM}
 
-\paragraph{Syntax}
-A forward-secure KEM $\FKEM=(\FKEMgen,\FKEMenc,\FKEMdec)$ is a tuple of three algorithms with encapsulation key space~$\eksp$, decapsulation key space~$\dksp$, ciphertext space~$\csp$, and symmetric key space~$\ksp$:
-
-\begin{itemize}
-    \item $\FKEMgen: \emptyset \tor \dksp\times\eksp$
-    \item $\FKEMenc: \eksp \tor \ksp\times\csp$
-    \item $\FKEMdec: \dksp\times\csp \to \dksp\times\ksp$
-\end{itemize}
-
-\paragraph{Correctness}
-A forward-secure KEM $\FKEM$ is correct if $\Pr[\CORR_{\FKEM}(\advA)=0]=1$ for all adversaries~$\advA$, where game~$\CORR$ is defined in Figure~\ref{fig:fkem:corr}.
-
-\begin{figure}[!ht]
-    \centering
-    \nicoresetlinenr%
-    \fbox{%
-        \scalebox{\codescalefactor}{%
-            \input{figures/fkem_corr}%
-        }%
-    }
-    \caption{%
-        Game $\CORR$ for forward-secure KEM~$\FKEM$.
-    }
-    \label{fig:fkem:corr}
-\end{figure}
-
-\paragraph{Security}
-The advantage of an adversary~$\advA$ against forward-secure KEM $\FKEM$ in game $\INDCCA$ from Figure~\ref{fig:fkem:ind} is defined as:
-\[
-\Adv_\FKEM^\indcca(\advA)\coloneqq\left|\Pr[\INDCCA_{\FKEM}^0(\advA)=1]-\Pr[\INDCCA_{\FKEM}^1(\advA)=1]\right|\text{.}
-\]
-
-\begin{figure}[!ht]
-    \centering
-    \nicoresetlinenr%
-    \fbox{%
-        \scalebox{\codescalefactor}{%
-            \input{figures/fkem_ind}%
-        }%
-    }
-    \caption{%
-        Games $\INDCCA$ for forward-secure KEM~$\FKEM$.
-    }
-    \label{fig:fkem:ind}
-\end{figure}
-
-\paragraph{Construction}
 
 
 \subsection{Updatable KEM}

@@ -14,7 +14,7 @@ A key encapsulation mechanism $\KEM=(\KEMgen,\KEMenc,\KEMdec)$ is a tuple of thr
     \item $\KEMdec: \dksp\times\csp \to \ksp$
 \end{itemize}
 
-Intuitively a KEM can be considered a special case of PKE that is limited to always encrypt (aka.\@ encapsulate) fresh symmetric keys.
+Intuitively a KEM can be considered a special case of PKE that is limited to always encrypt (aka.\ encapsulate) fresh symmetric keys.
 Instead of taking the symmetric keys as input, the encapsulation algorithm of a KEM generates them internally.
 
 \paragraph{Construction: ElGamal KEM}
@@ -91,7 +91,7 @@ We begin with considering typical adversarial capabilities against KEMs:
 \end{itemize}
 
 \paragraph{Chosen-Plaintext Attacks}
-The most standard adversarial capabilities that are considered realistic and defendable for KEMs are chosen-plaintext and chosen-ciphertext attacks (CPA resp.\@ CCA).
+The most standard adversarial capabilities that are considered realistic and defendable for KEMs are chosen-plaintext and chosen-ciphertext attacks (CPA resp.\ CCA).
 
 Consider the adversarial capabilities shown in Figure~\ref{fig:adv_capabilities}.
 Here, the adversary can see the values in the dashed boxes, as well as send values (in red).
@@ -126,20 +126,6 @@ The game $\INDCCA$ is defined in Figure~\ref{fig:kem:ind}.
     \label{fig:kem:ind}
 \end{figure}
 
-% \begin{figure}[!ht]
-%     \centering
-%     \nicoresetlinenr%
-%     \fbox{%
-%         \scalebox{\codescalefactor}{%
-%             \input{figures/kem_ind_mi_corrupt}%
-%         }%
-%     }
-%     \caption{%
-%         Multi-instance games $\INDCCA$ for key encapsulation mechanism~$\KEM$.
-%     }
-%     \label{fig:kem:ind:mi:corrupt}
-% \end{figure}
-
 \subsection{Adversarial Goal}
 The adversarial goal is the second component of defining security.
 It describes what the adversary is trying to learn. 
@@ -173,7 +159,7 @@ The reason for this is that it gives us a stronger security guarantee.
 Namely, if a construction is IND secure, the adversary is unable to learn a single bit of the secret.
 The $\INDCCA$ game is defined in Figure~\ref{fig:kem:ind}
 
-\subsection{Trivial Winning Strategies}
+\subsection{Trivial Winning Strategies}\label{sec:kem:trivial_attacks}
 So far, we have done some unexplained bookkeeping in our security games. The reason for that are \emph{trivial winning strategies}.
 These are strategies or attacks that work against every correct construction, simply because the constructions have to give sensible responses.
 For our KEM there are two trivial winning conditions we need to guard against (Figure~\ref{kem:triv}).
@@ -181,7 +167,7 @@ For our KEM there are two trivial winning conditions we need to guard against (F
 \begin{figure}[!ht]%
     \centering
     \input{figures/kem_triv.tex}
-    \caption{Trivial winning strategies against $\OWCCA$ and $\INDCCA$ $\KEM$ games}
+    \caption{Trivial winning strategies against $\OWCCA$ and $\INDCCA$ $\KEM$ games.}
     \label{kem:triv}
 \end{figure}
 
@@ -198,3 +184,27 @@ And the advantages for the IND games are defined as:
 \end{align*}
 
 If there exists a provably secure construction for a definition, then there are no more open trivial winning conditions.
+
+\paragraph{Multi-Instance Security}
+Definitions of security, such as the IND-CCA game, differ depending on the context.
+One example of that would be the multi-instance security game (Figure~\ref{fig:kem:ind:mi:corrupt}).
+This game is called \emph{multi-instance} because it captures a setting in which many instances are running concurrently.
+This can be the case in TLS for example, where many connections are established at the same time.
+If we were to use the IND-CCA game from Figure~\ref{fig:kem:ind}, then we would have to use the \emph{hybrid argument} to prove security.
+The hybrid argument can be used to prove security for multiple instances, by showing step by step that each instance is secure and then showing the indistinguishability between each step.
+Doing so however, yields a factor $q$ in the final security bound, where $q$ is the number of instances.
+To avoid this degeneration of the security bound, we can use the multi-instance game, for which sometimes tighter security bounds exist.
+
+\begin{figure}[!ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/kem_ind_mi_corrupt}%
+        }%
+    }
+    \caption{%
+        Multi-instance games $\INDCCA$ for key encapsulation mechanism~$\KEM$.
+    }
+    \label{fig:kem:ind:mi:corrupt}
+\end{figure}
