@@ -422,14 +422,6 @@ An updatable KEM $\UKEM=(\UKEMgen,\UKEMenc,\UKEMdec)$ is a tuple of three algori
 
 \subsubsection{Two-Pass Key Exchange}
 
-\paragraph{Syntax}
-A two-pass key exchange $\TKE=(\TKEsnd,\TKErsp,\TKErcv)$ is a tuple of three algorithms with state space~$\stsp$, initial ciphertext space~$\csp_I$, response ciphertext space~$\csp_R$, and symmetric key space~$\ksp$:
-
-\begin{itemize}
-    \item $\TKEsnd: \emptyset \tor \stsp\times\csp_I$
-    \item $\TKErsp: \csp_I \tor \ksp\times\csp_R$
-    \item $\TKErcv: \stsp\times\csp_R \to \ksp$
-\end{itemize}
 
 \paragraph{Construction: DH Key Exchange}
 

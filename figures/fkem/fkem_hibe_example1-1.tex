@@ -1,10 +1,10 @@
-% !TeX root = ..\main.tex
+% !TeX root = ..\..\main.tex
 \begin{tikzpicture}[
     level 1/.style = {level distance = .75cm, sibling distance = 2cm},
     level 2/.style = {level distance = .75cm, sibling distance = 1.25cm}]
     \node at (0,0) {$\sk_\epsilon$}
-        child  {node[orange] {$\sk_0$}}              
+        child  [missing]              
         child  {node {$\sk_1$}
             child {node {$\sk_{10}$}}
-        child {node[orange] {$\sk_{11}$}}};
+        child [missing]};
 \end{tikzpicture}
