@@ -1,0 +1,7 @@
+% !TeX root = ..\..\main.tex
+\begin{tabular}{lC{3cm}l}
+    \textbf{Alice} &  & \textbf{Bob}\\
+    $a\getsr\ZZ_p^*$ & $\xlongrightarrow{g^a}$ & $b\getsr\ZZ_p^*$ \\
+     & $\xlongrightarrow{g^b,\sigma_B}$ & $\sigma_B\gets\SIGsig(\sk_B,(g^a, g^b))$ \\
+     $\sigma_A\getsr\SIGsig(\sk_A,(g^a, g^b, \sigma_B))$ & $\xlongrightarrow{\sigma_A}$ & \\
+\end{tabular}

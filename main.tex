@@ -66,6 +66,8 @@ The author invites readers to submit comments or pull requests via the GitHub Re
 
 \input{sections/forward-sec.tex}
 
+\input{sections/authenticated-key-exchange.tex}
+
 \section{Symmetric Primitives}
 
 
@@ -422,14 +424,6 @@ An updatable KEM $\UKEM=(\UKEMgen,\UKEMenc,\UKEMdec)$ is a tuple of three algori
 
 \subsubsection{Two-Pass Key Exchange}
 
-\paragraph{Syntax}
-A two-pass key exchange $\TKE=(\TKEsnd,\TKErsp,\TKErcv)$ is a tuple of three algorithms with state space~$\stsp$, initial ciphertext space~$\csp_I$, response ciphertext space~$\csp_R$, and symmetric key space~$\ksp$:
-
-\begin{itemize}
-    \item $\TKEsnd: \emptyset \tor \stsp\times\csp_I$
-    \item $\TKErsp: \csp_I \tor \ksp\times\csp_R$
-    \item $\TKErcv: \stsp\times\csp_R \to \ksp$
-\end{itemize}
 
 \paragraph{Construction: DH Key Exchange}
 
@@ -438,15 +432,6 @@ A two-pass key exchange $\TKE=(\TKEsnd,\TKErsp,\TKErcv)$ is a tuple of three alg
 \subsubsection{Authenticated Key Exchange}
 
 \paragraph{Syntax}
-An authenticated key exchange $\AKE=(\AKEgen,\allowbreak\AKEsnd,\allowbreak\AKErsp_R,\allowbreak\AKErsp_I,\allowbreak\AKErcv)$ is a tuple of five algorithms with secret key space~$\sksp$, public key space~$\pksp$, state space~$\stsp$, ciphertext space~$\csp$, and symmetric key space~$\ksp$:
-
-\begin{itemize}
-    \item $\AKEgen: \emptyset \tor \sksp\times\pksp$
-    \item $\AKEsnd: \sksp\times\pksp \tor \stsp\times\csp$
-    \item $\AKErsp_R: \sksp\times\csp \tor \stsp\times\csp$
-    \item $\AKErsp_I: \sksp\times\stsp\times\csp \tor \ksp\times\csp$
-    \item $\AKErcv: \sksp\times\stsp\times\csp \to \pksp\times\ksp$
-\end{itemize}
 
 \paragraph{Construction: Signature-Based Authentication}
 

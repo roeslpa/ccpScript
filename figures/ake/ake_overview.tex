@@ -1,0 +1,9 @@
+% !TeX root = ..\..\main.tex
+\begin{tabular}{lC{3cm}l}
+    \textbf{Alice} &  & \textbf{Bob}\\
+    $(\sk_A, \pk_A)\getsr\AKEgen$ & $\xleftrightarrow{\pk_A,\pk_B}$ & $(\sk_B, \pk_B)\getsr\AKEgen$ \\
+    $(\st, c_1)\getsr\AKEsnd(\sk_A, \pk_B)$ & $\xlongrightarrow{c_1}$ & \\
+    & $\xlongleftarrow{c_2}$ & $(\st, c_2)\getsr\AKErsp_R(\sk_B, c_1)$\\
+    $(k,c_3)\getsr\AKErsp_I(\st, c_2)$ & $\xlongrightarrow{c_3}$ & \\
+    & & $(k, \pk_A)\gets\AKErcv(\st, c_3)$
+\end{tabular}

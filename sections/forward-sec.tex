@@ -41,7 +41,7 @@ The advantage of an adversary~$\advA$ against forward-secure KEM $\FKEM$ in game
         \nicoresetlinenr%
         \fbox{%
             \scalebox{\codescalefactor}{%
-                \input{figures/fkem_corr}%
+                \input{figures/fkem/fkem_corr}%
             }%
         }
         \caption{%
@@ -55,7 +55,7 @@ The advantage of an adversary~$\advA$ against forward-secure KEM $\FKEM$ in game
         \nicoresetlinenr%
         \fbox{%
             \scalebox{\codescalefactor}{%
-                \input{figures/fkem_ind.tex}%
+                \input{figures/fkem/fkem_ind.tex}%
             }%
         }
         \caption{%
@@ -70,7 +70,7 @@ The advantage of an adversary~$\advA$ against forward-secure KEM $\FKEM$ in game
 
 \begin{figure}[!ht]%
     \centering
-    \input{figures/fkem_triv.tex}
+    \input{figures/fkem/fkem_triv.tex}
     \caption{Additional Trivial winning strategies for forward-secure KEMs.}
     \label{fig:fkem:triv}
 \end{figure}
@@ -101,7 +101,7 @@ Through a series of delegations~($\HIBEdel$) Bob's secret key~$\sk''''$ is deriv
     \item $\HIBEdel: \sksp\times\{0,1\}^\lambda \to \sksp$
 \end{itemize}
 
-\paragraph{Correctness} A $\HIBE$ scheme is correct if the secret key $\sk$ delegated to string $\mathit{id}=\mathit{id}_1||\dots||\mathit{id}_l$ can decapsulate the ciphertext $c$ in $(k,c) \gets \HIBEenc(\pk,mathit{id})$.
+\paragraph{Correctness} A $\HIBE$ scheme is correct if the secret key $\sk$ delegated to string $\mathit{id}=\mathit{id}_1||\dots||\mathit{id}_l$ can decapsulate the ciphertext $c$ in $(k,c) \gets \HIBEenc(\pk,\mathit{id})$.
 For brevity, we do not give a formal definition of correctness.
 % \[\Pr[\HIBEdec(\sk, c)=k \mid \HIBEenc(\pk, \mathit{id})\tor(k,c), \HIBEgen\tor(\sk_0,\pk)]=1\]
 % where there is a chain of delegations $\HIBEdel(\sk_0,\mathit{id_1})\to\sk_1,\dots,\HIBEdel(\sk_{l-1},\mathit{id_l})\to\sk$
@@ -117,7 +117,7 @@ The $\mathit{nonce}$ should be unique for every encapsulation, i.e.\ it should b
 
 \begin{figure}[!ht]
     \centering
-    \input{figures/fkem_hibe_interaction}
+    \input{figures/fkem/fkem_hibe_interaction}
     \caption{Overview of the interaction between Alice and Bob in a $\FKEM$ exchange.}
     \label{fig:fkem:hibe:interaction}
 \end{figure}
@@ -142,19 +142,19 @@ It should be noted, that the number of secret keys grows logarithmically in the 
     \centering
     \begin{subfigure}{.33\textwidth}
         \centering
-        \input{figures/fkem_hibe_delegation1}
+        \input{figures/fkem/fkem_hibe_delegation1}
         \caption{Delegating $\sk_\mathit{nonce}$}
         \label{fig:fkem:hibe:delegation1}
     \end{subfigure}\hfill
     \begin{subfigure}{.33\textwidth}
         \centering
-        \input{figures/fkem_hibe_delegation3}
+        \input{figures/fkem/fkem_hibe_delegation3}
         \caption{Delegating co-path}
         \label{fig:fkem:hibe:delegation3}
     \end{subfigure}\hfill
     \begin{subfigure}{.33\textwidth}
         \centering
-        \input{figures/fkem_hibe_delegation4}
+        \input{figures/fkem/fkem_hibe_delegation4}
         \caption{Deleting path}
         \label{fig:fkem:hibe:delegation4}
     \end{subfigure}
@@ -187,38 +187,38 @@ He then repeats the five steps for decapsulation, which yield the encapsulated k
     \centering
     \begin{subfigure}{.33\textwidth}
         \centering
-        \input{figures/fkem_hibe_example1-1}
+        \input{figures/fkem/fkem_hibe_example1-1}
         \caption{Delegating $\sk_{10}$}
         \label{fig:fkem:hibe:example1-1}
     \end{subfigure}\hfill
     \begin{subfigure}{.33\textwidth}
         \centering
-        \input{figures/fkem_hibe_example1-3}
+        \input{figures/fkem/fkem_hibe_example1-3}
         \caption{Delegating co-path}
         \label{fig:fkem:hibe:example1-3}
     \end{subfigure}
     \begin{subfigure}{.33\textwidth}
         \centering
-        \input{figures/fkem_hibe_example1-4}
+        \input{figures/fkem/fkem_hibe_example1-4}
         \caption{Removing used secret keys}
         \label{fig:fkem:hibe:example1-4}
     \end{subfigure}
     %
     \begin{subfigure}{.33\textwidth}
         \centering
-        \input{figures/fkem_hibe_example2-1}
+        \input{figures/fkem/fkem_hibe_example2-1}
         \caption{Delegating $\sk_{00}$}
         \label{fig:fkem:hibe:example2-1}
     \end{subfigure}\hfill
     \begin{subfigure}{.33\textwidth}
         \centering
-        \input{figures/fkem_hibe_example2-3}
+        \input{figures/fkem/fkem_hibe_example2-3}
         \caption{Delegating co-path}
         \label{fig:fkem:hibe:example2-3}
     \end{subfigure}
     \begin{subfigure}{.33\textwidth}
         \centering
-        \input{figures/fkem_hibe_example2-4}
+        \input{figures/fkem/fkem_hibe_example2-4}
         \caption{Removing used secret keys}
         \label{fig:fkem:hibe:example2-4}
     \end{subfigure}
