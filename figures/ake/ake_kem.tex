@@ -1,0 +1,10 @@
+% !TeX root = ..\..\main.tex
+\begin{tabular}{lC{3cm}l}
+    \textbf{Alice}$(\sk_A, \pk_A)$ &  & \textbf{Bob}$(\sk_B, \pk_B)$\\
+    $(k_1,c_1)\getsr\KEMenc(\pk_B)$ & &\\
+    $(\sk',\pk')\getsr\AKEgen$ & $\xrightrightarrow{c_1,\pk'}$ & $k_1\gets\KEMdec(sk_B,c_1)$ \\
+    & & $(k_2,c_2)\getsr\KEMenc(\pk_A)$\\
+    & & $(k_3,c_3)\getsr\KEMenc(\pk')$\\
+    & $\xlongleftarrow{c_2,c_3,\tau_B}$ & $(\tau_B, k_B)\gets\PRFf(k_1,\mathit{tag}=(c_1,\pk',c_2,c_3))$\\
+    $(k,\tau_A)\gets\PRFf(k_)
+\end{tabular}

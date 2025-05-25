@@ -1,0 +1,32 @@
+% !TeX root = ..\..\main.tex
+\begin{minipage}[t]{.5\textwidth}
+    Attack 1: $\Ochall(i,s)$ and $\Oreveal(i,s)$:
+    \begin{enumerate}
+    \item Choose $(i,s)$ fittingly.
+    \item $\Ochall(i,s)\to k_{i,s}$
+    \item $\Oreveal(i,s)\to k_{i,s}'$
+    \item Stop with $k_{i,s}\not= k_{i,s}'$
+    \end{enumerate}
+    Attack 2: $\Ochall(i,s)$ and $\Oreveal(j,t)$:
+    \begin{enumerate}
+    \item Choose $(i,s)$ fittingly.
+    \item $\Ochall(i,s)\to k_{i,s}$
+    \item Let $(j,t)$ be a \emph{session partner} of $(i,s)$.
+    \item $\Oreveal(j,t)\to k_{j,t}$
+    \item Stop with $k_{i,s}\not= k_{j,t}$
+    \end{enumerate}
+\end{minipage}\hfill
+\begin{minipage}[t]{.5\textwidth}
+    Attack 3: $\Ochall(i,s)$ and $\Ocorrupt(j)$:
+    \begin{enumerate}
+    \item $\Ogen\to\pk_i$
+    \item $\Ogen\to\pk_j$
+    \item $\Osnd(i,s,\pk_j)\to c_1$
+    \item $\Ocorrupt(j)\to\sk_j$
+    \item $\AKErsp_R(\sk_j,c_1)\tor(\st,c_2)$
+    \item $\Orsp(i,s,c_2)\to c_3$
+    \item $\AKErcv(\st, c_3)\to (k,\pk_i)$
+    \item $\Ochall(i,s)\to k'$
+    \item Stop with $k\not= k'$
+    \end{enumerate}
+\end{minipage}
