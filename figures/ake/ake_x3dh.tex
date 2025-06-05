@@ -1,0 +1,8 @@
+% !TeX root = ..\..\main.tex
+\begin{tabular}{lC{2cm}cC{2cm}l}
+\textbf{Alice} & & \textbf{Server} & & \textbf{Bob}\\
+LTK: $(A, g^A)$ & $\longleftarrow$ & & $\longleftarrow$ & LTK: $(B, g^B)$\\
+$a\getsr\ZZ_p^*$ & $\longleftarrow$ & & $\xlongleftarrow{\circlearrowright}$ & Prekey: $(\beta, g^\beta)$\\
+$k\gets\PRFf(g^{aB}, g^{a\beta}, g^{ab}, g^{AB})$ & $\longleftarrow$ & & $\xlongleftarrow{\circlearrowright\circlearrowright}$ & One-time keys: $\{(b_i, g^{b_i})\}$\\
+& & $\xlongrightarrow{g^a, \SYEenc(k, m, \ad=g^a)}$ & &
+\end{tabular}

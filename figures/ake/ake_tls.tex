@@ -1,0 +1,8 @@
+% !TeX root = ..\..\main.tex
+\begin{tabular}{lC{3cm}l}
+    \textbf{Alice} &  & \textbf{Bob}\\
+    $x\getsr\ZZ_p^*$ & $\xlongrightarrow{g^x}$ & $y\getsr\ZZ_p^*$ \\
+    & $\xlongleftarrow{g^y,\sigma}$ & $\sigma\gets\SIGsig(\sk_B,(g^x, g^y))$ \\
+    & $\xlongrightarrow[\text{with }g^{xy}]{\text{Key Confirmation}}$ & \\
+    \parbox[b][][t]{2.5cm}{\centering$\downarrow$\\Key derivation} &  & \parbox[b][][t]{2.5cm}{\centering$\downarrow$\\Key derivation}
+\end{tabular}

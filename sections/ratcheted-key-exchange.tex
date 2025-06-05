@@ -1,0 +1,28 @@
+\section{Ratcheted Key Exchange}
+\label{sec:rke}
+
+We have seen plenty forward secure key exchange protocols in the previous chapters, but there is another security guarantee that is desirable in practice:
+Post-compromise security~(PCS), which is the ability to recover from a compromise.
+We adapt Figure~\ref{fig:fs:sketch}, which showed the idea of forward security, to show the idea of a protocol that provides both forward and post compromise security (Figure~\ref{fig:rke:pcs_fs_overview}).
+
+\begin{figure}[!ht]
+    \centering
+    \input{figures/rke/pcs_fs_overview}
+    \caption{A sketch of forward and post compromise security.}
+    \label{fig:rke:pcs_fs_overview}
+\end{figure}
+
+A way to achieve post compromise security are the so-called Ratcheted Key Exchange protocols~(RKE).
+In Figure~\ref{fig:rke:overview}, an abstract view on a two party RKE protocol is given.
+After the initial key exchange, both parties regularly update their keys in a Ratcheted Key Exchange step.
+Using the resulting key, a new message can be encrypted.
+
+For the steps different cryptographic building blocks are used.
+For example, X3DH might be used for the initial key exchange, the Signal Double Ratchet algorithm for the Ratcheted Key exchange step and AEAD for the encryption of the messages.
+
+\begin{figure}[!ht]
+    \centering
+    \input{figures/rke/rke_overview}
+    \caption{Overview of the Ratcheted Key Exchange~(RKE) protocol.}
+    \label{fig:rke:overview}
+\end{figure}

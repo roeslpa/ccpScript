@@ -1,0 +1,10 @@
+% !TeX root = ..\..\main.tex
+\begin{tabular}{lC{3cm}l}
+    \textbf{Alice} & & \textbf{Bob} \\
+    $x\getsr\ZZ_p^*$ & & \\
+    $k_1\gets\PRFf(\pk_B^x)$ & $\xlongrightarrow{g^x,\SYEenc(k_1,m_1)}$ & $k_1\gets\PRFf((g^x)^{\sk_B})$\\
+    & & $y\getsr\ZZ_p^*$ \\
+    & & $k_2\gets\PRFf(k_1, g^{xy})$\\
+    & $\xlongleftarrow{\substack{\SYEenc(k_1,g^y)\\\SYEenc(k_2,m_2)}}$ & \\
+    & $\xleftrightarrow{\SYEenc(k_2,m_i)}$ &
+\end{tabular}

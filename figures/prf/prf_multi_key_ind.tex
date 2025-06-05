@@ -1,0 +1,27 @@
+%!TEX root=../../main.tex
+\markersetlen{ndL}{110pt}%
+\markersetlen{ndR}{130pt}%
+\newcommand{\CC}{\mathit{CC}}%
+\begin{tabular}[t]{ll}
+    \nicodemusbox{\markerlenndL}{%
+        \textbf{Game} $\IND_{F,n,i}^b(\advA)$
+        \begin{nicodemus}
+            \item $R[\cdot]\gets\bot$
+            \item $k^i\getsr\ksp$
+            \item $b'\getsr\advA$
+            \item Stop with~$b'$
+        \end{nicodemus}%
+    }%
+    &
+    \nicodemusbox{\markerlenndR}{%
+        \textbf{Oracle} $\Ochall((k^j)_{j\in[n]\setminus\{i\}},m)$
+        \begin{nicodemus}
+            \item $r_0\gets\PRFf(k^1,\dots,k^n,m)$
+            \item If $K[(k^j)_{j\in[n]\setminus\{i\}},m]=\bot$:
+            \item \quad $r_1\getsr\rsp$
+            \item \quad $K[(k^j)_{j\in[n]\setminus\{i\}},m]\gets r_1$
+            \item Else: $r_1\gets K[(k^j)_{j\in[n]\setminus\{i\}},m]$
+            \item Return~$k_b$
+        \end{nicodemus}%
+    }%
+\end{tabular}%

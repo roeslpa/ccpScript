@@ -1,10 +1,13 @@
 % !TeX root = ..\..\main.tex
 \begin{tabular}{lC{3cm}l}
-    \textbf{Alice}$(\sk_A, \pk_A)$ &  & \textbf{Bob}$(\sk_B, \pk_B)$\\
-    $(k_1,c_1)\getsr\KEMenc(\pk_B)$ & &\\
-    $(\sk',\pk')\getsr\AKEgen$ & $\xrightrightarrow{c_1,\pk'}$ & $k_1\gets\KEMdec(sk_B,c_1)$ \\
-    & & $(k_2,c_2)\getsr\KEMenc(\pk_A)$\\
+    \textbf{Alice}$(\sk_A, \pk_A)$ & & \textbf{Bob}$(\sk_B, \pk_B)$\\
+    $({\color{blue}k_1},c_1)\getsr\KEMenc(\pk_B)$ & &\\
+    $(\sk',\pk')\getsr\KEMgen$ & $\xlongrightarrow{c_1,\pk'}$ & ${\color{blue}k_1}\gets\KEMdec(sk_B,c_1)$ \\
+    & & $({\color{orange}k_2},c_2)\getsr\KEMenc(\pk_A)$\\
     & & $(k_3,c_3)\getsr\KEMenc(\pk')$\\
-    & $\xlongleftarrow{c_2,c_3,\tau_B}$ & $(\tau_B, k_B)\gets\PRFf(k_1,\mathit{tag}=(c_1,\pk',c_2,c_3))$\\
-    $(k,\tau_A)\gets\PRFf(k_)
+    & $\xlongleftarrow{c_2,c_3,\tau_B}$ & $(\tau_B, {\color{blue}k_B})\gets\PRFf({\color{blue}k_1},\mathit{tag}=(c_1,\pk',c_2,c_3))$\\
+    $(\tau_B', {\color{blue}k_B})\gets\PRFf({\color{blue}k_1},\mathit{tag}=(c_1,\pk',c_2,c_3))$ & &\\
+    Require $\tau_B=\tau_B'$ & &\\
+    $(k,\tau_A)\gets\PRFf({\color{blue}k_B},{\color{orange}k_2},k_3)$ & $\xlongrightarrow{\tau_A}$ & $(k,\tau_A')\gets\PRFf({\color{blue}k_B},{\color{orange}k_2},k_3)$\\
+    & & Require $\tau_A=\tau_A'$\\
 \end{tabular}
