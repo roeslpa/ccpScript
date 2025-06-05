@@ -68,6 +68,8 @@ The author invites readers to submit comments or pull requests via the GitHub Re
 
 \input{sections/authenticated-key-exchange.tex}
 
+\input{sections/ratcheted-key-exchange.tex}
+
 \section{Symmetric Primitives}
 
 
@@ -121,13 +123,41 @@ The advantage of an adversary~$\advA$ against pseudo-random function $\PRF$ in g
     \nicoresetlinenr%
     \fbox{%
         \scalebox{\codescalefactor}{%
-            \input{figures/prf_ind}%
+            \input{figures/prf/prf_ind}%
         }%
     }
     \caption{%
         Games $\IND$ for pseudo-random function~$\PRF$.
     }
     \label{fig:prf:ind}
+\end{figure}
+
+\subsubsection{Multi-key PRF}
+\paragraph{Syntax} A multi-key $\PRF=\PRFf$ with key space~$\ksp$, input space~$\msp$, and output space~$\rsp$ is an algorithm with the following syntax:
+
+\begin{itemize}
+    \item $\PRFf: \ksp^n\times\msp \to \rsp$
+\end{itemize}
+
+\paragraph{Security}
+The advantage of an adversary~$\advA$ against pseudo-random function $\PRF$ in game $\IND_{F,n,i}$ from Figure~\ref{fig:prf:multi_key:ind} is defined as:
+\[
+\Adv_\PRF^\ind(\advA)\coloneqq\left|\Pr[\IND_{F,n,i}^0(\advA)=1]-\Pr[\IND_{F,n,i}^1(\advA)=1]\right|\text{.}
+\]
+
+
+\begin{figure}[!ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/prf/prf_multi_key_ind}%
+        }%
+    }
+    \caption{%
+        Games $\IND$ for multi-key pseudo-random function~$\PRF$.
+    }
+    \label{fig:prf:multi_key:ind}
 \end{figure}
 
 \subsection{Message Authentication Code (MAC)}

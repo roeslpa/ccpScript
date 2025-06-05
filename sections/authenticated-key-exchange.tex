@@ -92,7 +92,11 @@ This lecture uses the \emph{Matching Conversations} definition when talking abou
 \paragraph{Constructions} We present two constructions of authenticated key exchange protocols. 
 The first one (Figure~\ref{fig:ake:signed_dh}) is based on the Diffie-Hellman key exchange and uses signatures to provide integrity.
 
-% The second AKE construction (Figure~\ref{fig:ake:kem}) uses a KEM 
+The second AKE construction (Figure~\ref{fig:ake:kem}) uses a KEM and a multi-key PRF (Figure~\ref{fig:prf:multi_key:ind}). 
+In Figure~\ref{fig:ake:kem}, the secrets that can be learned by the adversary $\advA$ after corrupting Alice and Bob are colored orange and blue, respectively.
+For example, after corrupting Bob and learning the secret key $\sk_B$, $\advA$ can decapsulate $c_1$ (which can be learned by eavesdropping on the communication) and obtain $k_1$.
+The symmetric key $k$ will still remain secure, since $k_3$ will not be known to $\advA$, even if both Alice and Bob were corrupted.
+The reason for this is the usage of fresh keys $\sk',\pk'$ for each new execution.
 
 \begin{figure}[!ht]
     \centering
@@ -101,9 +105,84 @@ The first one (Figure~\ref{fig:ake:signed_dh}) is based on the Diffie-Hellman ke
     \label{fig:ake:signed_dh}
 \end{figure}
 
-% \begin{figure}[!ht]
-%     \centering
-%     \input{figures/ake/ake_kem}
-%     \caption{$\AKE$ based on $\KEM$.}
-%     \label{fig:ake:kem}
-% \end{figure}
+\begin{figure}[!ht]
+    \centering
+    \input{figures/ake/ake_kem}
+    \caption{$\AKE$ based on an $\INDCCA$ secure $\KEM$ and $\IND$ secure $\PRF$. Colored secrets are known to $\advA$ after corruption of \textcolor{orange}{Alice} and \textcolor{blue}{Bob}.}
+    \label{fig:ake:kem}
+\end{figure}
+
+\subsection{Real-World Authenticated Key Exchange}
+Even though there are many more real world examples, this script will focus on three examples:
+
+\subsubsection{Transport Layer Security~(TLS)}
+TLS key exchange is similar to the signed Diffie-Hellman construction in Figure~\ref{fig:ake:signed_dh}.
+An overview of the protocol is given in Figure~\ref{fig:ake:tls}.
+
+\begin{figure}[!ht]
+    \centering
+    \input{figures/ake/ake_tls}
+    \caption{TLS key exchange.}
+    \label{fig:ake:tls}
+\end{figure}
+
+\subsubsection{Noise Framework}
+The Noise Framework (\url{https://noiseprotocol.org/noise.html}) is a set of rules to combine Diffie-Hellman key exchange with Authenticated Encryption~(AE).
+The framework is very flexible, especially in a pre-configure context.
+It is used by WhatsApp for its client-to-server communication and by WireGuard among others.
+
+One protocol defined in the Noise Framework is ``NK''. 
+Following the naming convention of Noise protocols, the ``N'' signifies that the initiator has \textbf{n}o static key and the ``K'' signifies that the responder has a static key \textbf{k}nown to the initiator.
+
+In the documentation of the Noise Framework, the protocols are described in a format similar to the one in Figure~\ref{fig:ake:noise:nk}.
+Figure~\ref{fig:ake:noise:nk_overview} gives an overview of the protocol execution in the format used in this script.
+The $s$ in the figure is the static key of the responder, which is transmitted to the initiator before the protocol begins (shown by the dots afterwards).
+An $e$ is an \emph{ephemeral} key (short-lived key) that correspond to a DH public key-share (e.g. $g^x$).
+If two letters are combined a combination of the two keys is formed, e.g. $es$ and $g^{x\sk_B}$.
+
+The messages sent during and after the protocol execution offer different levels of security: 
+The encryption of $m_1$ offers forward security for the sender but not for the responder, while authenticity is only guaranteed for the responder.
+Anonymity is guaranteed for both parties, but for the responder this holds only as long as he is not corrupted.
+For $m_i, i\geq 2$ the encryption offers forward security for both parties, while the other security guarantees remain unchanged.
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}{.33\textwidth}
+        \centering
+        \input{figures/ake/ake_noise_nk}
+        \caption{Specification of the ``NK'' protocol in the Noise Framework format.}
+        \label{fig:ake:noise:nk}
+    \end{subfigure}\hfill
+    \begin{subfigure}{.66\textwidth}
+        \centering
+        \input{figures/ake/ake_noise_nk_overview}
+        \caption{Overview of ``NK'' protocol execution.}
+        \label{fig:ake:noise:nk_overview}
+    \end{subfigure}
+    \caption{Noise protocol ``NK''.}
+    \label{fig:ake:noise}
+\end{figure}
+
+\subsubsection{X3DH}
+X3DH is an extended and authenticated 2-pass key exchange. 
+It is used in the Ratcheted Key Exchange protocol~(Section \ref{sec:rke}).
+
+The X3DH protocol is designed for asynchronous settings, where two parties want to establish a shared secret key, but one of them might be offline.
+For this, one party (here named Bob) regularly sends Diffie-Hellman public keys to the server.
+His long term key~(LTK), a prekey and a set of one-time keys. 
+The prekey and the one-time keys are renewed regularly, but the one-time keys are renewed more often.
+
+If Alice wants to then establish a public key with Bob, she can fetch Bobs keys from the server.
+She also generates an ephemeral Diffie-Hellman exponent, which is then combined with Bobs keys and used to derive the symmetric key through a PRF. (Figure~\ref{fig:ake:x3dh})
+
+If all of Bobs secret keys were used, and he has not renewed them yet, the key $g^{ab}$ is left out.
+This reduces the forward security of the protocol, since the prekey is renewed much less often.
+
+The X3DH protocol guarantees strong forward security, authenticity and deniability (both parties can deny their participation).
+
+\begin{figure}[!ht]
+    \centering
+    \input{figures/ake/ake_X3DH}
+    \caption{X3DH key exchange.}
+    \label{fig:ake:x3dh}
+\end{figure}
