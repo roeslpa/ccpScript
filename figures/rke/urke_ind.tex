@@ -1,0 +1,63 @@
+%!TEX root=../../main.tex
+\markersetlen{ndL}{120pt}%
+\markersetlen{ndC}{145pt}%
+\markersetlen{ndR}{140pt}%
+\newcommand{\sync}{\mathit{sync}}%
+\begin{tabular}[t]{lll}
+    \nicodemusbox{\markerlenndL}{%
+        \textbf{Game} $\IND_{\URKE}^b(\advA)$
+        \begin{nicodemus}
+            \item $s\gets0; r\gets0; \sync\gets1$
+            \item {\color{red}ToDo}; $X_R\gets0$
+            \item $C[\cdot]\gets\bot$
+            \item $(\st_A, \st_B)\getsr\URKEinit$
+            \item $b'\getsr\advA$
+            \item Stop with~$b'$
+        \end{nicodemus}%
+        \medskip
+
+        \textbf{Oracle} $\Oexps()$
+        \begin{nicodemus}
+            \item {\color{red}ToDo}
+            \item Return~$\st_A$
+        \end{nicodemus}
+    }%
+    &
+    \nicodemusbox{\markerlenndC}{%
+        \textbf{Oracle} $\Osnd()$
+        \begin{nicodemus}
+            \item If $X_A=1$: Return~$(\bot, \bot)$
+            \item $(\st_A, k_0, c)\getsr\URKEsnd(\st_A)$
+            \item $k_1\getsr\ksp$
+            \item $C[s]\gets c$
+            \item $s\gets s+1$
+            \item Return~$(k_b,c)$
+        \end{nicodemus}%
+        \medskip
+
+        \textbf{Oracle} $\Oexpr()$
+        \begin{nicodemus}
+            \item If $\sync=1\land s>r$:
+            \item \quad Return~$\bot$
+            \item If $\sync=1\land s=r$:
+            \item \quad $X_R\gets1$
+            \item Return~$\st_B$
+        \end{nicodemus}
+    }%
+    &
+    \nicodemusbox{\markerlenndR}{%
+        \textbf{Oracle} $\Orcv(c)$
+        \begin{nicodemus}
+            \item $(\st_B, k_0)\gets\URKErcv(\st_B, c)$
+            \item If $c\neq C[r] \land \sync=1$:
+            \item \quad $\sync\gets0$
+            \item {\color{red}ToDo}
+            \item \qquad $k_1\getsr\ksp$
+            \item \qquad Return~$k_b$
+            \item $r\gets r+1$
+            \item If $\sync=1$:
+            \item \quad Return~$\bot$
+            \item Stop with~$b'$
+        \end{nicodemus}%
+    }%
+\end{tabular}%

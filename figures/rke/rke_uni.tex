@@ -1,0 +1,10 @@
+% !TeX root = ..\..\main.tex
+\begin{tabular}{rC{4cm}l}
+    \textbf{Alice} &  & \textbf{Bob} \\
+    $\st_A$ & $\xleftrightarrow{\makebox[3.5cm]{init}}$ & $\st_B$ \\
+    $\downarrow$ &  & $\downarrow$ \\ 
+    $k_1\gets\mathrm{snd}$ & $\xrightarrow{\mathmakebox[3.5cm]{c_1}}$ & $\mathrm{rcv}\to k_1$ \\
+    $\downarrow$ &  & $\downarrow$ \\  
+    $k_2\gets\mathrm{snd}$ & $\xleftarrow{\mathmakebox[3.5cm]{c_2}}$ & $\mathrm{rcv}\to k_2$ \\
+    $\downarrow$ &  & $\downarrow$ \\
+\end{tabular}

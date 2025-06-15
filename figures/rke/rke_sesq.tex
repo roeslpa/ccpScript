@@ -1,0 +1,31 @@
+% !TeX root = ..\..\main.tex
+
+%%%%%%%%%%%%%
+% Arrow are drawn using Tikz overlay and tikzmark, since arrows cross rows in the table.
+% tikzmark: https://texdoc.org/serve/tikzmark/0
+% using tikzmark requires two compilation passes (this should be fine since we already have to do LaTeX->BibTeX->LaTeX)
+%%%%%%%%%%%%%
+\begin{tabular}{rC{4cm}l}
+    \textbf{Alice} &  & \textbf{Bob} \\
+    %save the left and right positions for init arrow using tikzmarks
+    %this arrow could also be drawn in the table, but then consistent spacing in relation to the arrows below is hard
+    $\st_A$\tikzmark{rke_sesq_init_l} & & \tikzmark{rke_sesq_init_r}$\st_B$ \\
+    $\downarrow$ &  & $\downarrow$ \\ 
+    $k_1\gets\mathrm{snd}$\tikzmark{rke_sesq_c1_l} &  & \tikzmark{rke_sesq_c1_r}$\mathrm{rcv}\to k_1$ \\
+    $\downarrow$ &  & $\downarrow$ \\  
+    $k_2\gets\mathrm{snd}$\tikzmark{rke_sesq_c2_l} &  & \tikzmark{rke_sesq_c3_r}$\mathrm{snd}$ \\
+    $\downarrow$ &  & $\downarrow$ \\
+    $\mathrm{rcv}$\tikzmark{rke_sesq_c3_l} & & \tikzmark{rke_sesq_c2_r}$\mathrm{rcv}\to k_2$ \\
+    $\downarrow$ &  & $\downarrow$ \\
+\end{tabular}
+%draw the arrows
+%tikzmark coordinates can be accessed with (pic cs:<name>)
+%we shift the coordinates up so that the arrows are roughly in the middle of the line
+\begin{tikzpicture}[remember picture,overlay]
+    \draw[<->] ([xshift=.2cm, yshift=1mm]pic cs:rke_sesq_init_l) -- ([xshift=-.2cm, yshift=1mm]pic cs:rke_sesq_init_r) node[above, midway] {init};
+    \draw[->] ([xshift=.2cm, yshift=1mm]pic cs:rke_sesq_c1_l) -- ([xshift=-.2cm, yshift=1mm]pic cs:rke_sesq_c1_r) node[above, midway] {$c_1$};
+    %edge[out=0,in=180,->] curves the arrow
+    %the node is placed using xshift, because using the more readable node[midway, near start] causes placement to break
+    \draw ([xshift=.2cm, yshift=1mm]pic cs:rke_sesq_c2_l) edge[out=0,in=180,->] ([xshift=-.2cm, yshift=1mm]pic cs:rke_sesq_c2_r) node[above, xshift=.5cm] {$c_2$};
+    \draw ([xshift=-.2cm, yshift=1mm]pic cs:rke_sesq_c3_r) edge[out=180,in=0,->] ([xshift=.2cm, yshift=1mm]pic cs:rke_sesq_c3_l) node[above, xshift=-.5cm] {$c_3$};
+\end{tikzpicture}
