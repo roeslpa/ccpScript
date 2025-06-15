@@ -26,3 +26,117 @@ For example, X3DH might be used for the initial key exchange, the Signal Double 
     \caption{Overview of the Ratcheted Key Exchange~(RKE) protocol.}
     \label{fig:rke:overview}
 \end{figure}
+
+\paragraph{Types of RKE} RKE protocols can be divided into three types, depending on the directions of communication they support.
+Bidirectional RKE protocols is the intuitive case, where full bidirectional communication is supported~(Figure~\ref{fig:RKE:bi}).
+
+Sesquidirectional RKE gives one party full functionality, while the other party can only send ``non-functional'' messages.
+Consider for example the ciphertext $c_3$ in Figure~\ref{fig:RKE:sesq}:
+It does not encapsulate a key, instead it should be used for efficiency or security (e.g. Bob can use this message to communicate fresh randomness to Alice to recover from earlier compromise).
+Every Sesquidirectional RKE protocol can be transformed into a bidirectional RKE protocol, by using two instances of the Sesquidirectional RKE protocol.
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}{.5\textwidth}
+        \centering
+        \input{figures/rke/rke_bi}
+        \caption{Bidirectional RKE protocol.}
+        \label{fig:RKE:bi}
+    \end{subfigure}\hfill
+    \begin{subfigure}{.5\textwidth}
+        \centering
+        \input{figures/rke/rke_sesq}
+        \caption{Sesquidirectional RKE protocol.}
+        \label{fig:RKE:sesq}
+    \end{subfigure}
+    \caption{Interaction in bi- and sesquidirectional RKE protocols.}
+\end{figure}
+
+The third type of RKE protocols is unidirectional RKE, which only allows one party to send.
+For simplicity, this is the type of RKE we will focus on in the following.
+
+\subsection{Unidirectional RKE}
+
+An overview of the unidirectional RKE protocol is given in Figure~\ref{fig:rke:uni}.
+It should be noted that Bob is purely deterministic.
+He can not distribute fresh randomness, and therefore can not recover from corruptions.
+
+\begin{figure}[!ht]
+    \centering
+    \input{figures/rke/rke_uni}
+    \caption{Unidirectional RKE protocol.}
+    \label{fig:rke:uni}
+\end{figure}
+
+\paragraph{Syntax} A unidirectional RKE protocol $\URKE=(\URKEinit, \URKEsnd, \URKErcv)$ has the following syntax:
+
+\begin{itemize}
+    \item $\URKEinit: \emptyset\tor\stsp_A\times\stsp_B$
+    \item $\URKEsnd: \stsp_A\tor\stsp_A\times\ksp\times\csp$
+    \item $\URKErcv: \stsp_B\times\csp\to\stsp_B\times\ksp$
+\end{itemize}
+
+\paragraph{Correctness} The correctness of $\URKE$ is defined as follows:
+\begin{align*} %too long to fit on one line
+    \Pr[k_A^i=k_B^i\mid &(\st_A^0, \st_B^0)\getsr\URKEinit, \\
+                        &(\st_A^i, k_A^i, c_A^i)\getsr\URKEsnd(\st_A^{i-1}), \\
+                        &(\st_B^i, k_B^i)\gets\URKErcv(\st_B^{i-1}, c_B^i)] = 1
+\end{align*}
+
+\paragraph{Security} The advantage of an adversary $\advA$ against the $\IND_\URKE^b$ game shown in Figure~\ref{fig:urke:ind} is defined as follows:
+\[\Adv_\URKE^\ind(\advA) = \left|\Pr[\IND_\URKE^0(\advA)=1] - \Pr[\IND_\URKE^1(\advA)=1]\right|\]
+
+\begin{figure}[!ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/rke/urke_ind}%
+        }%
+    }
+    \caption{%
+        Games $\IND$ for unidirectional RKE~$\URKE$.
+    }
+    \label{fig:urke:ind}
+\end{figure}
+
+\paragraph{Trivial winning conditions} The four trivial attacks against the game $\IND_\URKE^b$ are shown in Figure~\ref{fig:urke:trivial}.
+
+\begin{figure}[!ht]
+    \centering
+    \begin{minipage}{.5\textwidth}
+        Attack 1: Challenge on both Sides:
+        \begin{enumerate}[topsep=\smallskipamount]
+            \item $\Osnd()\to(k,c)$
+            \item $\Orcv(c)\to(k')$
+            \item Stop with $(k\neq k')$
+        \end{enumerate}
+        \medskip
+        Attack 2: Send + Receiver Exposure:
+        \begin{enumerate}[topsep=\smallskipamount]
+            \item $\Osnd()\to(k,c)$
+            \item $\Oexpr()\to\st_R$
+            \item $(st_R', k')\gets\URKErcv(st_R, c)$
+            \item Stop with $(k\neq k')$
+        \end{enumerate}
+    \end{minipage}\hfill%
+    \begin{minipage}{.5\textwidth}
+        Attack 3: Receiver Exposure + Send:
+        \begin{enumerate}[topsep=\smallskipamount]
+            \item $\Oexpr()\to\st_R$
+            \item $\Osnd()\to(k,c)$
+            \item $(st_R', k')\gets\URKErcv(st_R, c)$
+            \item Stop with $(k\neq k')$
+        \end{enumerate}
+        \medskip
+        Attack 4: Sender Impersonation:
+        \begin{enumerate}[topsep=\smallskipamount]
+            \item $\Oexps()\to\st_S$
+            \item $(st_S', k', c')\getsr\URKEsnd(st_S)$
+            \item $\Orcv(c')\to(k)$
+            \item Stop with $(k\neq k')$
+        \end{enumerate}
+    \end{minipage}
+    \caption{Trivial winning conditions for game $\IND_\URKE^b$.}
+    \label{fig:urke:trivial}
+\end{figure}
