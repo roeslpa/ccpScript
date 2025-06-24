@@ -140,3 +140,79 @@ He can not distribute fresh randomness, and therefore can not recover from corru
     \caption{Trivial winning conditions for game $\IND_\URKE^b$.}
     \label{fig:urke:trivial}
 \end{figure}
+
+%this paragraph is not precise and understandable enough in my opinion
+\paragraph{Intuitive Security Goals} The security goal for unidirectional RKE protocols is to ensure that sender and receiver exposures are as harmless as possible.
+In particular, the sender state should only allow for \emph{immediate} impersonations, i.e. it should not reveal any (challenge) keys except the one received in the impersonation.
+The receiver state should only reveal future ``compatible'' (challenge) keys; an active attacker breaks ``compatibility''.
+
+This means that the protocol is forward secure w.r.t. exposures of senders and receivers.
+Post-compromise security is only achieved for the sender, who is also hard to non-trivially impersonate.
+
+
+\paragraph{Construction} A construction for a unidirectional RKE protocol $\URKE$ is given in Figure~\ref{fig:urke:const}.
+
+\begin{figure}[!ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/rke/urke_construction}%
+        }%
+    }
+    \caption{%
+        Construction of $\URKE$ using key encapsulation mechanism $\KEM$, signature $\SIG$ and random oracle $\ROh$.
+    }
+    \label{fig:urke:const}
+\end{figure}
+
+\subsection{Random Oracle Model}
+
+To analyze the security of the unidirectional RKE protocol $\URKE$, we use the random oracle model~(ROM).
+The random oracle model is a common abstraction in cryptography and models an ideal hash or one-way function.
+
+In the ``arrows-and-boxes'' style, the random oracle is shown in its own box instead of being called with $h\getsr \ROh$ (see Figure~\ref{fig:rom:overview}).
+Reduction and adversary interact with the random oracle just like they normally would.
+It is important to keep in mind, that the random oracle is still part of the reduction.
+
+
+%aligning the minipages with \begin{minipage}[b] might look better
+\begin{figure}[!ht]
+    \begin{minipage}[]{.5\textwidth}
+        \centering
+        \nicoresetlinenr%
+        \fbox{%
+            \scalebox{\codescalefactor}{%
+                \input{figures/rke/rom_sim}%
+            }%
+        }
+        \caption{%
+            Simulation of a random oracle $H$.
+        }
+        \label{fig:rom:sim}
+    \end{minipage}\hfill
+    \begin{minipage}[]{.5\textwidth}
+        \centering
+        \input{figures/rke/rom_overview}
+        \caption{%
+            Interaction with random oracle $H$ in the ``arrows-and-boxes'' style.
+        }
+        \label{fig:rom:overview}
+    \end{minipage}
+\end{figure}
+
+\subsection{Security Proof of URKE in the ROM}
+We do not give a full and detailed security proof of $\URKE$ in the $\IND_\URKE^b$ game, but a proof sketch could look as follows:
+
+First, assume that the verification key $\vk_i$ is authentically transmitted based on authenticity of signature $\sig_{i-1}$.
+This implies that the ciphertext $c_i$ is transmitted authentically unless the sender is trivially impersonated.
+The first assumption can be reduced to the $\SUFCMA$ security of the underlying signature scheme $\SIG$.
+
+Secondly, assume that the ciphertext $c_i$ protects the intermediate key $k'$.
+Then the random oracle input in the $i$-th send operation is secret, which implies that the random oracle output is also secret.
+We can then assume, that the $i+1$-th $\KEM$ instance protects the $i+1$-th ciphertext and its key, which can be reduced to the $\INDCCA$ security of the $\KEM$.
+
+\paragraph{Theorem} With the proof sketch above we can define a security bound for our $\URKE$ construction:
+
+For every successful adversary $\advA$ against $\IND$ security of scheme $\URKE$, there exist adversaries $\advB_\SIG$ and $\advB_\KEM$ such that
+\[\Adv_\URKE^\ind (\advA)\leq x\cdot \Adv_\SIG^\sufcma(\advB_\SIG) + y\cdot \Adv_\KEM^\indcca(\advB_\KEM)+z\]
