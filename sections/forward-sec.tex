@@ -18,6 +18,8 @@ In this section, we will discuss how to achieve security even if the secret key 
 
 \subsection{Forward Secure KEMs}
 
+\alert{add \cite{SP:GreMie15,EC:CanHalKat03,EC:GHJL17}}
+
 \paragraph{Syntax} To provide security even if the secret key is leaked, we have to change the secret key over time.
 This means we also need to change the syntax of the decapsulation algorithm.
 The forward-secure KEM $\FKEM=(\FKEMgen,\FKEMenc,\FKEMdec)$ is a tuple of three algorithms with encapsulation key space~$\eksp$, decapsulation key space~$\dksp$, ciphertext space~$\csp$, and symmetric key space~$\ksp$:

@@ -89,6 +89,8 @@ In literature however, there are different definitions of session partners, whic
 \end{itemize}
 This lecture uses the \emph{Matching Conversations} definition when talking about session partners.
 
+\alert{PR: add references to and integrate: \cite{RSA:PRSS21,EPRINT:BCJSW24}}
+
 \paragraph{Constructions} We present two constructions of authenticated key exchange protocols. 
 The first one (Figure~\ref{fig:ake:signed_dh}) is based on the Diffie-Hellman key exchange and uses signatures to provide integrity.
 
@@ -127,7 +129,7 @@ An overview of the protocol is given in Figure~\ref{fig:ake:tls}.
 \end{figure}
 
 \subsubsection{Noise Framework}
-The Noise Framework (\url{https://noiseprotocol.org/noise.html}) is a set of rules to combine Diffie-Hellman key exchange with Authenticated Encryption~(AE).
+The Noise Framework (\url{https://noiseprotocol.org/noise.html}change to citation and add analyses like \cite{PKC:DowRosSch20,CCS:ADHSW22}) is a set of rules to combine Diffie-Hellman key exchange with Authenticated Encryption~(AE).
 The framework is very flexible, especially in a pre-configure context.
 It is used by WhatsApp for its client-to-server communication and by WireGuard among others.
 
@@ -164,6 +166,7 @@ For $m_i, i\geq 2$ the encryption offers forward security for both parties, whil
 \end{figure}
 
 \subsubsection{X3DH}
+\alert{PR: add references to specification and analyses}
 X3DH is an extended and authenticated 2-pass key exchange. 
 It is used in the Ratcheted Key Exchange protocol~(Section \ref{sec:rke}).
 
@@ -186,3 +189,5 @@ The X3DH protocol guarantees strong forward security, authenticity and deniabili
     \caption{X3DH key exchange.}
     \label{fig:ake:x3dh}
 \end{figure}
+
+\alert{further info in here: \url{https://github.com/charlie-j/fm-crypto-lib/blob/main/Notes/computational/main.pdf}}
