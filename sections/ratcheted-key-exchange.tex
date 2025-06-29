@@ -202,8 +202,8 @@ It is important to keep in mind, that the random oracle is still part of the red
 \end{figure}
 
 \subsection{Security Proof of URKE in the ROM}
-We do not give a full and detailed security proof of $\URKE$ in the $\IND_\URKE^b$ game, but a proof sketch could look as follows:
 
+\paragraph{Proof Sketch} 
 First, assume that the verification key $\vk_i$ is authentically transmitted based on authenticity of signature $\sig_{i-1}$.
 This implies that the ciphertext $c_i$ is transmitted authentically unless the sender is trivially impersonated.
 The first assumption can be reduced to the $\SUFCMA$ security of the underlying signature scheme $\SIG$.
@@ -212,7 +212,95 @@ Secondly, assume that the ciphertext $c_i$ protects the intermediate key $k'$.
 Then the random oracle input in the $i$-th send operation is secret, which implies that the random oracle output is also secret.
 We can then assume, that the $i+1$-th $\KEM$ instance protects the $i+1$-th ciphertext and its key, which can be reduced to the $\INDCCA$ security of the $\KEM$.
 
-\paragraph{Theorem} With the proof sketch above we can define a security bound for our $\URKE$ construction:
+\paragraph{Theorem}
+The proof sketch gives a preliminary security bound:
 
 For every successful adversary $\advA$ against $\IND$ security of scheme $\URKE$, there exist adversaries $\advB_\SIG$ and $\advB_\KEM$ such that
 \[\Adv_\URKE^\ind (\advA)\leq x\cdot \Adv_\SIG^\sufcma(\advB_\SIG) + y\cdot \Adv_\KEM^\indcca(\advB_\KEM)+z\]
+
+The need for the factors $x, y$ and $z$ becomes clear in the concrete proof in the next section.
+
+\paragraph{Formal Proof}
+We now prove the security of the $\URKE$ scheme through a series of games:
+
+%set game i as the itemize bullet points to ensure no text under the game i label
+\begin{itemize}[leftmargin=2.0cm]
+    \item[Game 0:] The original game $\IND_\URKE^b$.
+    \item[Game 1:] Guess $n_{forge}\getsr [q_{rcv}+1]$, where $q_{rcv}$ is the number of queries to $\Orcv$.
+        If the $n_{forge}$-th query to oracle $\Orcv$ is not one that flips the bit $\mathit{sync}$ from $1$ to $0$, abort the game.
+
+        It holds that $\Adv^0=\Adv^1\cdot(q_{rcv}+1)$.
+    \item[Game 2:] If in the $n_{forge}$-th query to oracle $\Orcv$ the sender was not exposed for the corresponding prior state (i.e.,$n_{forge}\notin X_S$) and the received ciphertext was accepted (i.e., $k_0\neq\bot$), then abort the game.
+        The advantage is
+        \[\Adv^1\leq\Adv^2 + \Adv_{\SIG}^\sufcma(\advB_\SIG)\]
+    \item[Game 3:] Guess $n_{exp}\getsr [q_{rcv}]$.
+        If the receiver state is not exposed for the first time after the $n_{exp}$-th query to oracle $\Orcv$, abort the game.
+
+        It holds that $\Adv^2=\Adv^3\cdot q_{rcv}$.
+        
+    \listintertext{For the next games we use the hybrid argument over $n_{snd}$ steps, where $n_{snd}=\begin{cases}
+        q_{snd} &, n_{exp}>n_{forge}\\
+        n_{exp} &, \text{otherwise}
+    \end{cases}$}
+    \item[Game 4:] Lazy sample output of random oracle in the $i$-th query to $\Osnd$.
+        Lazy sampling means, that the output of the random oracle gets computed only when the adversary queries the corresponding inputs ``externally''. 
+
+        It is $\Adv^3=\Adv^4$.
+    \item[Game 5:] Abort if the adversary queries the random oracle for the inputs specified by the $i$-th query to oracle $\Osnd$.
+        The advantage is
+        \[\Adv^4\leq\Adv^5 + \Adv_\KEM^\owcca(\advB_\KEM)\]
+\end{itemize}
+
+We show indistinguishability of game 1 and game 2 by reducing every successful distinguisher $\advD_1^2$ to a successful attacker against the $\SUFCMA$ security (Figure~\ref{fig:sig:suf}) of the signature scheme $\SIG$.
+
+\begin{itemize}
+    \item Simulation
+    \begin{itemize}
+        \item Oracle $\Osnd$: 
+        In $n_{forge}-1$-th query embed the verification key $\vk$ in $c$.\par
+        In $n_{forge}$-th query ask the signing oracle of $\SUFCMA$ game for $\sig$ with $m:=(c',\vk')$.
+        \item  Oracle $\Oexpr$: 
+        After $n_{forge}-1$-th query to $\Orcv$, embed $\vk$ in $\st_R$.
+        \item Everything else is simulated honestly
+    \end{itemize}
+    \item Extraction: Distinguisher $\advD_1^2$ can only distinguish between game 1 and game 2 if game 2 aborts.
+    This only happens upon successful signature forgery.
+\end{itemize}
+
+Similarly, we prove indistinguishability of games 4 and 5 for every distinguisher $\advD_4^5$ by reducing to $\OWCCA$ security (Figure~\ref{fig:kem:ow:cca}) of the $\KEM$.
+
+\begin{itemize}
+    \item Simulation
+    \begin{itemize}
+        \item Oracle $\Oexps$: 
+        After the $i-1$-th query to $\Osnd$, embed the encapsulation key $\ek$ in $\sk_S$.
+        \item  Oracle $\Osnd$: 
+        In $i$-th query, embed the challenge ciphertext $c^*$ from the underlying $OWCCA_\KEM$ game as the $\KEM$ ciphertext 
+        \item Oracle $\Orcv(c)$: If $c$ was a trivial impersonation in $i$-th query to $\Orcv$, use oracle $\Odec$ of $\OWCCA$ game.
+    \end{itemize}
+    \item Extraction: The only way to distinguish games 4 and 5 for the adversary is to query the random oracle with the same inputs as the $i$-th $\Osnd$ query would.
+    Then, if the random oracle is queried with $x=(t,k',c)$ s.t. $t$ and $c$ match with internal values for $i$-th $\Osnd$ query, send $k'$ to $\OWCCA$ game.
+
+\end{itemize}
+
+After the $n_{snd}$-th hybrid step in game 5, all challenge keys are random oracle outputs for which adversary $\advA$ never queried random oracle on the corresponding inputs.
+It follows that $\Adv^5=0$.
+
+Taking the advantages together, the following concrete security bound for scheme $\URKE$ can be formulated:
+\[\Adv_\URKE^\ind(\advA) \leq (q_{rcv}+1)\cdot(\Adv_\SIG^\sufcma(\advB_\SIG)+q_{rcv}\cdot q_{snd}\Adv_\KEM^\owcca(\advB_\KEM))\] 
+
+
+%ALTERNATIVE: both proofs (indistinguishability of games 1 and 2 and games 4 and 5) as in the lecture (simulation written in boxes-and-arrows style):
+% \begin{figure}[!ht]
+%     \centering
+%     \input{figures/rke/urke_ind_proof-1.tex}
+%     \caption{Indistinguishability of games 1 and 2 for distinguisher $\advD_1^2$.}
+%     \label{fig:urke:ind:games1_2}
+% \end{figure}
+
+% \begin{figure}[!ht]
+%     \centering
+%     \input{figures/rke/urke_ind_proof-2.tex}
+%     \caption{Indistinguishability of games 4 and 5 for distinguisher $\advD_4^5$.}
+%     \label{fig:urke:ind:games4_5}
+% \end{figure}
