@@ -9,7 +9,7 @@
     \node[yshift=-.5cm, xshift=-2.5cm] (1a1) at (1) {$\substack{\downarrow\\\scriptstyle k}$};
     \node[yshift=-.5cm, xshift= 2.5cm] (1a2) at (1) {$\substack{\downarrow\\\scriptstyle k}$};
     %connect the two keys with a dashed arrow (the anchors, e.g. 1a1.30, are "border anchors" that use an angle)
-    \draw[->, dashed] (1a1.30) -- (1a2.150);
+    \draw[<->, dashed] (1a1.30) -- (1a2.150);
     
     %second step
     \node[yshift=-1cm] (2) at (1) {2. Ratcheted Key Exchange};
@@ -50,8 +50,8 @@
 
     %draw the arrow connecting the second message and the second channel
     \path[name path=A_m2path] (A_m2) -- (3Channel2.top);
-    \draw[-,name intersections={of=c1 and A_m2path, name=A_m2_intersect}] (A_m2) -- (A_m2_intersect-1);
-    \draw[->, gray] (A_m2_intersect-1) -- (3Channel2.top);
+    \draw[<-,name intersections={of=c1 and A_m2path, name=A_m2_intersect}] (A_m2) -- (A_m2_intersect-1);
+    \draw[-, gray] (A_m2_intersect-1) -- (3Channel2.top);
 
     %the messages bob receives
     \node (B_m1) at (9, -3) {$m$};
@@ -65,8 +65,8 @@
 
     %arrows connecting the second channel to bobs second message
     \path[name path=B_m2path] (B_m2) -- (3Channel2.top);
-    \draw[-, gray, name intersections={of=c1 and B_m2path, name=B_m2_intersect}] (3Channel2.bottom) -- (B_m2_intersect-1);
-    \draw[->] (B_m2_intersect-1) -- (B_m2);
+    \draw[<-, gray, name intersections={of=c1 and B_m2path, name=B_m2_intersect}] (3Channel2.bottom) -- (B_m2_intersect-1);
+    \draw[-] (B_m2_intersect-1) -- (B_m2);
 
     %Left side FS-arrows
     \draw[->|, green] (.5, -.5) -- (.5, -1.25) node [midway,left] {FS};

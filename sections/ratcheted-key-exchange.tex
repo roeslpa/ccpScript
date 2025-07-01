@@ -23,11 +23,14 @@ For example, X3DH might be used for the initial key exchange, the Signal Double 
 \begin{figure}[!ht]
     \centering
     \input{figures/rke/rke_overview}
-    \caption{Overview of the Ratcheted Key Exchange~(RKE) protocol.}
+    \caption{Overview of the Ratcheted Key Exchange~(RKE) protocol.
+    \alert{PR: would it be possible to align the keys $k$ with their circle arrow horizontally identically? (currently the lower keys are slightly shifted to the right)}}
     \label{fig:rke:overview}
 \end{figure}
 
-\paragraph{Types of RKE} RKE protocols can be divided into three types, depending on the directions of communication they support.
+\paragraph{Types of RKE}
+\alert{PR: add history starting with Double Ratchet, then its analysis~\cite{JC:CCDGS20}, then unidirectional~\cite{C:BSJNS17}, then more~\cite{C:PoeRos18}}
+RKE protocols can be divided into three types, depending on the directions of communication they support.
 Bidirectional RKE protocols is the intuitive case, where full bidirectional communication is supported~(Figure~\ref{fig:RKE:bi}).
 
 Sesquidirectional RKE gives one party full functionality, while the other party can only send ``non-functional'' messages.
