@@ -1,0 +1,36 @@
+%!TEX root=../../main.tex
+\newcommand{\CC}{\mathit{CC}}%
+\begin{tabular}{lllll}
+    \algbox{4cm}{%
+        \textbf{Game} $\\OWCCA_\KEM$:\\
+        $(\dk,\ek)\getsr\KEMgen$\\~\\
+        $(k^*, c^*)\getsr\KEMenc(\ek)$\\~\\
+        If $c\neq c^*:$\\
+        \hspace*{1em}$k\gets\KEMdec(\dk, c)$\\
+        If $k'\neq k^*$:\\
+        \hspace*{1em}$\mathit{no}\gets1$\\
+        Else: Stop with~$1$\\
+        Stop with~$0$}&
+    \arrbox{1cm}{%
+        $\xrightarrow{\ek}$\\~\\  
+        $\xrightarrow{c^*}$\\~\\
+        $\xleftarrow{c}$\\
+        $\xrightarrow{k}$\\
+        $\xleftarrow{k'}$\\
+        $\xrightarrow{\mathit{no}}$}&
+    \algbox{6.5cm}{%
+        \textbf{Reduction} $\mathcal{R}$
+        \begin{itemize}
+            \item Oracle $\Oexps$: 
+            After the $i-1$-th query to $\Osnd$, embed the encapsulation key $\ek$ in $\sk_S$.
+            \item  Oracle $\Osnd$: 
+            In $i$-th query, embed the challenge ciphertext $c^*$ from the underlying $OWCCA_\KEM$ game as the $\KEM$ ciphertext 
+            \item Oracle $\Orcv(c)$: If $c$ was a trivial impersonation in $i$-th query to $\Orcv$, use oracle $\Odec$ of $\OWCCA$ game.
+        \end{itemize}
+    }&
+    \arrbox{1cm}{
+        $\leftrightarrow$\\~\\~\\~\\
+        $\xleftarrow{d}$}&
+    \algbox{2.5cm}{%
+        \textbf{Adversary} $\advD_4^5$\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\}
+\end{tabular}

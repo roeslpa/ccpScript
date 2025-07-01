@@ -1,0 +1,46 @@
+% !TeX root = ..\..\main.tex
+\markersetlen{ndL}{110pt}%
+\markersetlen{ndM}{125pt}%
+\markersetlen{ndR}{135pt}%
+\begin{tabular}[t]{lll}
+    \nicodemusbox{\markerlenndL}{%
+        \textbf{Proc} $\URKEinit$
+        \begin{nicodemus}
+            \item $(\dk,\ek)\getsr\KEMgen$
+            \item $(\sk,\vk)\getsr\SIGgen$
+            \item $t\gets\epsilon$
+            \item $\st_S\gets(\ek,\sk,t)$
+            \item $\st_R\gets(\ek,\vk,t)$
+            \item Return $(\st_S,\st_R)$
+        \end{nicodemus}%
+    }%
+    &
+    \nicodemusbox{\markerlenndM}{%
+        \textbf{Proc} $\URKEsnd(\st_S)$
+        \begin{nicodemus}
+            \item $(\ek,\sk,t)\gets\st_S$
+            \item $(k', c')\getsr\KEMenc(\ek)$
+            \item $(\sk',\vk')\getsr\SIGgen$
+            \item $\sigma\getsr\SIGsig(\sk, (c',\vk'))$
+            \item $c\gets(c',\vk',\sigma)$
+            \item $(k,t,\dk)\gets \ROh(t, k', c)$
+            \item $\ek\gets\KEMgen(\dk)$
+            \item $\st_S\gets(\ek,\sk',t)$
+            \item Return $(\st_S, k, c)$
+        \end{nicodemus}%
+    }%
+    &
+    \nicodemusbox{\markerlenndR}{%
+        \textbf{Proc} $\URKErcv(\st_R, c)$
+        \begin{nicodemus}
+            \item $(\dk, \vk, t)\gets\st_R$
+            \item $(c', \vk', \sigma)\gets c$
+            \item If $\SIGvfy(\vk, (c', \vk'), \sigma) = 0$:
+            \item \quad Return $(\bot, \bot)$
+            \item $k'\gets\KEMdec(\dk, c')$
+            \item $(k,t,\dk)\gets \ROh(t, k', c)$
+            \item $\st_R\gets(\dk, \vk', t)$
+            \item Return $(\st_R, k)$
+        \end{nicodemus}%
+    }%
+\end{tabular}%

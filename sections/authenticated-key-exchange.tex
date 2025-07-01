@@ -117,7 +117,7 @@ The reason for this is the usage of fresh keys $\sk',\pk'$ for each new executio
 \subsection{Real-World Authenticated Key Exchange}
 Even though there are many more real world examples, this script will focus on three examples:
 
-\subsubsection{Transport Layer Security~(TLS)}
+\subsubsection{Transport Layer Security~(TLS) \cite{RFCTLS13}}
 TLS key exchange is similar to the signed Diffie-Hellman construction in Figure~\ref{fig:ake:signed_dh}.
 An overview of the protocol is given in Figure~\ref{fig:ake:tls}.
 
@@ -129,7 +129,8 @@ An overview of the protocol is given in Figure~\ref{fig:ake:tls}.
 \end{figure}
 
 \subsubsection{Noise Framework}
-The Noise Framework (\url{https://noiseprotocol.org/noise.html}change to citation and add analyses like \cite{PKC:DowRosSch20,CCS:ADHSW22}) is a set of rules to combine Diffie-Hellman key exchange with Authenticated Encryption~(AE).
+The Noise Framework \cite{NoiseFramework} is a set of rules to combine Diffie-Hellman key exchange with Authenticated Encryption~(AE). \textcite{PKC:DowRosSch20,CCS:ADHSW22} provide a deeper analysis.
+
 The framework is very flexible, especially in a pre-configure context.
 It is used by WhatsApp for its client-to-server communication and by WireGuard among others.
 

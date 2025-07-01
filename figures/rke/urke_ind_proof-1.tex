@@ -1,0 +1,37 @@
+%!TEX root=../../main.tex
+\newcommand{\MS}{\mathit{MS}}%
+\begin{tabular}{lllll}
+    \algbox{4cm}{%
+        \textbf{Game} $\SUFCMA_\SIG$:\\
+        $\MS\gets\emptyset$\\
+        $(\sk,\vk)\getsr\SIGgen$\\
+        \\
+        $\sig\gets\SIGsig(\sk, m)$\\
+        $\MS\gets\MS\cup\{(m, \sig)\}$\\
+        \\
+        If $\SIGvfy(\vk, m^*, \sig^*)=1$:\\
+        $\land (m^*,\sig^*)$:\\
+        \hspace*{1em}Stop with~$1$\\ %\quad does not work; but quad should have length 1em
+        Stop with~$0$}&
+    \arrbox{1cm}{%
+        $\xrightarrow{\vk}$\\~\\  
+        $\xleftarrow{m}$\\
+        $\xrightarrow{\sig}$\\~\\
+        $\xleftarrow{m^*,\sig^*}$}&
+    \algbox{6.5cm}{%
+        \textbf{Reduction} $\mathcal{R}$
+        \begin{itemize}
+            \item Oracle $\Osnd$: 
+            In $n_{forge}-1$-th query embed the verification key $\vk$ in $c$.\par
+            In $n_{forge}$-th query ask the signing oracle of $\SUFCMA$ game for $\sig$ with $m:=(c',\vk')$.
+            \item  Oracle $\Oexpr$: 
+            After $n_{forge}-1$-th query to $\Orcv$, embed $\vk$ in $\st_R$.
+            \item Everything else is simulated honestly
+        \end{itemize}
+    }&
+    \arrbox{1cm}{
+        $\leftrightarrow$\\~\\~\\~\\
+        $\xleftarrow{d}$}&
+    \algbox{2.5cm}{%
+        \textbf{Adversary} $\advD_1^2$\\~\\~\\~\\~\\~\\~\\~\\}
+\end{tabular}

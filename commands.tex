@@ -7,6 +7,19 @@
 
 \newcolumntype{C}[1]{>{\centering\arraybackslash\hspace{0pt}}p{#1}}
 
+%provides \intertext analogue for lists
+%\listintertext*{text} inserts text flush with left margin
+%\listintertext{text} inserts text flush with left margin of the list environment one higher (if it exists)
+%copied from https://tex.stackexchange.com/questions/135726/intertext-like-command-in-enumerate-environment
+\makeatletter
+\newcommand{\listintertext}{\@ifstar\listintertext@\listintertext@@}
+\newcommand{\listintertext@}[1]{% \listintertext*{#1}
+  \hspace*{-\@totalleftmargin}#1}
+\newcommand{\listintertext@@}[1]{% \listintertext{#1}
+  \hspace{-\leftmargin}#1}
+\makeatother
+
+
 \newcommand{\algbox}[2]{\fbox{\parbox{#1}{#2}}}
 \newcommand{\arrbox}[2]{\parbox{#1}{\centering#2}}
 
