@@ -23,8 +23,7 @@ For example, X3DH might be used for the initial key exchange, the Signal Double 
 \begin{figure}[!ht]
     \centering
     \input{figures/rke/rke_overview}
-    \caption{Overview of the Ratcheted Key Exchange~(RKE) protocol.
-    \alert{PR: would it be possible to align the keys $k$ with their circle arrow horizontally identically? (currently the lower keys are slightly shifted to the right)}}
+    \caption{Overview of the Ratcheted Key Exchange~(RKE) protocol.}
     \label{fig:rke:overview}
 \end{figure}
 
@@ -283,7 +282,6 @@ Similarly, we prove indistinguishability of games 4 and 5 for every distinguishe
     \end{itemize}
     \item Extraction: The only way to distinguish games 4 and 5 for the adversary is to query the random oracle with the same inputs as the $i$-th $\Osnd$ query would.
     Then, if the random oracle is queried with $x=(t,k',c)$ s.t. $t$ and $c$ match with internal values for $i$-th $\Osnd$ query, send $k'$ to $\OWCCA$ game.
-
 \end{itemize}
 
 After the $n_{snd}$-th hybrid step in game 5, all challenge keys are random oracle outputs for which adversary $\advA$ never queried random oracle on the corresponding inputs.
@@ -293,7 +291,7 @@ Taking the advantages together, the following concrete security bound for scheme
 \[\Adv_\URKE^\ind(\advA) \leq (q_{rcv}+1)\cdot(\Adv_\SIG^\sufcma(\advB_\SIG)+q_{rcv}\cdot q_{snd}\Adv_\KEM^\owcca(\advB_\KEM))\] 
 
 
-%ALTERNATIVE: both proofs (indistinguishability of games 1 and 2 and games 4 and 5) as in the lecture (simulation written in boxes-and-arrows style):
+% ALTERNATIVE: both proofs (indistinguishability of games 1 and 2 and games 4 and 5) as in the lecture (simulation written in boxes-and-arrows style):
 \begin{figure}[!ht]
     \centering
     \input{figures/rke/urke_ind_proof-1.tex}
@@ -307,3 +305,27 @@ Taking the advantages together, the following concrete security bound for scheme
     \caption{Indistinguishability of games 4 and 5 for distinguisher $\advD_4^5$.}
     \label{fig:urke:ind:games4_5}
 \end{figure}
+
+%begin of lecture 09
+\subsection{URKE under weak randomness}
+We will now look at a security model for $\URKE$ where the internal randomness can be compromised.
+In the real world, this could happen for various reasons, e.g. if a device is compromised, if the randomness offers too little entropy, or if a bad randomness generator is used.
+Some historic bad randomness generators include the Debian OpenSSL bug and the Dual EC backdoor~\cite{EPRINT:BerLanNie15}. \alert{Add citation for Debian OpenSSL bug}
+
+To model corruption of randomness, two different approaches are possible:
+Either we allow the adversary to learn the random coins used, or we give the adversary the ability to manipulate the random coins.
+
+Concretely, learning the random coins in an $\URKE$ construction has the following effects:
+\begin{itemize}
+    \item $\URKEinit$: If the randomness is revealed, the state $\st_R$ can be learned. 
+    There will be no confidentiality after.
+    \item $\URKErcv$: Since $\URKErcv$ is deterministic, there is no randomness to learn here.
+    \item $\URKEsnd$: When the randomness is revealed, $\URKEsnd$ is deterministic. 
+    To denote this, we write $\URKEsnd(\st_0;r)\to(\st_1, k, c)$. 
+    If the state $\st_0$ is known, then $k$ and the next state $\st_1$ is revealed.
+    Otherwise, no secrets are necessarily affected.
+\end{itemize}
+
+For the $\URKE$ construction from Figure~\ref{fig:urke:const}, this opens up a new attack:
+By exposing the sender state $\st_S$ and then learning the random coins of the next $\URKEsnd$ operation, an adversary can deterministally encapsulate the key $k'$ and use this key along with the sender state $\st_S$ to learn the next decapsulation key by executing the function $\ROh$ on these values.
+After this, the adversary knows $\dk$ forever.

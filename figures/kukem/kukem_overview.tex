@@ -1,0 +1,9 @@
+% !TeX root = ..\..\main.tex
+\begin{tabular}{cC{1cm}c}
+    \textbf{Alice} &  & \textbf{Bob}\\
+    & $\xlongleftarrow{\pk}$ & $(\sk, \pk)\getsr\KUKEMgen$\\
+    $\pk\gets\KUKEMup(\pk, \ad)$ & & $\sk\gets\KUKEMup(\sk, \ad)$\\
+    $(k, c)\getsr\KUKEMenc(\pk)$ & $\xlongrightarrow{c}$ & \\
+    & & $k\gets\KUKEMdec(\sk, c)$\\ 
+    $\pk\gets\KUKEMup(\pk, \ad)$ & & $\sk\gets\KUKEMup(\sk, \ad)$
+\end{tabular}
