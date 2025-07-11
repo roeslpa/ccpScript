@@ -1,0 +1,89 @@
+\section{Key-Updatable Key Encapsulation Mechanism (KU-KEM)}
+
+An overview of the interaction between Alice and Bob in a key-updatable key encapsulation mechanism ($\KUKEM$) is shown in Figure~\ref{fig:kukem:overview}. 
+
+\begin{figure}[!ht]
+    \centering
+    \input{figures/kukem/kukem_overview.tex}
+    \caption{Overview of a key-updatable key encapsulation mechanism (KU-KEM).}
+    \label{fig:kukem:overview}
+\end{figure}
+
+\paragraph{Syntax} An updatable KEM $\KUKEM=(\KUKEMgen,\KUKEMenc,\KUKEMdec, \KUKEMup)$ is a tuple of five algorithms ($\KUKEMup$ has two definitions) with secret key space~$\sksp$, public key space~$\pksp$, ciphertext space~$\csp$, symmetric key space~$\ksp$ and associated data space~$\adsp$:
+
+\begin{itemize}
+    \item $\KUKEMgen: \emptyset \tor \sksp\times\pksp$
+    \item $\KUKEMenc: \pksp \tor \ksp\times\csp$
+    \item $\KUKEMdec: \sksp\times\csp \to \dksp\times\ksp$
+    \item $\KUKEMup: \pksp\times\adsp\to\pksp$
+    \item $\KUKEMup: \sksp\times\adsp\to\sksp$
+\end{itemize}
+
+\paragraph{Correctness} A $\KUKEM$ construction is correct, if the following holds:
+\begin{align*}
+    \Pr[\KUKEMdec(\sk_n,c)=k\mid&(\sk_0,\pk_0)\getsr\KUKEMgen, \ad_i\getsr\adsp, \sk_i\gets\KUKEMup(\sk_{i-1},\ad_i),\\
+     &\pk_i\gets\KUKEMup(\pk_{i-1},\ad_i), (k,c)\getsr\KUKEMenc(\pk_n)] = 1
+\end{align*}
+
+\paragraph{Security} We define the adversarial capabilities by specifying the oracles:
+
+\begin{itemize}
+    \item $\Oenc()\to(c,k_b)$
+    \item $\OupPK(\ad)\to\pk$
+    \item $\OupSK(\ad)\to\bot$
+    \item $\Odec(c)\to\sfrac{k}{\bot}$, where $\bot$ is output when $c$ is a challenge.
+    \item $\Ocorrupt\to\sk$
+\end{itemize}  
+
+The adversarial goal is to learn the challenge bit $b$. This models the confidentiality of the encapsulated keys.
+
+\paragraph{Non-trivial attacks} In contrast to previous definitions, we do not give the trivial attacks here.
+Instead, there are two security properties that should hold for a key-updatable KEM:
+\begin{enumerate}
+    \item 
+    \begin{minipage}[t]{.5\linewidth}
+        Previous keys $k$ should stay secure even if later secret keys $\sk$ are corrupted after intermediate updates.
+    \end{minipage}\hfill
+    \begin{minipage}[t][][b]{.5\linewidth}
+        \centering
+        \vspace{-.7\baselineskip} %the vertical alignment is not perfect, but skipping .7\baselineskip is pretty arbitrary
+        \input{figures/kukem/kukem_attack1.tex}
+    \end{minipage}
+    \item \begin{minipage}[t]{.5\linewidth}
+        Keys $k$ should stay secure even if incompatible secret keys are corrupted.
+        Secret keys are incompatible if they are updated with associated data that differs from the public key updates.
+    \end{minipage}\hfill
+    \begin{minipage}[t][][b]{.5\linewidth}
+        \centering
+        \vspace{-.7\baselineskip}
+        \input{figures/kukem/kukem_attack2.tex}
+    \end{minipage}
+\end{enumerate}
+
+\subsection{Construction} 
+The idea of the construction is to use $\HIBE$~(Section~\ref{sec:hibe}) where $\KUKEMup(\pk,\ad)$ keeps a list of update strings and $\KUKEMup(\sk,\ad)$ extends the path in the $\HIBE$ identity hierarchy.
+An outline of this idea is given in Figure~\ref{fig:kukem:construction:idea}.
+
+\begin{figure}[!ht]
+    \centering
+    \input{figures/kukem/kukem_constr_idea.tex}
+    \caption{Basic Idea of constructing a $\KUKEM$ with $\HIBE$.}
+    \label{fig:kukem:construction:idea}
+\end{figure}
+
+\paragraph{Observations} 
+One problem with the construction is that the public key $\pk$ grows, although compression of $\pk$ is possible for some $\HIBE$ schemes.
+Another problem is that the depth of the $\HIBE$ is linear in the number of updates. 
+As a result, unbounded $\HIBE$ has to be used.
+
+Balli et al.~\cite{AC:BalRosVau20} showed that any $\URKE$ scheme secure against weak randomness is equivalent to a $\KUKEM$ scheme.
+
+At EuroCrypt 2023, Rösler et al.~\cite{EC:RosSlaStr23} presented two new constructions, showing that if the number of updates is bounded then $\KUKEM$ can be build from \emph{identity-based encryption}~(IBE).
+If the number of updates is unbounded, then bounded-depth $\HIBE$ can be used. An example tree for the later case is given in Figure~\ref{fig:kukem:upibe}. \alert{JR: I don't quite understand how to interpret the tree. There should be some explanation here.}
+
+\begin{figure}[!ht]
+    \centering
+    \input{figures/kukem/kukem_upibe.tex}
+    \caption{Using bounded-depth HIBE to construct $\KUKEM$.}
+    \label{fig:kukem:upibe}
+\end{figure}

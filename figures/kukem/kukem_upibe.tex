@@ -1,0 +1,58 @@
+% !TeX root = ..\..\main.tex
+\begin{tikzpicture}[
+    % !changing the distances requires recalculating the positions p1 in the later draw commands (more information below)
+    level 1/.style = {level distance = 1.5cm, sibling distance = 6cm},
+    level 2/.style = {level distance = 1cm, sibling distance = 3cm},
+    level 3/.style = {level distance = 1cm, sibling distance = 1.5cm},
+    level 4/.style = {level distance = 1cm, sibling distance = .75cm},
+    every child node/.style = {circle, draw, scale=.5},]
+
+    % draw the nodes
+    \node (n) {$\sk$} child foreach \x in {0,1}     %root
+            {node {} child foreach \y in {0,1}      %level 1
+                {node {} child foreach \z in {0,1}  %level 2
+                    {node {} child                  %level 3
+                        %draw the leaf nodes with a squiggly arrow
+                        {node {} edge from parent[decorate, decoration={coil,aspect=0, amplitude=1pt, segment length=2pt}]}}}};
+                    
+    %draw the blue arrows (this can be thought of as being done in multiple parts):
+    % 1. Draw the path from start node to end (this is the "(\p1) -- (n-X)--...--(n-X.south)" part)
+    % 1. a) Since the arrow is shifted (step 4), the first line has to be shorter than the actual edge in the graph
+    %       This is done by using "partway modifiers" (https://tikz.dev/tikz-coordinates#autosec-648). We name the start point with let \p1 =($(n-1.center)!<dist>!(n-1-2.center)$) in ...
+    %       <dist> has to be calculated s.t. dist=sqrt( (xshift * relLineLength)^2 + (xshift^2) ), where
+    %       relLineLength is level distance / (sibling distance / 2)
+    %       xshift is the amount of shift in the x-direction (here: -2mm)
+    %       e.g. if the line starts below a level 2 node, relLineLength=1/.75, dist=3.34mm
+    % 2. Draw the end of the arrow that "bends" around the last node (this is done by adding a relative node with "-- +(.2, -.2)")
+    % 3. Draw the rounded start of the arrow by goind .05 units to the left and .075 units down (with "($(\p1)+(-.05,-.075)$)" ) and then rounding the corner with "[rounded corners=1mm]--"
+    % Shift everything by xshift with "transform canvas={xshift=-2mm}"
+
+    %draw the three "inner" arrows (arrows 2,3 and 4 from the left) after the rules describe above
+    \draw[blue, transform canvas={xshift=-2mm,}, ->] let \p1 =($(n-1-1.center)!3.34mm!(n-1-1-2.center)$) in
+        ($(\p1)+(-.05,-.075)$) [rounded corners=1mm]-- (\p1) -- (n-1-1-2.center) -- (n-1-1-2-1.south) -- node[pos=1, below] {$2t$} +(.2, -.2);
+    \draw[blue, transform canvas={xshift=-2mm}, ->] let \p1 =($(n-1.center)!2.41mm!(n-1-2.center)$) in
+        ($(\p1)+(-.05,-.075)$) [rounded corners=1mm]-- (\p1) -- (n-1-2.center) -- (n-1-2-1.center) -- ( n-1-2-1-1.south) -- node[pos=1, below] {$3t$} +(.2, -.2);
+    \draw[blue, transform canvas={xshift=-2mm}, ->] let \p1 =($(n-1-2.center)!3.34mm!(n-1-2-2.center)$) in
+        ($(\p1)+(-.05,-.075)$) [rounded corners=1mm]-- (\p1) -- (n-1-2-2.center) -- ( n-1-2-2-1.south) -- node[pos=1, below] {$4t$} +(.2, -.2);
+    
+    %leftmost arrow; no bend at start
+    %this is drawn in two parts: The first part is from the root to to beginning of the squiggly arrow, where a node "1" is placed
+    %and the second part is from node 1 to the end of the squiggly arrow, where a node "t" is placed
+    %when drawing node 1 we have to reverse the yshift of 1mm by placing a new node with "+(0, -.1)"
+    \draw[blue, transform canvas={xshift=-2mm, yshift=1mm}, rounded corners=1mm, -|] (n.center) -- (n-1.center) -- (n-1-1.center) -- (n-1-1-1.center) -- node[pos=1, left] {$1$} +(0, -.1);
+    \draw[blue, transform canvas={xshift=-2mm, yshift=1mm}, rounded corners=1mm, ->] ($(n-1-1-1.center)+(0,-.1)$) -- ([yshift=-2mm] n-1-1-1-1.south) -- node[pos=1, below] {$t$} +(.2, -.1);
+
+    %draw the rightmost arrow
+    %we place two nodes after the last segment: one node contains vertical dots and the other node contains the label $4t+x$
+    \draw[blue, transform canvas={xshift=-2mm}] let \p1 =($(n.center)!4mm!(n-2.center)$) in
+        ($(\p1)+(-.05,-.075)$) [rounded corners=1mm]-- (\p1) -- (n-2.center) -- (n-2-1.center) -- ( n-2-1-1.south) -- node[below] {\vdots} +(0, -.2) node[left] {$4t+x$};
+
+    %draw the (l,t)-line to the right 
+    %let p1 be the rightmost, lowermost node of the last level before the squiggly arrow shifted 1 unit to the right
+    %let p2 be the rightmost node of the last level
+    \draw[|-] let \p1=([xshift=1cm] n-2-2-2) in
+        (\x1, 0) -- node[right, midway] {$l$} (\p1); %\x1 is x-coordinate of p1
+    \draw[|-|] let \p1=($(n-2-2-2)+(1,0)$), \p2=(n-2-2-2-1) in
+        (\p1) -- node[right, midway] {$t$} (\x1, \y2);
+
+    \end{tikzpicture}

@@ -22,8 +22,8 @@
     %first channel cylinder below the third step (anchor is "shape center", since the normal "center" uses the actual height of the 3d cylinder)
     \node[yshift=-.5cm, anchor=shape center] (3Channel1) at (3) [cylinder, shape border rotate=180, draw, minimum height=5.2cm, minimum width=.5cm] {};
     %draw refreshing keys
-    \node[yshift=-.5cm, xshift=-2.5cm] (3a1) at (3Channel1) {$k\circlearrowleft$};
-    \node[yshift=-.5cm, xshift= 2.5cm] (3a2) at (3Channel1) {$\circlearrowleft k$};
+    \node[yshift=-1cm, xshift=-2.5cm] (3a1) at (3) {$k\circlearrowleft$};
+    \node[yshift=-1cm, xshift= 2.5cm] (3a2) at (3) {$\circlearrowleft k$};
     %second channel cylinder (no anchor=shape center since we use the shape center anchor of the first cylinder for placement)
     \node[yshift=-1cm] (3Channel2) at (3Channel1) [cylinder, shape border rotate=180, draw, minimum height=5.2cm, minimum width=.5cm] {};
 
