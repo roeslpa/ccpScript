@@ -1,0 +1,36 @@
+\section{Double Ratchet Algorithm}
+
+The Double Ratchet Algorithm~\cite{DoubleRatchetAlg} is used to exchange encrypted messages between two parties.
+Originally, it was named Axolotl and based on Off-the-Record~(OTR) messaging.
+It was designed by Trevor Perrin, who also worked on the Noise Protocol Framework (Section~\ref{sec:NoiseFramework}) and by Moxie Marlinspike in 2013.
+Multiple security analyses have been done, e.g., by Cohn-Gordon~\cite{EUROSP:CCDGS17}, Alwen et al.~\cite{EC:AlwCorDod19} and others \cite{C:BFGMR22}. \alert{JR: I could only find one work from C'22}
+
+The Double Ratchet Algorithm is divided into two parts:
+The Asymmetric Ratchet, which is a continuous Diffie-Hellman key exchange, and the Symmetric Ratchet, which continuously derives new messaging keys.
+
+In Figure~\ref{fig:double-ratchet:double_ratchet}, an example of a Double Ratchet exchange is given.
+Each new round trip renews the Diffie-Hellman key material.
+
+\begin{figure}[!ht]
+    \centering
+    \input{figures/double-ratchet/double_ratchet_overview.tex}
+    \caption{An example of a simplified Double Ratchet exchange.}
+    \label{fig:double-ratchet:double_ratchet}
+\end{figure}
+
+\paragraph{Asymmetric Ratchet}
+The current Diffie-Hellman share is resend with every message to handle the loss of ciphertexts.
+A new Diffie-Hellman key exchange~(DHKE) is performed on every full round trip.
+If communication is continuous round trips will occur naturally.
+Regardless, receipt acknowledgments, as are sent in many messaging protocols, amplify the frequency of completed round trips.
+The asymmetric ratchet offers forward and post compromise security, as each full round trip is a full DHKE.
+
+\paragraph{Symmetric Ratchet}
+Each party maintains one ratchet for sending and one for receiving messages.
+At the beginning of each round trip, the root key $\rk$ and the chain key $\ck$ are renewed with a key derivation function~(KDF): $(\rk, \ck)\gets\KDF(\rk, g^{a_i b_i})$.
+The chain key is then used to derive a new chain key and a message key: $(\ck, \mk)\gets\KDF(\ck)$.
+
+Since the message key is not used to derive new key material, it can be stored on the device until the message is sent or received.
+Chain keys are deleted once the next chain key is derived.
+This gives the symmetric ratchet immediate forward security.
+

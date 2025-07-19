@@ -1,0 +1,44 @@
+% !TeX root = ..\..\main.tex
+\newcommand{\gen}{\mathrm{gen}}
+\newcommand{\enc}{\mathrm{enc}}
+\begin{tikzpicture}[%
+    level 1/.style={sibling distance=8cm}, %distances between nodes on level 1
+    level 2/.style={sibling distance=4cm},
+    level 3/.style={sibling distance=2cm},
+]
+    %draw the tree
+    \scoped [align=center] %allow all nodes to include line breaks (\\)
+        \node (n) {$\pk_{AH}\gets\gen(k_{AH})$\\$(k_{AH}, c_{AH})\getsr\enc(\pk_{EH})$} %set name of root node to n --> childs are named n-1/n-2 and grandchilds are n-1-1/n-1-2...
+            child {node {$\pk_{AD}\gets\gen(k_{AD})$\\$(k_{AD}, c_{AD})\getsr\enc(\pk_{CD})$}
+                child {node {$\pk_{AB}\gets\gen(k_{AB})$\\$(k_{AB}, c_{AB})\getsr\enc(\pk_B)$}
+                    child {node {Alice\\$\sk_A, \pk_A$}}
+                    child {node {Bob\\$\sk_B, \pk_B$}}
+                }
+                child {node {$\pk_{CD}\gets\gen(k_{CD})$\\$(k_{CD}, c_{CD})\getsr\enc(\pk_D)$}
+                    child {node {Charlie\\$\sk_C, \pk_C$}}
+                    child {node {Dave\\$\sk_D, \pk_D$}}
+                }}
+            child {node {$\pk_{EH}$\\$k_{EH}$}
+                child {node {$\pk_{EF}$\\$k_{EF}$}
+                    child {node {Eve\\$\sk_E, \pk_E$}}
+                    child {node {\dots} edge from parent[draw=none]} %draw the dots to indicate that there are more nodes; dont draw the edge from parent
+                }
+                child[missing]
+            };
+    
+    %ARROWS
+    %between Alice and Bob
+    \draw[->] (n-1-1-1) -- (n-1-1-2) node[midway, above] {$c_{AB}$};
+    %between Charlie and Dave
+    \draw[->] (n-1-2-1) -- (n-1-2-2) node[midway, above] {$c_{CD}$};
+    %between AB and CD
+    \draw[->] (n-1-1) -- (n-1-2) node[midway, above] {$c_{AD}$};
+    %between AD and EH
+    %If the arrow is drawn directly from node n-1-1 to n-1-2, it will be way to long and look bad
+    %--> place nodes left and right of n-1-1 and n-1-2 and use them as anchors for the arrows
+    % \node (n-1-1ArrowAnchor) [right=1mm of n-1-1] {};
+    % \node (n-1-2ArrowAnchor) [left=1mm of n-1-2] {};
+    \node (n-1ArrowAnchor) [right=1cm of n-1] {};
+    \node (n-2ArrowAnchor) [left=2cm of n-2] {};
+    \draw[->] (n-1ArrowAnchor) -- (n-2ArrowAnchor) node[midway, above] {$c_{AH}$};
+\end{tikzpicture}

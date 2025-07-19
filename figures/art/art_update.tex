@@ -1,0 +1,48 @@
+% !TeX root = ..\..\main.tex
+\begin{tikzpicture}[%
+    level 1/.style={sibling distance=8cm}, %distances between nodes on level 1
+    level 2/.style={sibling distance=4cm},
+    level 3/.style={sibling distance=2cm},
+]
+    %draw the tree
+    \scoped [align=center] %allow all nodes to include line breaks (\\)
+        \node (n) {7. $\pk'_{AH}\gets g^{k'_{AH}}$\\$k'_{AH}\gets g^{k'_{AD}k_{EH}}$} %set name of root node to n --> childs are named n-1/n-2 and grandchilds are n-1-1/n-1-2...
+            child {node {5. $\pk'_{AD}\gets g^{k'_{AD}}$\\$k'_{AD}\gets (\pk_{AB})^{k'_{CD}}=(\pk'_{CD})^{k_{AB}}$}
+                child {node {$\pk_{AB}\gets g^{k_{AB}}$\\$k_{AB}\gets g^{ab}$}
+                    child {node {Alice\\$a, g^a$}}
+                    child {node {Bob\\$b, g^b$}}
+                }
+                child {node {3. $\pk'_{CD}\gets g^{k'_{CD}}$\\$k'_{CD}\gets g^{c'd}$}
+                    child {node {1. Charlie\\$c', g^{c'}$}}
+                    child {node {Dave\\$d, g^d$}}
+                }}
+            child {node {$\pk_{EH}$\\$k_{EH}$}
+                child {node {$\pk_{EF}$\\$k_{EF}$}
+                    child {node {Eve\\$e, g^e$}}
+                    child {node {\dots} edge from parent[draw=none]} %draw the dots to indicate that there are more nodes; dont draw the edge from parent
+                }
+                child[missing]
+            };
+    
+    %ARROWS
+    %transform canvas is used to shift the upper arrow up and the lower arrow down
+
+    %between Alice and Bob
+    \draw[->, transform canvas={yshift= 2}] (n-1-1-1) -- (n-1-1-2) node[midway, above] {$g^a$};
+    \draw[<-, transform canvas={yshift=-2}] (n-1-1-1) -- (n-1-1-2) node[midway, below] {$g^b$};
+    %between Charlie and Dave
+    \draw[->, transform canvas={yshift= 2}] (n-1-2-1) -- (n-1-2-2) node[midway, above] {2. $g^{c'}$};
+    \draw[<-, transform canvas={yshift=-2}] (n-1-2-1) -- (n-1-2-2) node[midway, below] {$g^d$};
+    %between AB and CD
+    %If the arrow is drawn directly from node n-1-1 to n-1-2, it will be way to long and look bad
+    %--> place nodes left and right of n-1-1 and n-1-2 and use them as anchors for the arrows
+    \node (n-1-1ArrowAnchor) [right=1mm of n-1-1] {};
+    \node (n-1-2ArrowAnchor) [left=1mm of n-1-2] {};
+    \draw[->, transform canvas={yshift= 2}] (n-1-1ArrowAnchor) -- (n-1-2ArrowAnchor) node[midway, above] {$\pk_{AB}$};
+    \draw[<-, transform canvas={yshift=-2}] (n-1-1ArrowAnchor) -- (n-1-2ArrowAnchor) node[midway, below] {4. $\pk'_{CD}$};
+    %between AD and EH
+    \node (n-1ArrowAnchor) [right=1cm of n-1] {};
+    \node (n-2ArrowAnchor) [left=2cm of n-2] {};
+    \draw[->, transform canvas={yshift= 2}] (n-1ArrowAnchor) -- (n-2ArrowAnchor) node[midway, above] {$6. \pk'_{AD}$};
+    \draw[<-, transform canvas={yshift=-2}] (n-1ArrowAnchor) -- (n-2ArrowAnchor) node[midway, below] {$\pk_{EH}$};
+\end{tikzpicture}
