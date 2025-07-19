@@ -1,0 +1,82 @@
+\section{Messaging in Groups}
+
+Until now, we have only discussed messaging in two party settings.
+However, most messengers also support group messaging.
+
+\paragraph{Pairwise Channels} 
+One method to implement group messaging is to use existing pairwise channels (e.g., Double Ratchet channels).
+This method was used in early version of Signal.
+The advantage is, that forward and post-compromise security are inherited from the pairwise channels.
+The problem is that this introduces a communication overhead of $n-1$: 
+If one wants to send a message in a group with $n$ group members, $n-1$ different encryptions have to be constructed and sent through the pairwise channels.
+
+Another problem is managing the membership. 
+Earlier, this was done with a shared group secret as proof of membership.
+This introduces new problems, as the group secret has to be updated on every membership change.
+As a result, current implementations often use sophisticated server-assisted membership protocols.
+
+\paragraph{Sender Key Mechanism}
+This method is used in WhatsApp, Signal and many others.
+The idea is, that each member maintains $n$ sender ratchets per group, one for each group member.
+Then, the sender only has to create one ciphertext for the group, which is then sent to all group members.
+Using this method, the cryptographic overhead in ciphertext is eliminated, but there is no more post-compromise security.
+Forward security is still provided immediately, but to achieve post-compromise security, the sender keys have to be renewed periodically via pairwise channels, which reintroduces cryptographic overhead.
+
+\paragraph{Message Layer Security Standard}
+A third method of managing group messaging is the Message Layer Security~(MLS) standard~\cite{RFCMLS}.
+MLS uses tree based structures create and manage a shared group secret even if the users are offline most of the time.
+These structures will be explained in more detail in the following section.
+
+\subsection{Asynchronous Ratcheting Tree~(ART)}
+ART \cite{EPRINT:CCGMM17} uses Diffie-Hellman keys to asynchronously create a shared group secret.
+A tree for eight group members can be seen in Figure~\ref{fig:art:art}.
+The eight parties are at the leave nodes of the tree.
+
+\begin{figure}[!ht]
+    \centering
+    \input{figures/art/art.tex}
+    \caption{An example of an Asynchronous Ratcheting Tree~(ART) with eight group members.}
+    \label{fig:art:art}
+\end{figure}
+
+Now assume that Charlie was compromised at some point and now wants to update the group keys.
+Charlie can sample a new Diffie-Hellman share $c'$ and propagate the change upwards through the tree as seen in Figure~\ref{fig:art:art_update}.
+It is important to note, that the other parties do not have to be online for Charlie to update the keys.
+Once they are online, they can recompute the new group key from the new public keys.
+
+\begin{figure}[!ht]
+    \centering
+    \input{figures/art/art_update.tex}
+    \caption{Steps of Charlie updating their key in the ART of Figure~\ref{fig:art:art}.}
+    \label{fig:art:art_update}
+\end{figure}
+
+ART has a cryptographic overhead of $O(\log n)$, for updating group keys in a group of $n$ members.
+The group membership is also dynamic: When a new member joins, the tree is extended and when a member leaves, the tree is rewritten and the removed users path is updated.
+Since ART relies on DHKE, it is however not post-quantum secure.
+
+\subsection{Tree KEM}
+Instead of using DHKE, one can also use a key encapsulation mechanism~(KEM) to create a shared group key.
+
+\begin{figure}[!ht]
+    \centering
+    \input{figures/art/art_kem.tex}
+    \caption{An example of a Tree KEM with eight group members. $\mathrm{gen}(k)$ is the KEM gen algorithm with randomness $k$.}
+    \label{fig:art:art_kem}
+\end{figure}
+
+If Bob wants to update the group key, he does the following operations:
+\begin{enumerate}
+    \item $(\sk'_B, \pk'_B)\getsr\mathrm{gen}$
+    \item $(k'_{AB}, c'_{AB})\getsr\mathrm{enc}(\pk_A)$\\
+        $(s_\pk, s_{\mathrm{enc}})\gets\KDF(k'_{AB})$\\
+        $\pk_{AB}\gets\mathrm{gen}(s_\pk)$
+    \item $(k'_{AD}, c'_{AD})\gets\mathrm{enc}(\pk_{CD}; s_{\mathrm{enc}})$\\
+        $(s_\pk, s_{\mathrm{enc}})\gets\KDF(k'_{AD})$\\
+        $\pk'_{AD}\gets\mathrm{gen}(s_\pk)$
+    \item $(k'_{AH}, c'_{AH})\gets\mathrm{enc}(\pk_{EH}; s_{\mathrm{enc}})$\\
+        $(s_\pk, k_{\mathit{group}})\gets\KDF(k'_{AH})$\\
+        $\pk'_{AH}\gets\mathrm{gen}(s_\pk)$
+\end{enumerate}
+
+% We need to use seeds $s_\pk$ and $s_{\mathrm{enc}}$ as otherwise 
