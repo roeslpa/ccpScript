@@ -21,13 +21,14 @@ This course focuses on the following classes of \emph{real-world protocols} and 
 \label{sec:overview:dhke}
 
 Let $\DHgr=(\DHg,\DHp)$ be a group of prime order~$\DHp$ with generator~$\DHg$.
-That is, $\DHgr$ is a set with a multiplicativly written operation~$\cdot$. A
+That is, $\DHgr$ is a set with a multiplicativly written operation~`$\cdot$'. A
 simple example is the Group $\DHgr=(\ZZ_5^*,\cdot)$, where $\ZZ_5^* =
-\{1,2,3,4\}$. Then a generator for $\DHgr$ is $\DHg=2$, since $2^0=1$, $2^1=2$,
+\{1,2,3,4\}$ is the set of all integers modulo~$\DHp=5$ that have inverses; thus, $0$~is not $\ZZ_5^*$.
+Then a generator for $\DHgr$ is $\DHg=2$, since $2^0=1$, $2^1=2$,
 $2^2=4$, $2^3=8\equiv3\mod 5$, and $2^4=16\equiv 1\mod 5$. (Applying the
 group operation to the generator~$\DHg$ multiple times gives all group elements.)
 
-Then, the Diffie-Hellman Key Exchange~(DHKE)~\cite{DifHel76}
+The Diffie-Hellman Key Exchange~(DHKE)~\cite{DifHel76}
 between two users Alice and Bob works as follows:
 \begin{enumerate}
     \item Alice samples $x\getsr\ZZ_\DHp^*$, locally stores $x$, and sends $X\gets(\DHg^x\mod\DHp)$ to Bob
@@ -64,7 +65,7 @@ The advantage of an adversary~$\advA$ against the DDH problem in group~$\DHgr$ i
     \caption{The Decisional Diffie-Hellman~(DDH) problem.}
     \label{fig:ddh_assumption}
 \end{figure}
-Or 
+ 
 Intuitively, adversary~$\advA$ plays a game in which it sees both Diffie-Hellman shares $\DHg^x$ and $\DHg^y$ as well as either the real key~$\DHg^{xy}$~$(Z_0)$ or a random group element~$\DHg^z$~$(Z_1)$.
 To win this game, the adversary has to \emph{decide} which of the two views they saw.
 The advantage $\Adv_\DHgr^\ddh(\advA)$ denotes the probability of $\advA$ winning this game beyond pure guessing.
