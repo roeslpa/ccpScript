@@ -1,0 +1,12 @@
+% !TeX root = ..\..\main.tex
+\begin{tikzpicture}
+    \pic at (0,0) {stickfigure};
+    \pic at (2,0) {server};
+    \node[cylinder, draw, shape border rotate = 90, aspect=0.2] (DB) at (4, -.5) {DB};
+
+    \draw[->] (.6, -.4) -- (1.1, -.4) node[midway, above] {$q$};
+    \draw[<-] (.6, -.6) -- (1.1, -.6) node[midway, below] {$p$};
+
+    \draw[->] (2.9, -.4) -- (3.4, -.4);
+    \draw[<-] (2.9, -.6) -- (3.4, -.6);
+\end{tikzpicture}

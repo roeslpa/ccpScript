@@ -1,0 +1,110 @@
+\section{Advanced Primitives}
+
+In this section, we will give a brief overview of some advanced primitives.
+\alert{[JR] I added descriptions where I could, they probably need to be checked.}
+
+\begin{longtable}{p{.4\linewidth}p{.6\linewidth}}
+\textbf{Differential Privacy}\par
+For all permitted queries $q$, responses $r$ look similar enough independent of whether the database $\mathrm{DB}$ contains element $e$ or not.
+&
+\begin{minipage}[t][][c]{\linewidth}
+    \centering
+    \input{figures/adv_primitives/differential_privacy.tex}
+\end{minipage}\\
+
+\textbf{Searchable Encryption}\par
+Ciphertexts $c_1,\dots,c_n$ can be searched with help of server without revealing anything beyond.
+The clients query $q$ yields ciphertext indices $i_1, \dots, i_l$.
+&
+\begin{minipage}[t][][c]{\linewidth}
+    \centering
+    \input{figures/adv_primitives/searchable_encryption.tex}
+\end{minipage}\\
+
+\textbf{Broadcast Encryption}\par
+A user can encrypt a message in such a way, that a specified subset of users can decrypt it.
+&
+\begin{minipage}[t][][c]{\linewidth}
+    \centering
+    \input{figures/adv_primitives/broadcast_encryption.tex}
+\end{minipage}\\
+
+\textbf{Identity Based Encryption}\par
+Users can encrypt messages to a shared public root key and an identity $\mathit{id}$.
+Only the holder of $\mathit{id}$ can decrypt the message.
+&
+\begin{minipage}[t][][c]{\linewidth}
+    \centering
+    \input{figures/adv_primitives/identity_based_encryption.tex}
+\end{minipage}\\
+
+\textbf{Homomorphic Encryption}\par
+Homomorphic encryption allows an operation $f$ to be performed on encrypted data without decrypting it.
+&
+\begin{minipage}[t][][c]{\linewidth}
+    \centering
+    \input{figures/adv_primitives/homomorphic_encryption.tex}
+\end{minipage}\\
+
+\textbf{Non-malleable Codes}\par
+&
+\begin{minipage}[t][][c]{\linewidth}
+    \centering
+    \input{figures/adv_primitives/non_malleable_codes.tex}
+\end{minipage}\\
+
+\textbf{Secret Sharing}\par
+Users can encrypt a message $m$ into $n$ shares $(c_1, \dots, c_n)$ in such a way that it can only be recovered with at least $l$ shares. 
+&
+\begin{minipage}[t][][c]{\linewidth}
+    \centering
+    \input{figures/adv_primitives/secret_sharing.tex}
+\end{minipage}\\
+
+\textbf{Oblivious RAM, Private Information Retrieval, etc.}\par
+The server can answer queries without learning either the data nor the addresses.
+\alert{[JR] There are three different variants in ``oblivious\_ram.tex'', with different scaling of the stick figure and server. I think the 1.5 scale looks best.}
+&
+\begin{minipage}[t][][c]{\linewidth}
+    \centering
+    \input{figures/adv_primitives/oblivious_ram.tex}
+\end{minipage}\\
+
+\textbf{Anonymous Credentials, Blind Signatures, Ring Signatures, etc.}\par
+Users receive tokens with respect to their identity, and registered users can use these tokens and some function $f$ to authenticate themselves.
+$f(\mathit{token})$ reveals no information about the identity of the user nor the token.
+&
+\begin{minipage}[t][][c]{\linewidth}
+    \centering
+    \input{figures/adv_primitives/anonymous_credentials.tex}
+\end{minipage}\\
+
+\textbf{Zero Knowledge Proofs}\par
+A zero knowledge proof is a proof that some facts fulfill a certain statement.
+The proof is accepted only if the statement about the facts is true and does not reveal anything beyond the statement and its validity.
+&
+\begin{minipage}[t][][c]{\linewidth}
+    \centering
+    \input{figures/adv_primitives/zero_knowledge_proofs.tex}
+\end{minipage}\\
+
+\textbf{Multiparty Computation}\par
+Alice and Bob learn the result of function $f(a,b)$ or $g(a,b)$ respectively, without learning anything about the other party's input.
+&
+\begin{minipage}[t][][c]{\linewidth}
+    \centering
+    \input{figures/adv_primitives/multiparty_computation.tex}
+\end{minipage}\\
+
+\textbf{Indistinguishability Obfuscation}\par
+For two implementation $c_1, c_2$ of function $f$ with $|c_1|=|c_2|$, the encodings $E_1\gets\encode(c_1)$ and $E_2\gets\encode(c_2)$ are indistinguishable.
+&
+\alert{[JR] missing pictogram}\\
+
+\textbf{Blockchain etc.}\par
+In Blockchain systems, consensus is reached via a proof of resources (e.g.,\ work, stake).
+This makes it possible to avoid interactive protocols for consensus and enables asynchronous solutions.
+&
+\alert{[JR] missing pictogram}
+\end{longtable}
+

@@ -20,6 +20,50 @@
 \makeatother
 
 
+%define some tikz picture that get used multiple times
+%Stickfigure (in chapter "advanced primitives")
+\tikzset{
+  stickfigure/.pic={
+    \def\StickFigLegLength{.35} %length of the legs (shuold be choosen s.t. the height of stick figure is ~1cm)
+    \def\StickFigArmLength{.25} %length of the arms
+
+    %head
+    \draw (0,-.125) circle (-.125); %draw a circle with radius .125cm s.t. the northmost point is at (0,0)
+
+    %body
+    \node (LegsStart) at (0,-.7) {}; 
+    \node (ArmsStart) at (0,-.45) {};
+    \draw (0, -.25) -- (ArmsStart.center);
+    \draw (ArmsStart.center) -- (LegsStart.center);
+
+    %legs
+    \draw (LegsStart.center) -- ([turn]35:\StickFigLegLength); % (ANGLE:LENGTH) is a polar coordinate; [turn] makes the polar coordinate relative to the current coordiantes
+    \draw (LegsStart.center) -- ([turn]325:\StickFigLegLength);
+
+    %arms
+    \draw (ArmsStart.center) -- ([turn]120:\StickFigArmLength);
+    \draw (ArmsStart.center) -- ([turn]240:\StickFigArmLength);
+  }
+}
+%Server (in chapter "advanced primitives")
+\tikzset{
+  server/.pic={
+    %rectangle of monitor
+    \draw (-.4,0) rectangle (.4, -.7);
+    %lines in monitor 
+    %this solution is not optimal, as it does not scale with tikz-"scale" option --> everything else does
+    \node (M) at (0,-.35) {$\substack{\rule{4mm}{.1pt}\\\rule{4mm}{.1pt}}$};
+    
+    %Monitor stand
+    \node (Stand) at (0, -1) {};
+    %vertical line from monitor to ground
+    \draw (0, -.7) -- (Stand.center);
+    %horizontal line (~monitor stand)
+    \draw (Stand.center) -- +(.4, 0) -- +(-.4, 0); 
+  }
+}
+
+
 \newcommand{\algbox}[2]{\fbox{\parbox{#1}{#2}}}
 \newcommand{\arrbox}[2]{\parbox{#1}{\centering#2}}
 
@@ -133,6 +177,14 @@
 \newcommand{\secp}{\lambda}
 
 \fi
+
+%"nameless" functions --> do not print name of primitive
+\newcommand{\gen}{\mathrm{gen}}
+\newcommand{\enc}{\mathrm{enc}}
+\newcommand{\dec}{\mathrm{dec}}
+\newcommand{\del}{\mathrm{del}}
+\newcommand{\encode}{\mathrm{enode}}
+\newcommand{\decode}{\mathrm{decode}}
 
 %DH
 \newcommand{\DHgr}{\mathbb{G}}

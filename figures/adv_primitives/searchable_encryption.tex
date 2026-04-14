@@ -1,0 +1,23 @@
+% !TeX root = ..\..\main.tex
+\begin{tikzpicture}
+    \pic at (0,0) {stickfigure};
+    \pic at (3.5,-1.5) {server};
+    \node[cylinder, draw, shape border rotate = 90, aspect=0.2] (DB) at (5, -.5) {DB};
+
+    \node[align=left] at (1.3, -.5) {%
+        \scalebox{.66}{$\begin{drcases}
+            \mathrm{enc}(k, m_1)\\\dots\\\mathrm{enc}(k, m_n)
+        \end{drcases}$}
+    };
+
+    %Stickman to DB
+    \draw[->] (2.3, -.5) -- (4, -.5);
+
+    %DB to Server
+    \draw[<->] (4.5, -1) -- (4, -1.4);
+
+    %Stickman to Server
+    \draw[->] (.7, -1.2) -- (3, -1.7) node[midway, sloped, anchor=center, above] {$q$};
+    \draw[<-] (.7, -1.4) -- (3, -1.9) node[midway, sloped, anchor=center, below] {$(i_1, \dots, i_l)$};
+
+\end{tikzpicture}

@@ -1,0 +1,17 @@
+% !TeX root = ..\..\main.tex
+\begin{tikzpicture}
+    \pic[scale=1] at (0, 0) {stickfigure};
+    \pic[scale=1] at (5, 0) {stickfigure};
+
+    %Arrows in the middle
+    \draw[->] (2, -1) -- (3, -1);
+    \draw[<-] (2, -1.5) -- (3, -1.5);
+
+    %Arrows from Alice/Bob to the middle
+    \draw[->] (.5, -.5) -- (1.5, -1) node[midway, sloped, above] {$x$};
+    \draw[->] (4.5, -.5) -- (3.5, -1) node[midway, sloped, above] {$y$};
+
+    %Arrows the middle to "output"
+    \draw[->] (1.5, -1.5) -- (.5, -2) node[midway, sloped, above] {$f(x,y)$};
+    \draw[->] (3.5, -1.5) -- (4.5, -2) node[midway, sloped, above] {$f(x,y)$};
+\end{tikzpicture}

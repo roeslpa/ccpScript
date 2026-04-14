@@ -1,0 +1,9 @@
+% !TeX root = ..\..\main.tex
+\newcommand{\EK}{\overline{\mathrm{EK}}}   
+%we have to use itemize here, as align* does not work for some reason
+\begin{itemize}
+    \item $\gen(n)\tor(\ek_1,\dots,\ek_n,\dk_1,\dots,\dk_n)$
+    %\vspace{1mm} %manual fix for better vertical spacing
+    \item $\enc(\EK)\tor(k, c)$, where $\EK=\{\ek_a,\dots,\ek_z\}$ is the set of excluded receivers.
+    \item $\dec(\dk_i, c)\to k$, unless $\ek_i\in\EK$.
+\end{itemize}
