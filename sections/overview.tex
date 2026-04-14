@@ -3,32 +3,55 @@
 
 The goal of this course is to \emph{understand how to analyze the security of real-world protocols}.
 \emph{Analyzing} comprises
+%
 \begin{enumerate}
     \item Methodically Defining Security
     \item Identifying the Cryptographic Core of Protocols
     \item Systematically Finding Attacks against Protocols
     \item Formally Proving Security of Protocols
 \end{enumerate}
+%
 This course focuses on the following classes of \emph{real-world protocols} and their main building blocks:
+%
 \begin{itemize}
     \item Key Exchange Protocols
     \item Simple Communication Channels
     \item Messaging Protocols
     \item Group Membership Management Protocols
 \end{itemize}
+%
+To achieve this goal, the course is structured based on the following units:
+%
+\begin{enumerate}
+    \item Simple Building Blocks: Public-Key Encryption, Diffie Hellman Key Exchange, and ElGamal
+    \item Standard Security Definitions: Indistinguishability and Chosen Plaintext Attacks, Security Proof for ElGamal
+    \item Systematic Definitions for Key Encapsulation Mechanisms
+    \item Forward Secrecy for Key Exchange: Forward-Secure KEMs and Identity Based Encryption
+    \item Authenticated Key Echange: Signed Diffie Hellman and KEM-based Authentication
+    \item Real-World Key Exchange: TLS, Noise, X3DH, and Ratcheted Key Exchange
+    \item Forward Security and Post-Compromise Security: From Symmetric Channel to Ratcheted Key Exchange
+    \item Ratcheted Key Exchange: From Unidirectional to Bidirectional Communication and back
+    \item Unidirectional Ratcheted Key Exchange: Construction and Proof
+    \item Key-Updatable KEM and Real-World Ratcheting: Signal, WhatsApp, and Extensions
+    \item Double Ratchet and Ratcheted Key Exchange in Groups: Tree-based Diffie Hellman and TreeKEM
+    \item Overview of Advanced Cryptographic Primitives
+\end{enumerate}
+%
+This script aims to cover most of the contents of these units, but it does not (strictly) follow the structure.
 
 \subsection{First Informal Example: Diffie-Hellman Key Exchange}
 \label{sec:overview:dhke}
 
-Let $\DHgr=(\DHg,\DHp)$ be a group of prime order~$\DHp$ with generator~$\DHg$.
-That is, $\DHgr$ is a set with a multiplicatively written operation~`$\cdot$'. A
-simple example is the Group $\DHgr=(\ZZ_5^*,\cdot)$, where $\ZZ_5^* =
+Let $\DHgr=(\DHg,\DHp,\cdot)$ be a group of prime order~$\DHp$ with generator~$\DHg$ and operation~$\cdot$.
+That is, $\DHgr$ consists of a set with a multiplicatively written operation~`$\cdot$';
+the shortcut notion $\DHgr=(\DHg,\DHp)$ leaves the operation implicit.
+A simple example is the group $\DHgr=(\ZZ_5^*,\DHg,\cdot)$, where $\ZZ_5^* =
 \{1,2,3,4\}$ is the set of all integers modulo~$\DHp=5$ that have inverses; thus, $0$~is not in $\ZZ_5^*$.
 Then a generator for $\DHgr$ is $\DHg=2$, since $2^0=1$, $2^1=2$,
-$2^2=4$, $2^3=8\equiv3\mod 5$, and $2^4=16\equiv 1\mod 5$. (Applying the
-group operation to the generator~$\DHg$ multiple times gives all group elements.)
+$2^2=4$, $2^3=8\equiv3\mod 5$, and $2^4=16\equiv 1\mod 5$.
+(Applying the group operation to the generator~$\DHg$ multiple times gives all group elements.)
 
-The Diffie-Hellman Key Exchange~(DHKE)~\cite{DifHel76}
+Based on such a prime order group, the Diffie-Hellman Key Exchange~(DHKE)~\cite{DifHel76}
 between two users Alice and Bob works as follows (see Figure~\ref{fig:dhke}):
 \begin{enumerate}
     \item Alice samples $x\getsr\ZZ_\DHp^*$, locally stores $x$, and sends $X\gets(\DHg^x\mod\DHp)$ to Bob

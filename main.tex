@@ -39,28 +39,13 @@
 \input{sections/admin}
 
 \section{Preliminary Remarks}
-This document is based on the manuscript from the lecture sessions, which was lifted into \LaTeX with strong contributions by Jannes Rätsch.
+This document is based on the manuscript from the lecture sessions, which was lifted into \LaTeX\ with strong contributions by Jannes Rätsch.
 It is not (yet) a full course script.
 Instead, it is meant as an additional resource that systematizes the considered primitives, definitions, and constructions.
 The author invites readers to submit comments or pull requests via the GitHub Repository \url{https://github.com/roeslpa/ccpScript}.
 
 
 \section{Notation}
-
-\begin{tabular}{|l|p{13cm}|}\hline
-    \textbf{Symbol} & \textbf{Meaning}\\\hline
-    $\T$ / $\F$ & Boolean values true and false\\
-    $\gets$ / $\to$ & Assigns a constant expression or the output of a deterministic algorithm\\
-    $\getsr$ / $\tor$ & Assigns a random value uniformly sampled from a finite set or the output of a probabilistic algorithm\\
-    $\PS(X)$ & Power set of set~$X$ (i.e., each element of $\PS(X)$ is set of elements from set~$X$)\\
-    $(X)^+$ & Set of non-trivial vectors of elements from set~$X$\\
-    $X[\cdot]\gets x$ & Assigns all entries of array~$X$ with default value~$x$\\
-    Invoke $X$ & Executes algorithm $X$\\
-    Stop with $x$ & Terminates the running experiment with final output~$x$\\
-    Require $x$ & Ends the algorithm, resp.~oracle, if expression~$x=\F$\\\hline
-\end{tabular}
-
-\alert{Alternative:}
 
 \noindent
 \begin{tabularx}{\linewidth}{l X}\toprule
@@ -81,22 +66,11 @@ Start early in this course with learning and mapping terms and acronyms to their
 Use a table similar to the following, bring it to every session and extend it with new concepts that you want to remember.
 
 \noindent
-\begin{tabular}{|l|p{13cm}|}\hline
-    \textbf{Term} & \textbf{Meaning}\\\hline
-    Syntax & Abstract input and output interfaces of the algorithms that belong to a primitive.\\
-    IND-CPA & Indistinguishability (of encrypted messages/keys/\dots) under chosen plaintext attacks;
-    a ciphertext should not reveal a single bit about the encrypted plaintext and, when aiming to learn a plaintext bit, the attacker can observe ciphertexts for maliciously chosen plaintexts.\\
-    \dots & \dots\\\hline
-\end{tabular}
-
-\alert{Alternative:}
-
-\noindent
 % l@{\quad}: add a "quad" space after the first left-aligned (l) column --> Better spacing between "IND-CPA" and the second column.
 \begin{tabularx}{\linewidth}{l@{\quad}X}\toprule
     \textbf{Term} & \textbf{Meaning}\\\midrule
     Syntax & Abstract input and output interfaces of the algorithms that belong to a primitive.\\
-    IND-CPA & Indistinguishability (of encrypted messages/keys/\dots) under chosen plaintext attacks;
+    IND-CPA & \underline{Ind}istinguishability (of encrypted messages/keys/\dots) under \underline{c}hosen \underline{p}laintext \underline{a}ttacks;
     a ciphertext should not reveal a single bit about the encrypted plaintext and, when aiming to learn a plaintext bit, the attacker can observe ciphertexts for maliciously chosen plaintexts.\\
     \dots & \dots\\\bottomrule
 \end{tabularx}
