@@ -166,9 +166,9 @@ A public-key encryption scheme $\PKE$ is correct if every message encrypted unde
 
 \paragraph{Passive Security}
 We begin with a notion of passive security for PKE that is called \emph{Indistinguishability of Plaintexts under Chosen Plaintext Attacks} (IND-CPA).
-This models that adversaries only eavesdrop victims' ciphertexts for adversarially chosen messages --- hence, \emph{chosen plaintext attacks}.
+This models that adversaries only eavesdrop victims' ciphertexts for adversarially chosen messages---hence, \emph{chosen plaintext attacks}.
 However, the adversary never observes the decryption of ciphertexts that were not created by the victims themselves.
-The goal of the adversary is to decide which of two possible messages was encrypted in a challenge ciphertext --- hence, \emph{indistinguishability of ciphertext}.
+The goal of the adversary is to decide which of two possible messages was encrypted in a challenge ciphertext---hence, \emph{indistinguishability of plaintext}.
 
 We introduce this passive notion of security mainly for didactic reasons.
 Yet, we want to mention that the Fujisaki-Okamoto transform~\cite{C:FujOka99} lifts passively secure PKE schemes to actively secure ones.
@@ -224,7 +224,7 @@ The ElGamal PKE scheme~\cite{ElGamal85}, shown in Figure~\ref{fig:pke:elgamal:co
 Intuitively, the ElGamal PKE key pair~$(\dk,\ek)$ is Alice's key pair in the DHKE.
 For ElGamal encryption, one samples a fresh, ephemeral DHKE key pair, which corresponds to Bob's key in the DHKE.
 Using Alice's DHKE public key and Bob's DHKE secret key, one computes the shared key and multiplies the message to that shared key.
-On ElGamal decryption, the same shared key is computed and, by multiplying with its inverse, the original, encrypted message is derived.
+For decrypting with ElGamal, the same shared key is computed and, by multiplying with its inverse, the original, encrypted message is derived.
 
 That decryption yields the original message can be seen from the following equation:
 \[m\gets\frac{c_2}{c_1^\dk}=\frac{\ek^x\cdot m}{(g^x)^\dk}=\frac{g^{x\dk}\cdot m}{g^{x\dk}}=m\]
@@ -242,18 +242,22 @@ That decryption yields the original message can be seen from the following equat
     \label{fig:pke:elgamal:const}
 \end{figure}
 
-\paragraph{Security of ElGamal}
+\paragraph{Security of ElGamal: Sequence of Games}
 To prove IND-CPA security of the ElGamal encryption scheme, we assume that there is a successful adversary~$\advA$ against the IND-CPA security of $\PKE$ (Figure~\ref{fig:elgamal:ind}).
 We then construct another game $G_1^b$ (Figure~\ref{fig:elgamal:g1}) that is a small modification of the ElGamal IND-CPA game.
+Although this modification is small, it is crucial:
+Instead of giving the adversary the original ElGamal ciphertext~$c_2=\ek^x\cdot m_b$ for the challenge message~$m_b$, we give the adversary~$c_2'=\DHg^z\cdot m_b$.
 There can be no adversary against $G_1^b$ that does better than just guessing the bit $b$.
-This is because every value exposed to the adversary is independent of $b$.
-For $\pk$ and $c_1$ this is obvious and because $z$ is uniformly sampled from $\ZZ_p^*$, $c_2$ is also random.
+This is because every value exposed to the adversary is independent of the challenge bit~$b$.
+For $\ek$ and $c_1$ this is obvious; since~$z$ is sampled uniformly from $\ZZ_p^*$, $c_2$ is now also a random group element.
 
-To show that games $G_1^b$ and $\INDCPA_\PKE^b$ are indistinguishable, we turn every successful distinguisher~$\advD$ into a successful adversary against the DDH problem (Figure~\ref{fig:elgamal:reduction}).
+To show that games $G_1^b$ and $\INDCPA_\PKE^b$ are indistinguishable, we turn every successful distinguisher~$\advD$ between these two games into a successful adversary against the DDH problem (Figure~\ref{fig:elgamal:reduction}).
 The distinguisher~$\advD$ is an algorithm that outputs $d\gets\{0,1\}$ depending on which game ($\INDCPA_\PKE^b$ or $G_1^b$) it is playing against.
 
 The argument behind this proof strategy is as follows:
-If we have a game, for which no adversary can do better than guessing ($G_1^b$), and this game is indistinguishable from the original one, then no adversary can do better than guessing when playing the original game.
+If we have a game for which no adversary can do better than guessing ($G_1^b$), and this game is indistinguishable from the original one, then no adversary can do better than guessing when playing the original game.
+
+\alert{Until here: use $x$ as the exponent in the $\ek$ and $y$ as the exponent in the ciphertext both in the construction of DHKE, ElGamal PKE, and in the proof}
 
 \begin{figure}[!ht]
     \centering
@@ -278,3 +282,7 @@ If we have a game, for which no adversary can do better than guessing ($G_1^b$),
     \label{fig:elgamal:reduction}
 \end{figure}
 
+The proof strategy, sketched here, is called \emph{Sequence of Games}~\cite{EPRINT:Shoup04}.
+Its idea is to gradually modify the adversary's perspective in multiple \emph{game-hops}.
+Each game-hop introduces a small modification, and for every such game-hop, one proves that the implemented modification is undetectable.
+The last game in the sequence of game(-hop)s should be specified such that it is obvious that the adversary cannot win anymore.
