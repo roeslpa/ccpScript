@@ -60,6 +60,22 @@ The author invites readers to submit comments or pull requests via the GitHub Re
     Require $x$ & Ends the algorithm, resp.~oracle, if expression~$x=\F$\\\hline
 \end{tabular}
 
+\alert{Alternative:}
+
+\noindent
+\begin{tabularx}{\linewidth}{l X}\toprule
+    \textbf{Symbol} & \textbf{Meaning}\\\midrule
+    $\T$ / $\F$ & Boolean values true and false\\
+    $\gets$ / $\to$ & Assigns a constant expression or the output of a deterministic algorithm\\
+    $\getsr$ / $\tor$ & Assigns a random value uniformly sampled from a finite set or the output of a probabilistic algorithm\\
+    $\PS(X)$ & Power set of set~$X$ (i.e., each element of $\PS(X)$ is set of elements from set~$X$)\\
+    $(X)^+$ & Set of non-trivial vectors of elements from set~$X$\\
+    $X[\cdot]\gets x$ & Assigns all entries of array~$X$ with default value~$x$\\
+    Invoke $X$ & Executes algorithm $X$\\
+    Stop with $x$ & Terminates the running experiment with final output~$x$\\
+    Require $x$ & Ends the algorithm, resp.~oracle, if expression~$x=\F$\\\bottomrule
+\end{tabularx}
+
 \section{Cheat Sheet}
 Start early in this course with learning and mapping terms and acronyms to their meaning.
 Use a table similar to the following, bring it to every session and extend it with new concepts that you want to remember.
@@ -72,6 +88,18 @@ Use a table similar to the following, bring it to every session and extend it wi
     a ciphertext should not reveal a single bit about the encrypted plaintext and, when aiming to learn a plaintext bit, the attacker can observe ciphertexts for maliciously chosen plaintexts.\\
     \dots & \dots\\\hline
 \end{tabular}
+
+\alert{Alternative:}
+
+\noindent
+% l@{\quad}: add a "quad" space after the first left-aligned (l) column --> Better spacing between "IND-CPA" and the second column.
+\begin{tabularx}{\linewidth}{l@{\quad}X}\toprule
+    \textbf{Term} & \textbf{Meaning}\\\midrule
+    Syntax & Abstract input and output interfaces of the algorithms that belong to a primitive.\\
+    IND-CPA & Indistinguishability (of encrypted messages/keys/\dots) under chosen plaintext attacks;
+    a ciphertext should not reveal a single bit about the encrypted plaintext and, when aiming to learn a plaintext bit, the attacker can observe ciphertexts for maliciously chosen plaintexts.\\
+    \dots & \dots\\\bottomrule
+\end{tabularx}
 
 \input{sections/overview}
 
