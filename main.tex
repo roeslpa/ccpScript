@@ -51,14 +51,22 @@ The author invites readers to submit comments or pull requests via the GitHub Re
 \begin{tabularx}{\linewidth}{l X}\toprule
     \textbf{Symbol} & \textbf{Meaning}\\\midrule
     $\T$ / $\F$ & Boolean values true and false\\
-    $\gets$ / $\to$ & Assigns a constant expression or the output of a deterministic algorithm\\
-    $\getsr$ / $\tor$ & Assigns a random value uniformly sampled from a finite set or the output of a probabilistic algorithm\\
+    $[n]$ & The set $\{1,\dots,n\}$\\
     $\PS(X)$ & Power set of set~$X$ (i.e., each element of $\PS(X)$ is set of elements from set~$X$)\\
     $(X)^+$ & Set of non-trivial vectors of elements from set~$X$\\
+    $\gets$ / $\to$ & Assigns a constant expression or the output of a deterministic algorithm\\
+    $\getsr$ / $\tor$ & Assigns a random value uniformly sampled from a finite set or the output of a probabilistic algorithm\\
+    $X\coloneqq Y$ & Defines function/algorithm $X$ as $Y$\\
     $X[\cdot]\gets x$ & Assigns all entries of array~$X$ with default value~$x$\\
     Invoke $X$ & Executes algorithm $X$\\
+    Return $x$ & Terminates a running algorithm or oracle with output~$x$ that is given to the calling instance or adversary, resp.\\
     Stop with $x$ & Terminates the running experiment with final output~$x$\\
-    Require $x$ & Ends the algorithm, resp.~oracle, if expression~$x=\F$\\\bottomrule
+    Require $x$ & Ends the algorithm, resp.~oracle, if expression~$x=\F$\\
+    $\Pr[X]$ & Probability of event $X$\\
+    $\advA$ & Adversary aka.\ Attacker\\
+    $\advR$ & Reduction\\
+    $\Adv_\mathrm{C}^\mathrm{gm}(\advA)$ & Advantage, which is probability of adversary~$\advA$ in breaking construction~$\mathrm{C}$ in game~$\mathrm{gm}$ non-trivially\\
+    \bottomrule
 \end{tabularx}
 
 \section{Cheat Sheet}
@@ -388,7 +396,7 @@ Let $\DHgr=(\DHg,\DHp)$ be a group of prime order~$\DHp$ with generator~$\DHg$.
 \paragraph{Discrete Logarithm}
 The advantage of an adversary~$\advA$ against the discrete logarithm problem in group~$\DHgr$ is defined as:
 \[
-\Adv_\DHgr^\dlp(\advA)\coloneqq\Pr[\advA(\DHg,\DHp,\DHg^x)=x\mid x\getsr\ZZ_\DHp^*]\text{.}
+\Adv_\DHgr^\dlog(\advA)\coloneqq\Pr[\advA(\DHg,\DHp,\DHg^x)=x\mid x\getsr\ZZ_\DHp^*]\text{.}
 \]
 
 

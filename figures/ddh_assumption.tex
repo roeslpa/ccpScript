@@ -3,14 +3,14 @@
 \newcommand{\rarrowproof}[1]{\xrightarrow{\mathmakebox[.9\linewidth]{#1}}}
 \begin{tabular}{lll}
     \algbox{4.5cm}{%
-        \textbf{DDH}$^b_{\DHgr=(\DHg, \DHp)}$\\
-        $x,y,z \getsr \ZZ_p^*$\\
+        \textbf{Game}$\DDH^b_{\DHgr=(\DHg, \DHp)}$\\
+        $x,y,z \getsr \ZZ_\DHp^*$\\
         $X\gets g^x, Y\gets g^y,Z_0\gets g^{xy}$\\
         $Z_1\gets g^z$\\~\\
         Return $b'$}&
     \arrbox{2cm}{%    
         ~\\~\\
-        $\rarrowproof{(\DHg,\DHp,X,Y,Z_p)}$
+        $\rarrowproof{(\DHg,\DHp,X,Y,Z_\DHp)}$
         \\~\\
         $\larrowproof{b'}$}&
     \algbox{3cm}{%
