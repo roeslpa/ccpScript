@@ -7,6 +7,13 @@
 
 \newcolumntype{C}[1]{>{\centering\arraybackslash\hspace{0pt}}p{#1}}
 
+% "\skiplines{x} inserts "\\ \strut\\ \strut\\..." so that x lines are skipped.
+% Used to create blank lines in "boxes-and-arrows style proofs without triggering the underfull badness error"
+\usepackage{pgffor}
+\newcommand{\skiplines}[1]{%
+  \foreach \i in {1,...,#1} {\strut \\}%
+}
+
 %provides \intertext analogue for lists
 %\listintertext*{text} inserts text flush with left margin
 %\listintertext{text} inserts text flush with left margin of the list environment one higher (if it exists)

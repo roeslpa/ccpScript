@@ -1,7 +1,7 @@
 %!TEX root=../main.tex
 \begin{tabular}{lll}
     \algbox{4.5cm}{%
-        \textbf{DDH}$^b_{g,p}$\\
+        \textbf{DDH}$^b_{\DHgr=(\DHg, \DHp)}$\\
         $x,y,z \getsr \ZZ_p^*$\\
         $X\gets g^x, Y\gets g^y,Z_0\gets g^{xy}$\\
         $Z_1\gets g^z$\\~\\
@@ -9,6 +9,27 @@
     \arrbox{2cm}{%    
         ~\\~\\$\xrightarrow{(\DHg,\DHp,X,Y,Z_p)}$\\~\\
         $\xleftarrow{b'}$}&
+    \algbox{3cm}{%
+        \textbf{Adversary} $\advA$:\\~\\~\\~\\~\\}
+\end{tabular}
+
+\alert{Alternative (fixed arrow length in ``boxes-and-arrows-style proofs''):}
+
+\noindent
+\newcommand{\larrowproof}[1]{\xleftarrow{\mathmakebox[.9\linewidth]{#1}}}
+\newcommand{\rarrowproof}[1]{\xrightarrow{\mathmakebox[.9\linewidth]{#1}}}
+\begin{tabular}{lll}
+    \algbox{4.5cm}{%
+        \textbf{DDH}$^b_{\DHgr=(\DHg, \DHp)}$\\
+        $x,y,z \getsr \ZZ_p^*$\\
+        $X\gets g^x, Y\gets g^y,Z_0\gets g^{xy}$\\
+        $Z_1\gets g^z$\\~\\
+        Return $b'$}&
+    \arrbox{2cm}{%    
+        ~\\~\\
+        $\rarrowproof{(\DHg,\DHp,X,Y,Z_p)}$
+        \\~\\
+        $\larrowproof{b'}$}&
     \algbox{3cm}{%
         \textbf{Adversary} $\advA$:\\~\\~\\~\\~\\}
 \end{tabular}
