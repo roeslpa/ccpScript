@@ -9,9 +9,12 @@ The syntax specifies the algorithms of a primitive by defining their inputs and 
 
 A key encapsulation mechanism $\KEM=(\KEMgen,\KEMenc,\KEMdec)$ is a tuple of three algorithms with encapsulation key space~$\eksp$, decapsulation key space~$\dksp$, ciphertext space~$\csp$, and symmetric key space~$\ksp$:
 \begin{itemize}
-    \item $\KEMgen: \emptyset \tor \dksp\times\eksp$
-    \item $\KEMenc: \eksp \tor \ksp\times\csp$
-    \item $\KEMdec: \dksp\times\csp \to \ksp$
+    \item $\KEMgen: \emptyset \tor \dksp\times\eksp$\\ 
+    Generates a key pair of decapsulation key~$\dk\in\dksp$ and encapsulation key~$\ek\in\eksp$
+    \item $\KEMenc: \eksp \tor \ksp\times\csp$\\
+    Encapsulates a message~$k\in\ksp$ with encapsulation key~$\ek\in\eksp$ in ciphertext~$c\in\csp$
+    \item $\KEMdec: \dksp\times\csp \to \ksp$\\
+    Decapsulates key~$k\in\ksp$ with decapsulation key~$\dk\in\dksp$ from ciphertext~$c\in\csp$
 \end{itemize}
 
 Intuitively a KEM can be considered a special case of PKE that is limited to always encrypt (aka.\ encapsulate) fresh symmetric keys.
@@ -46,11 +49,21 @@ The literature on distributed systems developed two complementary notions of cor
 A correctness definition in the sense of \emph{safety} typically suffices for the ultimate goal of defining and analyzing security.
 Furthermore, specifying \emph{liveness} requirements for sophisticated primitives sometimes leads to complex, incomprehensible definitions.
 
-A key encapsulation mechanism $\KEM$ is correct if
+For the simple case of a KEM, a correctness definition in the flavor of safety would be:
 \[
-\Pr[\KEMdec(\dk,c)=k\mid (\dk,\ek)\getsr\KEMgen,(k,c)\getsr\KEMenc(\ek))=m]=1\text{.}
+\Pr[\KEMdec(\dk,c)\in\{k,\bot\}\mid (\dk,\ek)\getsr\KEMgen,(k,c)\getsr\KEMenc(\ek))=m]=1
 \]
-Equivalently, a key encapsulation mechanism $\KEM$ is correct if $\Pr[\CORR_{\KEM}(\advA)=0]=1$ for all adversaries~$\advA$, where game~$\CORR$ is defined in Figure~\ref{fig:kem:corr}.
+and a correctness definition in the flavor of liveness would be:
+\[
+\Pr[\KEMdec(\dk,c)\neq\bot\mid (\dk,\ek)\getsr\KEMgen,(k,c)\getsr\KEMenc(\ek))=m]=1\text{,}
+\]
+which, in combination, leads to the standard correctness definitions for a~$\KEM$:
+\[
+\Pr[\KEMdec(\dk,c)=k\neq\bot\mid (\dk,\ek)\getsr\KEMgen,(k,c)\getsr\KEMenc(\ek))=m]=1\text{.}
+\]
+
+For more sophisticated primitives and protocols, one can tame complexity of definitions by specifying a correctness game.
+Following the safety idea, a key encapsulation mechanism $\KEM$ is correct if $\Pr[\CORR_{\KEM}(\advA)=0]=1$ for all adversaries~$\advA$, where game~$\CORR$ is defined in Figure~\ref{fig:kem:corr}.
 
 \begin{figure}[!ht]
     \centering
@@ -67,12 +80,14 @@ Equivalently, a key encapsulation mechanism $\KEM$ is correct if $\Pr[\CORR_{\KE
 \end{figure}
 
 \subsection{Adversarial Capabilities}
-Defining \emph{security} can be divided into three components:
+Defining \emph{security} can be divided into three steps:
 modeling the \emph{capabilities of adversaries},
-specifying the \emph{adversaries' goal}, and
+specifying the \emph{security goal}, and
 identifying attack strategies that are \emph{trivially} successful against every possible construction.
-The former two components are typically influenced by intuitive purpose of the considered primitive and how this primitive is used in practice;
-the latter one is almost entirely determined by all remaining definitional steps.
+
+The former two steps are typically influenced by human intuition regarding the purpose of the considered primitive and how this primitive is used in practice.
+This influence of human intuition can lead to ambiguities.
+The latter step, identifying trivial attack strategies, is almost entirely determined by all remaining definitional steps, which reduces ambiguity.
 
 \subsubsection{Typical Capabilities}
 We begin with considering typical adversarial capabilities against KEMs:
@@ -94,11 +109,8 @@ We begin with considering typical adversarial capabilities against KEMs:
 The most standard adversarial capabilities that are considered realistic and defendable for KEMs are chosen-plaintext and chosen-ciphertext attacks (CPA resp.\ CCA).
 
 Consider the adversarial capabilities shown in Figure~\ref{fig:adv_capabilities}.
-Here, the adversary can see the values in the dashed boxes, as well as send values (in red).
-Observing the values $\ek$ and $c$ is possible by eavesdropping, but the fact that $k'$ is visible might be surprising at first.
-This is because an active adversary can send $c'$ and observe certain \emph{side-channels} to learn information about $k'$.
-E.g. the adversary can measure the time it takes to decapsulate $c'$ or send an invalid $c'$ and observe the error message.
-To model this capability we provide the adversary with the ability to choose ciphertexts for decapsulation and provide it with the decryption oracle (CCA).
+Here, the adversary can see the values in the dashed boxes, as well as send chosen values (in red) to the victims.
+Observing the values~$\ek$ and~$c$ is motivated by simple eavesdropping attacks, which models CPA.
 
 \begin{figure}[!ht]
     \centering
@@ -110,7 +122,13 @@ To model this capability we provide the adversary with the ability to choose cip
 \end{figure}
 
 \paragraph{Chosen-Ciphertext Attacks}
-The game $\INDCCA$ is defined in Figure~\ref{fig:kem:ind}.
+The fact that~$k'$ is visible is motivated by active adversaries who can send~$c'$ and observe certain \emph{side-channels} to learn information about~$k'$.
+For example, the adversary can measure the time it takes to decapsulate~$c'$ or send an invalid~$c'$ and observe the error message.
+To model this capability we allow the adversary to choose ciphertexts for decapsulation and provide it with the decapsulation oracle~(CCA).
+This decapsulation oracle models all forms of leaked side-channel information that can be obtained by observing the decapsulation.
+
+The game $\INDCCA$, defined in Figure~\ref{fig:kem:ind}, captures chosen-ciphertext attacks as oracle $\Odec$ is provided;
+if querying this oracle is forbidden, only chosen-plaintext attacks are modeled.
 
 \begin{figure}[!ht]
     \centering
@@ -126,18 +144,18 @@ The game $\INDCCA$ is defined in Figure~\ref{fig:kem:ind}.
     \label{fig:kem:ind}
 \end{figure}
 
-\subsection{Adversarial Goal}
-The adversarial goal is the second component of defining security.
-It describes what the adversary is trying to learn. 
-The adversarial goal is typically denoted in the first part of the name of the security game (e.g. \emph{IND}-CPA or \emph{OW}-CCA)
+\subsection{Security Goal}
+Specifying security goal is our second step.
+It describes what the adversary is trying to break and what the cryptographic primitive is trying to protect/prevent.
+The security goal is typically denoted in the first part of the name of the security game (e.g. \emph{IND}-CPA or \emph{OW}-CCA).
 
 \subsubsection{Typical Goals}
-For KEMs, the typical adversarial goals are either indistinguishability of ciphertexts or one-way security.
+For KEMs, the typical security goals are either \emph{indistinguishability} or \emph{one-way security} of the encapsulated keys.
 
 \paragraph{One-Way Security}
-One-way security~(OW-security) is the intuitive definition of the adversarial goal. 
-For a KEM, OW-security defines this to be learning the encapsulated key $k$.
-The security game $\OWCCA$ is defined in Figure~\ref{fig:kem:ow:cca} and the $\OWCPA$ game follows from it by excluding the decryption oracle.
+For a KEM, one-way~(OW) security means that must be hard to learn the full encapsulated key~$k$.
+Thus, an attacker is only successful if all bits of the key are derived correctly.
+The security game $\OWCCA$ is defined in Figure~\ref{fig:kem:ow:cca} and the $\OWCPA$ game follows from it by excluding the decapsulation oracle.
 
 \begin{figure}[!ht]
     \centering
@@ -153,16 +171,17 @@ The security game $\OWCCA$ is defined in Figure~\ref{fig:kem:ow:cca} and the $\O
     \label{fig:kem:ow:cca}
 \end{figure}
 
-\paragraph{Indistinguishability of Ciphertexts}
-As we have seen in Section~\ref{sec:overview:pke}, we sometimes want \emph{indistinguishability} of the generated ciphertext and a randomly chosen ciphertext.
+\paragraph{Indistinguishability}
+As we have seen in Section~\ref{sec:overview:pke}, we sometimes want \emph{indistinguishability} of the secret encrypted information from some other chosen or randomly sampled bit strings.
 The reason for this is that it gives us a stronger security guarantee. 
 Namely, if a construction is IND secure, the adversary is unable to learn a single bit of the secret.
 The $\INDCCA$ game is defined in Figure~\ref{fig:kem:ind}
 
 \subsection{Trivial Winning Strategies}\label{sec:kem:trivial_attacks}
 So far, we have done some unexplained bookkeeping in our security games. The reason for that are \emph{trivial winning strategies}.
-These are strategies or attacks that work against every correct construction, simply because the constructions have to give sensible responses.
-For our KEM there are two trivial winning conditions we need to guard against (Figure~\ref{kem:triv}).
+These are strategies or attacks work against every correct construction, simply because correctness enforces that the constructions behave \emph{meaningfully}.
+For our KEM, there are two trivial winning strategies we need to guard against (Figure~\ref{kem:triv}):
+The decapsulation oracle is used to learn the key from the challenge ciphertext; this key is either directly used as the game's solution ($\OWCCA$), or it is compared with the challenge key to win the game ($\INDCCA$).
 
 \begin{figure}[!ht]%
     \centering
@@ -175,24 +194,25 @@ Now that the trivial winning conditions are defined, we can specify the advantag
 For the OW-CPA and OW-CCA games that is:
 \begin{align*}
     \Adv_\KEM^\owcpa(\advA)\coloneqq&\Pr[\OWCPA_{\KEM}(\advA)=1]\\
-    \Adv_\KEM^\owcca(\advA)\coloneqq&\Pr[\OWCCA_{\KEM}(\advA)=1]
+    \Adv_\KEM^\owcca(\advA)\coloneqq&\Pr[\OWCCA_{\KEM}(\advA)=1]\text{.}
 \end{align*}
-And the advantages for the IND games are defined as:
+The advantages for the IND games are defined as:
 \begin{align*}
     \Adv_\KEM^\indcpa(\advA)\coloneqq&\left|\Pr[\INDCPA_{\KEM}^0(\advA)=1]-\Pr[\INDCPA_{\KEM}^1(\advA)=1]\right|\\
-    \Adv_\KEM^\indcca(\advA)\coloneqq&\left|\Pr[\INDCCA_{\KEM}^0(\advA)=1]-\Pr[\INDCCA_{\KEM}^1(\advA)=1]\right|
+    \Adv_\KEM^\indcca(\advA)\coloneqq&\left|\Pr[\INDCCA_{\KEM}^0(\advA)=1]-\Pr[\INDCCA_{\KEM}^1(\advA)=1]\right|\text{.}
 \end{align*}
 
-If there exists a provably secure construction for a definition, then there are no more open trivial winning conditions.
+To validate that all trivial winning conditions are caught and forbidden, it suffices to find a secure construction and prove that it satisfies the definition.
 
 \paragraph{Multi-Instance Security}
-Definitions of security, such as the IND-CCA game, differ depending on the context.
-One example of that would be the multi-instance security game (Figure~\ref{fig:kem:ind:mi:corrupt}).
+The security definitions introduced so far only cover a single (pair) of victims that are attacked by an adversary.
+In contrast, in the real-world an adversary can interact with many victims and break the security of only one of them.
+To account for this, one can define a multi-instance security game (Figure~\ref{fig:kem:ind:mi:corrupt}).
 This game is called \emph{multi-instance} because it captures a setting in which many instances are running concurrently.
 This can be the case in TLS for example, where many connections are established at the same time.
-If we were to use the IND-CCA game from Figure~\ref{fig:kem:ind}, then we would have to use the \emph{hybrid argument} to prove security.
+If we were to use the IND-CCA game from Figure~\ref{fig:kem:ind}, then we would have to use a, so called, \emph{hybrid argument} to prove security.
 The hybrid argument can be used to prove security for multiple instances, by showing step by step that each instance is secure and then showing the indistinguishability between each step.
-Doing so however, yields a factor $q$ in the final security bound, where $q$ is the number of instances.
+Doing so, however, yields a factor~$q$ in the final security bound, where $q$ is the number of instances.
 To avoid this degeneration of the security bound, we can use the multi-instance game, for which sometimes tighter security bounds exist.
 
 \begin{figure}[!ht]

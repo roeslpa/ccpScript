@@ -155,7 +155,7 @@ A public-key encryption scheme $\PKE=(\PKEgen,\PKEenc,\PKEdec)$ is a tuple of th
     \item $\PKEenc: \eksp\times\msp \tor \csp$\\
     Encrypts a message~$m\in\msp$ with encryption key~$\ek\in\eksp$ in ciphertext~$c\in\csp$
     \item $\PKEdec: \dksp\times\csp \to \msp$\\
-    decrypts a message~$m\in\msp$ with decryption key~$\dk\in\eksp$ from ciphertext~$c\in\csp$
+    Decrypts a message~$m\in\msp$ with decryption key~$\dk\in\dksp$ from ciphertext~$c\in\csp$
 \end{itemize}
 
 \paragraph{Correctness}
@@ -275,6 +275,9 @@ If we have a game for which no adversary can do better than guessing ($G_1^b$), 
         \label{fig:elgamal:g1}
     \end{minipage}
 \end{figure}
+
+\alert{Make sure that $\ek$ vs.\ $\pk$ are used consistently.}
+
 \begin{figure}[!ht]
     \centering
     \input{figures/pke/elgamal_reduction.tex}

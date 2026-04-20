@@ -1,7 +1,7 @@
 \section{Forward Security}
 \label{sec:forward-sec}
 
-\paragraph{Motivation} Until now, we have used a secret key that was only known by one or more honest parties participating in the various protocols.
+Until now, we have used a secret key that was only known by one or more honest parties participating in the various protocols.
 However in the real world, the secret key often gets compromised, and the adversary learns some information about it.
 This might happen if the device gets stolen or confiscated, if the honest parties get hacked or just through human error.
 If we use our KEM from Figure~\ref{fig:kem:const:elgamal} as an example, this would enable the adversary to decapsulate every single ciphertext that was sent (if the adversary recorded the ciphertexts).
