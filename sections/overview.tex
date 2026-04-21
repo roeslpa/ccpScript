@@ -221,13 +221,13 @@ The advantage of an adversary~$\advA$ against public-key encryption scheme $\PKE
 \paragraph{ElGamal Encryption}
 Now, we look at a concrete instantiation of a public-key encryption scheme:
 The ElGamal PKE scheme~\cite{ElGamal85}, shown in Figure~\ref{fig:pke:elgamal:const}, uses at its core the Diffie-Hellman key exchange.
-Intuitively, the ElGamal PKE key pair~$(\dk,\ek)$ is Alice's key pair in the DHKE.
+Intuitively, the ElGamal PKE key pair~$(x,\ek)$ is Alice's key pair in the DHKE.
 For ElGamal encryption, one samples a fresh, ephemeral DHKE key pair, which corresponds to Bob's key in the DHKE.
 Using Alice's DHKE public key and Bob's DHKE secret key, one computes the shared key and multiplies the message to that shared key.
 For decrypting with ElGamal, the same shared key is computed and, by multiplying with its inverse, the original, encrypted message is derived.
 
 That decryption yields the original message can be seen from the following equation:
-\[m\gets\frac{c_2}{c_1^\dk}=\frac{\ek^x\cdot m}{(g^x)^\dk}=\frac{g^{x\dk}\cdot m}{g^{x\dk}}=m\]
+\[m\gets\frac{c_2}{c_1^x}=\frac{\ek^y\cdot m}{(g^y)^x}=\frac{g^{xy}\cdot m}{g^{xy}}=m\]
 \begin{figure}[!ht]
     \centering
     \nicoresetlinenr%
