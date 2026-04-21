@@ -6,28 +6,28 @@
     \nicodemusbox{\markerlenndL}{%
         \textbf{Proc} $\PKEgen$
         \begin{nicodemus}
-            \item $\dk\getsr\ZZ_\DHp^*$
+            \item $x\getsr\ZZ_\DHp^*$
             \item $\ek\gets\DHg^\dk$
-            \item Return $(\dk,\ek)$
+            \item Return $(x,\ek)$
         \end{nicodemus}%
     }%
     &
     \nicodemusbox{\markerlenndM}{%
         \textbf{Proc} $\PKEenc(\ek,m)$
         \begin{nicodemus}
-            \item $x\getsr\ZZ_\DHp^*$
-            \item $c_1\gets\DHg^x$
-            \item $c_2\gets\ek^x\cdot m$
+            \item $y\getsr\ZZ_\DHp^*$
+            \item $c_1\gets\DHg^y$
+            \item $c_2\gets\ek^y\cdot m$
             \item $c\gets(c_1,c_2)$
             \item Return~$c$
         \end{nicodemus}%
     }%
     &
     \nicodemusbox{\markerlenndR}{%
-        \textbf{Proc} $\PKEdec(\dk,c)$
+        \textbf{Proc} $\PKEdec(x,c)$
         \begin{nicodemus}
             \item $(c_1,c_2)\gets c$
-            \item $m\gets c_2/c_1^\dk$
+            \item $m\gets c_2/c_1^x$
             \item Return $m$
         \end{nicodemus}%
     }%

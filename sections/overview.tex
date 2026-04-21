@@ -246,7 +246,7 @@ That decryption yields the original message can be seen from the following equat
 To prove IND-CPA security of the ElGamal encryption scheme, we assume that there is a successful adversary~$\advA$ against the IND-CPA security of $\PKE$ (Figure~\ref{fig:elgamal:ind}).
 We then construct another game $G_1^b$ (Figure~\ref{fig:elgamal:g1}) that is a small modification of the ElGamal IND-CPA game.
 Although this modification is small, it is crucial:
-Instead of giving the adversary the original ElGamal ciphertext~$c_2=\ek^x\cdot m_b$ for the challenge message~$m_b$, we give the adversary~$c_2'=\DHg^z\cdot m_b$.
+Instead of giving the adversary the original ElGamal ciphertext~$c_2=\ek^y\cdot m_b$ for the challenge message~$m_b$, we give the adversary~$c_2'=\DHg^z\cdot m_b$.
 There can be no adversary against $G_1^b$ that does better than just guessing the bit $b$.
 This is because every value exposed to the adversary is independent of the challenge bit~$b$.
 For $\ek$ and $c_1$ this is obvious; since~$z$ is sampled uniformly from $\ZZ_p^*$, $c_2$ is now also a random group element.
