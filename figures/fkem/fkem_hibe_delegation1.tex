@@ -4,10 +4,10 @@
     level 2/.style = {level distance = .75cm, sibling distance = 1.25cm}]
     \node at (0,0) {$\sk_\epsilon$}
         child  {node {$\sk_{0}$}                            
-            child [missing]                    
+            child [missing]  % We only want to show the right (i.e. the "1") child, so we declare this node to be missing              
             child {node {$\sk_{01}$}
                 child[dotted] {node {$\sk_{01\dots1}$}
-                    child[solid] {node {$\sk_{01\dots10}$}}
+                    child[solid] {node {$\sk_{01\dots10}$}} % We need to declare this node to be solid to prevent it from being dotted by inheriting the option from the parent.
                     child[missing]}}}
-        child  [missing];
+        child [missing];
 \end{tikzpicture}
