@@ -51,9 +51,8 @@ Furthermore, specifying \emph{liveness} requirements for sophisticated primitive
 
 For the simple case of a KEM, a correctness definition in the flavor of safety would be:
 \[
-\Pr[\KEMdec(\dk,c)\in\{k,\bot\}\mid (\dk,\ek)\getsr\KEMgen,(k,c)\getsr\KEMenc(\ek))\alert{=m}]=1
+\Pr[\KEMdec(\dk,c)\in\{k,\bot\}\mid (\dk,\ek)\getsr\KEMgen,(k,c)\getsr\KEMenc(\ek))]=1
 \]
-\alert{[JR] What does ``$=m$'' mean? I removed it in the next two formulas.}
 and a correctness definition in the flavor of liveness would be:
 \[
 \Pr[\KEMdec(\dk,c)\neq\bot\mid (\dk,\ek)\getsr\KEMgen,(k,c)\getsr\KEMenc(\ek))]=1\text{,}
