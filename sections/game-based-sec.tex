@@ -211,10 +211,11 @@ In contrast, in the real-world an adversary can interact with many victims and b
 To account for this, one can define a multi-instance security game (Figure~\ref{fig:kem:ind:mi:corrupt}).
 This game is called \emph{multi-instance} because it captures a setting in which many instances are running concurrently.
 This can be the case in TLS for example, where many connections are established at the same time.
-If we were to use the IND-CCA game from Figure~\ref{fig:kem:ind}, then we would have to use a, so called, \emph{hybrid argument} to prove security.
+
+To prove that the single-instance IND-CCA game from Figure~\ref{fig:kem:ind} implies its multi-instance generalization from Figure~\ref{fig:kem:ind:mi:corrupt}, one would use a, so called, \emph{hybrid argument}.
 The hybrid argument can be used to prove security for multiple instances, by showing step by step that each instance is secure and then showing the indistinguishability between each step.
-Doing so, however, yields a factor~$q$ in the final security bound, where $q$ is the number of instances.
-To avoid this degeneration of the security bound, we can use the multi-instance game, for which sometimes tighter security bounds exist.
+Doing so, however, yields a factor~$q$ in the final security bound, where $q$ is the total number of instances.
+To avoid this degeneration of the security bound, we can use the multi-instance game, for which sometimes tighter security bounds than the above general hybrid proof exist.
 
 \begin{figure}[!ht]
     \centering

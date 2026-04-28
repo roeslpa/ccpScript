@@ -1,25 +1,24 @@
 \section{Forward Security}
 \label{sec:forward-sec}
 
-Until now, we have used a secret key that was only known by one or more honest parties participating in the various protocols.
-However in the real world, the secret key often gets compromised, and the adversary learns some information about it.
-This might happen if the device gets stolen or confiscated, if the honest parties get hacked or just through human error.
+Until now, we have considered secret keys that are only known by the honest parties participating in the various protocols.
+However in the real world, secret keys are sometimes compromised, which means that the adversary learns this key.
+This might happen if the device is stolen or confiscated, if the honest parties are hacked, or just through human error.
 If we use our KEM from Figure~\ref{fig:kem:const:elgamal} as an example, this would enable the adversary to decapsulate every single ciphertext that was sent (if the adversary recorded the ciphertexts).
-Forward security guarantees that messages before the compromise remain secure (Figure~\ref{fig:fs:sketch}).
-However, forward security does not guarantee that messages after the compromise are secure.
+Forward security guarantees that keys and messages received \emph{before} the compromise remain secure (Figure~\ref{fig:fs:sketch}).
+However, forward security does not guarantee that keys and messages sent \emph{after} the compromise are secure.
 
-In this section, we will discuss how to achieve security even if the secret key is compromised in the future, using our KEM as an example.
+In this section, we will discuss how to achieve security even if the secret key is compromised in the future, using KEM as an example.
+More sophisticated and alternative examples in the literature include~\cite{SP:GreMie15,EC:CanHalKat03,EC:GHJL17}.
 
 \begin{figure}[!ht]
     \centering
     \input{figures/fs-alt}
-    \caption{A sketch of forward security}
+    \caption{A sketch of forward security.}
     \label{fig:fs:sketch}
 \end{figure}
 
 \subsection{Forward Secure KEMs}
-
-\alert{add \cite{SP:GreMie15,EC:CanHalKat03,EC:GHJL17}}
 
 \paragraph{Syntax} To provide security even if the secret key is leaked, we have to change the secret key over time.
 We can achieve this by updating the decapsulation key after every decapsulation.
@@ -88,7 +87,7 @@ A $\HIBE$ scheme consists of the following algorithms: $\HIBE = (\HIBEgen,\HIBEe
 We motivate $\HIBE$ with the example of domain based infrastructure.
 Due to its inefficiency, $\HIBE$ is not used in practice for this, but it is a good example to understand the concept.
 In our example Alice only knows the email address of Bob and the public key of the top domain (`\texttt{.de}'), and wants to send an encapsulated key to him.
-The key can then be used by Alice and Bob to encrypt messages with a symmetric encryption scheme, so it is important that only Alice and Bob can learn the key (and not an entity along the domain path).
+The key can then be used by Alice and Bob to encrypt messages with a symmetric encryption scheme, so it is important that only Alice and Bob can learn the key (in particular not an entity that is not on Bob's domain path).
 
 Through a series of delegations~($\HIBEdel$) Bob's secret key~$\sk''''$ is derived from the top domain's secret key~$\sk$.
 
@@ -102,23 +101,24 @@ Through a series of delegations~($\HIBEdel$) Bob's secret key~$\sk''''$ is deriv
 \paragraph{Syntax} Concretely, a $\HIBE$ scheme is defined as follows:
 \begin{itemize}
     \item $\HIBEgen : \emptyset \tor \sksp\times\pksp$
-    \item $\HIBEenc: \pksp\times\{0,1\}^{l\cdot\lambda} \tor \csp\times\ksp$
+    \item $\HIBEenc: \pksp\times\BB^{l\cdot\lambda} \tor \csp\times\ksp$, where $l\in\NN$ is the hierarchy level and $\lambda\in\NN$ is the number of bits that an identity sub-string in each hierarchy level can have.
     \item $\HIBEdec: \sksp\times\csp \to \ksp$
-    \item $\HIBEdel: \sksp\times\{0,1\}^\lambda \to \sksp$
+    \item $\HIBEdel: \sksp\times\BB^\lambda \to \sksp$
 \end{itemize}
 
-\paragraph{Correctness} A $\HIBE$ scheme is correct if the secret key $\sk$ delegated to string $\mathit{id}=\mathit{id}_1||\dots||\mathit{id}_l$ can decapsulate the ciphertext $c$ in $(k,c) \getsr \HIBEenc(\pk,\mathit{id})$.
+\paragraph{Correctness (informal)} An $\HIBE$ scheme is correct if the secret key $\sk$ delegated to string $\mathit{id}=\mathit{id}_1||\dots||\mathit{id}_l$ can decapsulate the ciphertext $c$ in $(k,c) \getsr \HIBEenc(\pk,\mathit{id})$.
 For brevity, we do not give a formal definition of correctness.
 % \[\Pr[\HIBEdec(\sk, c)=k \mid \HIBEenc(\pk, \mathit{id})\tor(k,c), \HIBEgen\tor(\sk_0,\pk)]=1\]
 % where there is a chain of delegations $\HIBEdel(\sk_0,\mathit{id_1})\to\sk_1,\dots,\HIBEdel(\sk_{l-1},\mathit{id_l})\to\sk$
 
-\paragraph{Security} Once again, we only give an informal definition:
-A $\HIBE$ scheme is secure if $k$ is indistinguishable from a random key, with $(k,c)\getsr\HIBEenc(\pk,\mathit{id})$, as long as none of the secret keys delegated to prefixes of $\mathit{id}$ are corrupted.
+\paragraph{Security (informal)} Once again, we only give an informal definition:
+Anx $\HIBE$ scheme is secure if $k$ is indistinguishable from a random key, with $(k,c)\getsr\HIBEenc(\pk,\mathit{id})$, as long as none of the secret keys delegated to prefixes of $\mathit{id}$ are corrupted.
 
 \subsubsection{Construction of a forward-secure KEM from HIBE}
 
 An overview of how a construction of a forward-secure KEM from $\HIBE$ works is shown in Figure~\ref{fig:fkem:hibe:interaction}.
-The $\mathit{nonce}$ is a random number with bit length $l$ and serves as the identity for the $\HIBE$ scheme. 
+The $\mathit{nonce}$ (number used once) is a random number with bit length $l$ and serves as the identity for the $\HIBE$ scheme;
+thereby, $\lambda$ is set to a single bit, which leads to a binary hierarchy tree.
 The $\mathit{nonce}$ should be unique for every encapsulation, i.e.\ it should be only used once.
 
 \begin{figure}[!ht]
@@ -131,18 +131,19 @@ The $\mathit{nonce}$ should be unique for every encapsulation, i.e.\ it should b
 \paragraph{Delegation} In Figure~\ref{fig:fkem:hibe:interaction}, the delegation of the secret key $\sk_{\mathit{nonce}}$ from $\sk$ still needs to be addressed.
 As an example, let $\mathit{nonce}=01\dots10$. The delegation is done in 5 steps:
 \begin{enumerate}
-    \item Delegate along path of $\mathit{nonce}$~(Figure~\ref{fig:fkem:hibe:delegation1})\\
+    \item Delegate along path of $\mathit{nonce}$~(Figure~\ref{fig:fkem:hibe:delegation1}).\\
         This gives the secret key $\sk_{01\dots10}$.
-    \item Decapsulate $c$ with resulting secret key $\sk_{\mathit{nonce}}$
-    \item Delegate co-path of $\mathit{nonce}$~(Figure~\ref{fig:fkem:hibe:delegation3})\\
+    \item Decapsulate $c$ with resulting secret key $\sk_{\mathit{nonce}}$.
+    \item Delegate co-path of $\mathit{nonce}$~(Figure~\ref{fig:fkem:hibe:delegation3}).\\
         The co-path contains all siblings of nodes on the original path.
-    \item Remove secret keys on the path of $\mathit{nonce}$~(Figure~\ref{fig:fkem:hibe:delegation4})\\
+    \item Remove secret keys on the path of $\mathit{nonce}$~(Figure~\ref{fig:fkem:hibe:delegation4}).\\
         The keys $(\sk_\epsilon,\sk_0,\sk_{01},\sk_{01\dots1},\sk_{01\dots10})$ are removed.
-    \item Remember only secret keys on co-path\\
-        The new secret keys are $(\sk_1,\sk_{00},\sk_{01\dots11})$ and those along the co-path of $\sk_{01}$ and $\sk_{01\dots1}$.
+    \item Remember only secret keys on co-path.\\
+        The new secret keys are $(\sk_1,\sk_{00},\sk_{01\dots11})$ and those along the co-path between the nodes of $\sk_{01}$ and $\sk_{01\dots1}$.
 \end{enumerate}
 
-It should be noted, that the number of secret keys grows logarithmically in the number of decryptions, which makes these $\HIBE$ constructions inefficient. 
+It should be noted, that the number of secret keys grows logarithmically in the number of decryptions.
+This degrades the performance of this $\HIBE$-based construction even further than what is caused by the performance limitations of $\HIBE$ itself already. 
 
 \begin{figure}[!ht]
     \centering
@@ -170,17 +171,17 @@ It should be noted, that the number of secret keys grows logarithmically in the 
 
 \paragraph{Example} We provide a short example of how a $\FKEM_\HIBE$ can be used to decapsulate two messages.
 
-Let Bob receive two messages $c_1=(c_1',``10")$ and $c_2=(c_2',``00")$ in that order.
+Let Bob receive two messages $c_1=(``10'',c_1')$ and $c_2=(``00'',c_2')$ in that order.
 For this, he sets the $\FKEM$~$\sk$ to the $\sk_\epsilon$ generated by the $\HIBEgen$ algorithm.
 He then delegates $\sk_\epsilon$ to $\sk_{10}$ using the five steps described above:
 \begin{enumerate}
-    \item Delegate along path of $\mathit{nonce}_1=10$\\
+    \item Delegate along path of $\mathit{nonce}_1=10$.\\
         This results in the tree shown in Figure~\ref{fig:fkem:hibe:example1-1} and the secret key $\sk_{10}$.
-    \item Decapsulate $c_1$ with resulting secret key $\sk_{10}$\\
+    \item Decapsulate $c_1$ with resulting secret key $\sk_{10}$.\\
         This gives the encapsulated key $k_1$.
-    \item Delegate co-path of $10$\\
+    \item Delegate co-path of $10$.\\
         This results in the tree shown in Figure~\ref{fig:fkem:hibe:example1-3} and the secret keys $\sk_{00}$.
-    \item Remove the secret keys on the path of $10$\\
+    \item Remove the secret keys on the path of $10$.\\
         The secret keys $\sk_\epsilon$, $\sk_0$, $\sk_{10}$ are removed (Figure~\ref{fig:fkem:hibe:example1-4}).
     \item The new secret keys are $\sk_0$, and $\sk_{11}$.
 \end{enumerate}
