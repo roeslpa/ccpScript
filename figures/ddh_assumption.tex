@@ -1,6 +1,4 @@
 %!TEX root=../main.tex
-\newcommand{\larrowproof}[1]{\xleftarrow{\mathmakebox[.9\linewidth]{#1}}}
-\newcommand{\rarrowproof}[1]{\xrightarrow{\mathmakebox[.9\linewidth]{#1}}}
 \begin{tabular}{lll}
     \algbox{4.5cm}{%
         \textbf{Game}$\DDH^b_{\DHgr=(\DHg, \DHp)}$\\
@@ -10,9 +8,9 @@
         Return $b'$}&
     \arrbox{2cm}{%    
         ~\\~\\
-        $\rarrowproof{(\DHg,\DHp,X,Y,Z_\DHp)}$
+        $\xrightarrow{(\DHg,\DHp,X,Y,Z_\DHp)}$
         \\~\\
-        $\larrowproof{b'}$}&
+        $\xleftarrow{b'}$}&
     \algbox{3cm}{%
         \textbf{Adversary} $\advA$:\\~\\~\\~\\~\\}
 \end{tabular}
