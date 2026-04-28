@@ -4,19 +4,19 @@
     \algbox{4cm}{%
         \textbf{Game} $\SUFCMA_\SIG$:\\
         $\MS\gets\emptyset$\\
-        $(\sk,\vk)\getsr\SIGgen$\\
-        \\
+        $(\sk,\vk)\getsr\SIGgen$\skiplines{2}    
+        %
         $\sig\gets\SIGsig(\sk, m)$\\
-        $\MS\gets\MS\cup\{(m, \sig)\}$\\
-        \\
+        $\MS\gets\MS\cup\{(m, \sig)\}$\skiplines{2}
+        %
         If $\SIGvfy(\vk, m^*, \sig^*)=1$:\\
         $\land (m^*,\sig^*)$:\\
         \hspace*{1em}Stop with~$1$\\ %\quad does not work; but quad should have length 1em
         Stop with~$0$}&
     \arrbox{1cm}{%
-        $\xrightarrow{\vk}$\\~\\  
+        $\xrightarrow{\vk}$\skiplines{2}
         $\xleftarrow{m}$\\
-        $\xrightarrow{\sig}$\\~\\
+        $\xrightarrow{\sig}$\skiplines{2}
         $\xleftarrow{m^*,\sig^*}$}&
     \algbox{6.5cm}{%
         \textbf{Reduction} $\mathcal{R}$
@@ -30,8 +30,8 @@
         \end{itemize}
     }&
     \arrbox{1cm}{
-        $\leftrightarrow$\\~\\~\\~\\
+        $\leftrightarrow$\skiplines{4}
         $\xleftarrow{d}$}&
     \algbox{2.5cm}{%
-        \textbf{Adversary} $\advD_1^2$\\~\\~\\~\\~\\~\\~\\~\\}
+        \textbf{Adversary} $\advD_1^2$\skiplines{8}\strut}
 \end{tabular}
