@@ -4,7 +4,7 @@
         \textbf{Game}$\DDH^b_{\DHgr=(\DHg, \DHp)}$\\
         $x,y,z \getsr \ZZ_\DHp^*$\\
         $X\gets g^x, Y\gets g^y,Z_0\gets g^{xy}$\\
-        $Z_1\gets g^z$\\~\\
+        $Z_1\gets g^z$\skiplines{2}
         Return $b'$}&
     \arrbox{2cm}{%    
         ~\\~\\
@@ -12,5 +12,5 @@
         \\~\\
         $\xleftarrow{b'}$}&
     \algbox{3cm}{%
-        \textbf{Adversary} $\advA$:\\~\\~\\~\\~\\}
+        \textbf{Adversary} $\advA$:\skiplines{5}\strut} % \strut to prevent underfull hbox
 \end{tabular}

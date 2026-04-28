@@ -2,9 +2,11 @@
 \newcommand{\CC}{\mathit{CC}}%
 \begin{tabular}{lllll}
     \algbox{4cm}{%
-        \textbf{Game} $\\OWCCA_\KEM$:\\
-        $(\dk,\ek)\getsr\KEMgen$\\~\\
-        $(k^*, c^*)\getsr\KEMenc(\ek)$\\~\\
+        \textbf{Game} $\OWCCA_\KEM$:\\
+        $(\dk,\ek)\getsr\KEMgen$\skiplines{2}
+        %
+        $(k^*, c^*)\getsr\KEMenc(\ek)$\skiplines{2}
+        %
         If $c\neq c^*:$\\
         \hspace*{1em}$k\gets\KEMdec(\dk, c)$\\
         If $k'\neq k^*$:\\
@@ -12,8 +14,8 @@
         Else: Stop with~$1$\\
         Stop with~$0$}&
     \arrbox{1cm}{%
-        $\xrightarrow{\ek}$\\~\\  
-        $\xrightarrow{c^*}$\\~\\
+        $\xrightarrow{\ek}$\skiplines{2}
+        $\xrightarrow{c^*}$\skiplines{2}
         $\xleftarrow{c}$\\
         $\xrightarrow{k}$\\
         $\xleftarrow{k'}$\\
@@ -29,8 +31,8 @@
         \end{itemize}
     }&
     \arrbox{1cm}{
-        $\leftrightarrow$\\~\\~\\~\\
+        $\leftrightarrow$\skiplines{4}
         $\xleftarrow{d}$}&
     \algbox{2.5cm}{%
-        \textbf{Adversary} $\advD_4^5$\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\}
+        \textbf{Adversary} $\advD_4^5$\skiplines{8}\strut}
 \end{tabular}
