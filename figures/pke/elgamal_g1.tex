@@ -1,12 +1,10 @@
-%!TEX root=../../main.tex%place a strut here, to make this box the same size as the adversarial box.
-\newcommand{\alertcolor}{red!90!black}
+%!TEX root=../../main.tex
 \begin{tabular}{lll}
     \algbox{3.5cm}{
-
         \textbf{Game} $G_1^b$:\\
         $x\gets\ZZ_p^*,\ek\gets\DHg^x$\\
-        $y,{\color{\alertcolor}z}\getsr\ZZ_p^*$\\
-        $c_1\gets\DHg^y, c_2^1\gets{\color{\alertcolor}\DHg^z}$\\
+        $y,\textcolor{redb}{z}\getsr\ZZ_p^*$\\
+        $c_1\gets\DHg^y, c_2^1\gets\textcolor{redb}{\DHg^z}$\\
         $c_2\gets c_2^1\cdot m_b$\\
         $c^*\gets(c_1,c_2)$\\
         Return $b'$}&
