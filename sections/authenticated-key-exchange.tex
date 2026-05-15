@@ -1,13 +1,21 @@
 \section{Authenticated Key Exchange}
 \label{sec:AKE}
 
-In practice, our key exchange protocol should provide authentication.
-This means that after the key exchange, both parties should be sure that their communication partner is indeed the intended party and that no other party has knowledge of their shared symmetric key.
+Using a Key Encapsulation Mechanism~(KEM), two parties can easily establish a fresh symmetric key.
+With the forward secure construction from Section~\ref{sec:forward-sec}, the fresh symmetric key even remains secure if the receiver's decapsulation key is ever corrupted.
+Since this construction is based on Hierarchical Identity-based Encryption~(HIBE), it suffers from impractical performance limitations.
+Furthermore, neither a KEM nor its forward secure extension offer any authenticity guarantees for the receiver:
+The receiver does not even know who established the key with them.
 
-\paragraph{Key Exchange with Interaction} Consider the \emph{key exchange with interaction}~(IKE) protocol from the exercise. 
+In this section, we begin with adding interaction between the two parties to \emph{efficiently} achieve forward security;
+in a second step, we extend the result to also provide authenticity.
+Thus, after the key exchange, both parties can be sure that their communication partner is indeed the intended party and that no other party has knowledge of their shared symmetric key.
+
+\paragraph{Key Exchange with Interaction} 
+Consider the \emph{key exchange with interaction}~(IKE) protocol from the exercise. 
 As a reminder, the protocol (here called two-pass key exchange) is defined as follows:
 
-A two-pass key exchange $\TKE=(\TKEsnd,\TKErsp,\TKErcv)$ is a tuple of three algorithms with state space~$\stsp$, initial ciphertext space~$\csp_I$, response ciphertext space~$\csp_R$, and symmetric key space~$\ksp$:
+A Two-Pass Key Exchange $\TKE=(\TKEsnd,\TKErsp,\TKErcv)$ is a tuple of three algorithms with state space~$\stsp$, initial ciphertext space~$\csp_I$, response ciphertext space~$\csp_R$, and symmetric key space~$\ksp$:
 
 \begin{itemize}
     \item $\TKEsnd: \emptyset \tor \stsp\times\csp_I$
@@ -15,9 +23,10 @@ A two-pass key exchange $\TKE=(\TKEsnd,\TKErsp,\TKErcv)$ is a tuple of three alg
     \item $\TKErcv: \stsp\times\csp_R \to \ksp$
 \end{itemize}
 
-A normal protocol execution can be seen in Figure~\ref{fig:tke:overview}.
+A protocol execution can be seen in Figure~\ref{fig:tke:overview}.
+This protocol can be based on a standard KEM by embedding a freshly generated encapsulation key in the first ciphertext from Alice to Bob, and embedding the KEM ciphertext to this encapsulation key in the response.
 
-The problem with a two-pass key exchange is that it is vulnerable to a \emph{Man-in-the-Middle} attack, where the adversary $\advA$ intercepts the messages between Alice and Bob and replaces them with its own messages (and therefore its own keys)~(Figure~\ref{fig:tke:MitM}).
+The problem with a two-pass key exchange is that it is vulnerable to a \emph{Person-in-the-Middle} attack, where the adversary~$\advA$ intercepts the messages between Alice and Bob and replaces them with their own messages (and therefore their own keys)~(Figure~\ref{fig:tke:MitM}).
 
 \begin{figure}[!ht]
     \centering
@@ -30,7 +39,7 @@ The problem with a two-pass key exchange is that it is vulnerable to a \emph{Man
     \begin{subfigure}{.49\textwidth}
         \centering
         \input{figures/tke/tke_MitM.tex}
-        \caption{$\TKE$ Man-in-the-Middle attack.}
+        \caption{$\TKE$ Person-in-the-Middle attack.}
         \label{fig:tke:MitM}
     \end{subfigure}
     \caption{Two-pass key exchange protocol.}
@@ -45,8 +54,8 @@ An authenticated key exchange $\AKE=(\AKEgen,\allowbreak\AKEsnd,\allowbreak\AKEr
     \item $\AKErsp_I: \stsp\times\csp \tor \ksp\times\csp$
     \item $\AKErcv: \sksp\times\stsp\times\csp \to \pksp\times\ksp$
 \end{itemize}
-
-An overview of normal protocol execution is given in Figure~\ref{fig:ake:overview}. 
+%
+An overview of a protocol execution is provided in Figure~\ref{fig:ake:overview}. 
 
 \begin{figure}[!ht]
     \centering
@@ -55,23 +64,32 @@ An overview of normal protocol execution is given in Figure~\ref{fig:ake:overvie
     \label{fig:ake:overview}
 \end{figure}
 
-\paragraph{Correctness} An $\AKE$ protocol is correct if Alice and Bob compute the same key $k$ for every honest protocol execution.
+\paragraph{Correctness (informal)}
+An $\AKE$ protocol is correct if Alice and Bob compute the same key $k$ for every honest protocol execution.
 
-\paragraph{Security} The adversary has access to the following oracles with the goal of using the $\Ochall$ oracle to output bit $b$.
+\paragraph{Security (informal)}
+The adversary has access to the following oracles.
+With these oracles, the adversary can generate new parties' key pairs and start sessions between parties.
+To participate in a session, each party has a dedicated instance that executes the respective key exchange algorithms.
+In every terminated session, a key is established.
+For such keys, the adversary can query oracle $\Ochall$ that outputs either the real key established in a session (if challenge bit $b=0$) or a random key (if $b=1$).
+The adversary terminates with a guess~$b'$ for challenge bit~$b$.
 
 \setlength\itemizeskip{3.5cm}
 \begin{itemize}
-    \item $\Ogen() \to \pk$:\hfill\makebox[\linewidth-\itemizeskip][l]{Generate new party}
-    \item $\Osnd(i, s, \pk) \to c$:\hfill\makebox[\linewidth-\itemizeskip][l]{Lets instance $s$ of party $i$ start a session with party $\pk$}
-    \item $\Orsp(i,s,c)\to c'$:\hfill\parbox[t][][l]{\linewidth-\itemizeskip}{Lets instance $s$ of party $i$ respond to $c$\\Also used for final receipt}
+    \item $\Ogen() \to \pk$:\hfill\makebox[\linewidth-\itemizeskip][l]{Generate a new party's long-term key pair}
+    \item $\Osnd(i, s, \pk) \to c$:\hfill\makebox[\linewidth-\itemizeskip][l]{Lets instance $s$ of party $i$ start a session with the party who owns~$\pk$}
+    \item $\Orsp(i,s,c)\to c'$:\hfill\parbox[t][][l]{\linewidth-\itemizeskip}{Lets instance $s$ of party $i$ respond to $c$; also used for final receipt}
     \item $\Ocorrupt(i)\to\sk_i$:\hfill\makebox[\linewidth-\itemizeskip][l]{Corrupts party $i$'s long-term secret key}
     \item $\Oreveal(i,s)\to k_{i,s}$:\hfill\makebox[\linewidth-\itemizeskip][l]{Reveals final session key computed by instance $s$ of party $i$} 
-    \item $\Ochall(i,s)\to k_{i,s,b}$:\hfill\makebox[\linewidth-\itemizeskip][l]{Either outputs real or random session key of instance $c$ of party $i$}
+    \item $\Ochall(i,s)\to k_{i,s,b}$:\hfill\makebox[\linewidth-\itemizeskip][l]{Either outputs real or random session key of instance~$s$ of party $i$}
 \end{itemize}
 
 \paragraph{Trivial winning conditions} The trivial attacks are listed in Figure~\ref{fig:ake:trivial}. 
 Note that the names of the trivial attacks give the general strategy and that the provided pseudocode can sometimes be changed (e.g., by switching the order of $\Ochall$ and $\Oreveal$ in the first attack).
 The third attack in particular requires only that $\pk_j$ is the intended partner of $(i,s)$ and that $(i,s)$ has no session partners.
+An attacker against an~$\AKE$ is only considered successful if neither of these trivial attacks is performed.
+Based on this, our informal security definition requires a secure $\AKE$ to provide authenticity and forward security.
 
 \begin{figure}[!ht]
     \centering
@@ -80,24 +98,27 @@ The third attack in particular requires only that $\pk_j$ is the intended partne
     \label{fig:ake:trivial}
 \end{figure}
 
-\paragraph{Session partners} When talking about $\AKE$ it is helpful to formalize the concept of \emph{session partners}. 
-In literature however, there are different definitions of session partners, which can be summarized as follows:
+\paragraph{Session partners}
+To formalize Trivial Attack~2, the concept of \emph{session partners} must be defined. 
+In literature, however, there are different variants for this concept, which can be summarized as follows:
 \begin{itemize}
     \item \emph{Matching Conversations} \cite{C:BelRog93}: ``Both instances saw the same transcript''
-    \item \emph{Session identifiers}: ``Both instances saw the same relevant parts of the transcript''
+    \item \emph{Session identifiers} \cite{STOC:BelRog95,EPRINT:BCJSW24}: ``Both instances saw the same relevant parts of the transcript''
     \item \emph{Original Key Partnering} \cite{EPRINT:LiSch17}: ``Using the same randomness, $(i,s)$ and $(j,t)$ would have computed the same key in an honest execution''
 \end{itemize}
+A more detailed discussion of the advantages and disadvantages of these concepts, as well as a systematization of security definitions for authenticated key exchange can be found in~\cite{RSA:PRSS21,EPRINT:BCJSW24}.
 This lecture uses the \emph{Matching Conversations} definition when talking about session partners.
 
-\alert{PR: add references to and integrate: \cite{RSA:PRSS21,EPRINT:BCJSW24}}
-
-\paragraph{Constructions} We present two constructions of authenticated key exchange protocols. 
-The first one (Figure~\ref{fig:ake:signed_dh}) is based on the Diffie-Hellman key exchange and uses signatures to provide integrity.
+\paragraph{Constructions}
+We present two constructions of authenticated key exchange protocols.
+Both constructions also provide forward security.
+The first one (Figure~\ref{fig:ake:signed_dh}) is based on an ephemeral Diffie-Hellman key exchange and uses signatures to provide authenticity.
 
 The second AKE construction (Figure~\ref{fig:ake:kem}) uses a KEM and a multi-key PRF (Figure~\ref{fig:prf:multi_key:ind}). 
-In Figure~\ref{fig:ake:kem}, the secrets that can be learned by the adversary $\advA$ after corrupting Alice and Bob are colored orange and blue, respectively.
-For example, after corrupting Bob and learning the secret key $\sk_B$, $\advA$ can decapsulate $c_1$ (which can be learned by eavesdropping on the communication) and obtain $k_1$.
-The symmetric key $k$ will still remain secure, since $k_3$ will not be known to $\advA$, even if both Alice and Bob were corrupted.
+This construction provides forward security \emph{and} authenticity via the security of the underlying KEM.
+To see how this is achieved, we highlight the secrets that can be learned by the adversary~$\advA$ after corrupting Alice and Bob in orange and blue, respectively, in Figure~\ref{fig:ake:kem}.
+For example, after corrupting Bob and learning the secret key $\sk_B$, $\advA$ can decapsulate~$c_1$ (which can be learned by eavesdropping on the communication) and obtain $k_1$.
+The symmetric key $k$ will still remain secure, since $k_3$ will not be known to~$\advA$, even if both Alice and Bob were corrupted.
 The reason for this is the usage of fresh keys $\sk',\pk'$ for each new execution.
 
 \begin{figure}[!ht]
@@ -115,7 +136,8 @@ The reason for this is the usage of fresh keys $\sk',\pk'$ for each new executio
 \end{figure}
 
 \subsection{Real-World Authenticated Key Exchange}
-Even though there are many more real world examples, this script will focus on three examples:
+\alert{continue here.}
+Even though there are many more similarly important real world $\AKE$ protocols, this script focuses on three relevant examples.
 
 \subsubsection{Transport Layer Security~(TLS) \cite{RFCTLS13}}
 TLS key exchange is similar to the signed Diffie-Hellman construction in Figure~\ref{fig:ake:signed_dh}.
