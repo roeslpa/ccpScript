@@ -115,9 +115,15 @@ In literature, however, there are different variants for this concept, which can
 A more detailed discussion of the advantages and disadvantages of these concepts, as well as a systematization of security definitions for authenticated key exchange can be found in~\cite{RSA:PRSS21,EPRINT:BCJSW24}.
 This lecture uses the \emph{Matching Conversations} definition when talking about session partners.
 
+\paragraph{Clean Formalism for Key Exchange}
+In collaboration with Doreen Riepel, we developed an exemplary collection of definitions, constructions, and security proofs for basic authenticated key exchange protocols.%
+\footnote{\url{https://github.com/proof-ladders/protocol-ladder/blob/main/Notes/computational/main.pdf}}
+\href{https://github.com/proof-ladders/protocol-ladder/blob/main/Notes/computational/main.pdf}{This collection} can be used to gain a deeper understanding of a clean formalism for key exchange and how to analyze its security precisely.
+
+
 \paragraph{Constructions}
 We present two constructions of authenticated key exchange protocols.
-Both constructions also provide forward security.
+Both constructions provide forward security.
 The first one (Figure~\ref{fig:ake:signed_dh}) is based on an ephemeral Diffie-Hellman key exchange and uses signatures to provide authenticity.
 
 The second AKE construction (Figure~\ref{fig:ake:kem}) uses a KEM and a multi-key PRF (Figure~\ref{fig:prf:multi_key:ind}). 
@@ -141,13 +147,18 @@ The reason for this is the usage of fresh keys $\sk',\pk'$ for each new executio
     \label{fig:ake:kem}
 \end{figure}
 
-\subsection{Real-World Authenticated Key Exchange}
-\alert{continue here.}
-Even though there are many more similarly important real world $\AKE$ protocols, this script focuses on three relevant examples.
 
-\subsubsection{Transport Layer Security~(TLS) \cite{RFCTLS13}}
-TLS key exchange is similar to the signed Diffie-Hellman construction in Figure~\ref{fig:ake:signed_dh}.
-An overview of the protocol is given in Figure~\ref{fig:ake:tls}.
+\subsection{Real-World Authenticated Key Exchange}
+The list of AKE protocols deployed in practice is very long: TLS, SSH, IKEv2 in IPsec, X3DH and PQXDH in Signal, Noise with Wireguard, etc.
+In this section, we focus on three relevant, very different examples:
+TLS, which is the most important protocol for establishing secure channels on the Internet,
+the Noise protocol framework, which offers a lightweight alternative for special deployment scenarios,
+and X3DH, which is a fast key exchange protocol for settings in which the two communication partners do not need to be online simultaneously.
+
+\subsubsection{Transport Layer Security~(TLS)}
+The key exchange in TLS~\cite{rfc8446} resembles the signed Diffie-Hellman construction in Figure~\ref{fig:ake:signed_dh}.
+However, since TLS offers many different modes and a dynamic negotiation of used cryptographic algorithms, the schematic overview of the cryptographic core of TLS in Figure~\ref{fig:ake:tls} can only be considered a strong simplification.
+For more details we refer the interested reader to the large literature on security analyses of TLS~1.3~\cite{JC:DFGS21,JC:DieJag21,EC:DDGJ22,AC:BDEFKK22}.
 
 \begin{figure}[!ht]
     \centering
@@ -156,24 +167,29 @@ An overview of the protocol is given in Figure~\ref{fig:ake:tls}.
     \label{fig:ake:tls}
 \end{figure}
 
-\subsubsection{Noise Framework}\label{sec:NoiseFramework}
-The Noise Framework \cite{NoiseFramework} is a set of rules to combine Diffie-Hellman key exchange with Authenticated Encryption~(AE). Dowling et al. \cite{PKC:DowRosSch20} and Angel et al. \cite{CCS:ADHSW22} provide a deeper analysis of the Noise Framework.
 
-The framework is very flexible, especially in a pre-configure context.
-It is used by WhatsApp for its client-to-server communication and by WireGuard among others.
+
+\subsubsection{Noise Framework}\label{sec:NoiseFramework}
+The Noise framework \cite{NoiseFramework} is a set of rules to combine Diffie-Hellman key exchange with Authenticated Encryption~(AE) to establish a secure channel.
+Instead of implementing dynamic algorithm and protocol negotiation as in TLS, the Noise framework offers multiple different static protocols for different settings.
+Thus, such static Noise protocols are meant to be deployed in settings in which all protocol participants can be pre-configured equally.
+Besides avoiding dynamic negotiation, this homogeneous pre-configuration allows for a more efficient and lightweight protocol design.
+
+Protocols from the Noise framework are used by WhatsApp for its client-to-server communication and by WireGuard among others.
+Dowling et al. \cite{PKC:DowRosSch20} and Angel et al.~\cite{CCS:ADHSW22} provide a deeper analysis of the Noise Framework.
 
 One protocol defined in the Noise Framework is ``NK''. 
-Following the naming convention of Noise protocols, the ``N'' signifies that the initiator has \textbf{n}o static key and the ``K'' signifies that the responder has a static key \textbf{k}nown to the initiator.
+Following the naming convention of Noise protocols, the ``N'' means that the initiator of a protocol execution has \textbf{n}o static public key and the ``K'' means that the responder in a session has a static public key \textbf{k}nown to the initiator.
 
 In the documentation of the Noise Framework, the protocols are described in a format similar to the one in Figure~\ref{fig:ake:noise:nk}.
 Figure~\ref{fig:ake:noise:nk_overview} gives an overview of the protocol execution in the format used in this script.
-The $s$ in the figure is the static key of the responder, which is transmitted to the initiator before the protocol begins (shown by the dots afterwards).
-An $e$ is an \emph{ephemeral} key (short-lived key) that correspond to a DH public key-share (e.g. $g^x$).
-If two letters are combined a combination of the two keys is formed, e.g. $es$ and $g^{x\sk_B}$.
+The~s in the figure is the static key of the responder, which is transmitted to the initiator before the protocol begins (shown by the dots afterwards).
+An~e is an \emph{ephemeral} key (short-lived key) that correspond to a DH public key-share (e.g. $g^x$).
+If two letters are combined a Diffie-Hellman key exchange with the two keys is performed, e.g.~es for $g^{x\sk_B}$.
 
 The messages sent during and after the protocol execution offer different levels of security: 
 The encryption of $m_1$ offers forward security for the sender but not for the responder, while authenticity is only guaranteed for the responder.
-Anonymity is guaranteed for both parties, but for the responder this holds only as long as he is not corrupted.
+Anonymity is guaranteed for both parties, but for the responder this holds only as long as their long-term secret key is not corrupted.
 For $m_i, i\geq 2$ the encryption offers forward security for both parties, while the other security guarantees remain unchanged.
 
 \begin{figure}[!ht]
@@ -195,22 +211,19 @@ For $m_i, i\geq 2$ the encryption offers forward security for both parties, whil
 \end{figure}
 
 \subsubsection{X3DH}
-\alert{PR: add references to specification and analyses}
-X3DH is an extended and authenticated 2-pass key exchange. 
-It is used in the Ratcheted Key Exchange protocol~(Section \ref{sec:rke}).
+The X3DH~\cite{X3DH} protocol is an extended and authenticated 2-pass key exchange. 
+It is designed for asynchronous settings, where two parties want to establish a shared secret key, but one of them might be offline.
+For this, one party (here named Bob) stores his long term public key~(LTK) at a server.
+Furthermore, Bob regularly renews and sends ephemeral Diffie-Hellman public keys to the server: a signed prekey and a set of one-time keys.
 
-The X3DH protocol is designed for asynchronous settings, where two parties want to establish a shared secret key, but one of them might be offline.
-For this, one party (here named Bob) regularly sends Diffie-Hellman public keys to the server.
-His long term key~(LTK), a prekey and a set of one-time keys. 
-The prekey and the one-time keys are renewed regularly, but the one-time keys are renewed more often.
+If Alice, then, wants to establish a shared symmetric key with Bob, she can fetch Bob's public keys from the server.
+She also generates an ephemeral Diffie-Hellman exponent, which is then combined with Bobs keys and used to derive the symmetric key through a PRF. (Figure~\ref{fig:ake:x3dh}).
 
-If Alice wants to then establish a public key with Bob, she can fetch Bobs keys from the server.
-She also generates an ephemeral Diffie-Hellman exponent, which is then combined with Bobs keys and used to derive the symmetric key through a PRF. (Figure~\ref{fig:ake:x3dh})
-
-If all of Bobs secret keys were used, and he has not renewed them yet, the key $g^{ab}$ is left out.
-This reduces the forward security of the protocol, since the prekey is renewed much less often.
+If all of Bobs one-time secret keys were used, and he has not renewed them yet, input~$g^{ab}$ is not part of the final key computation.
+This minimally reduces the forward security of the protocol, since the prekey is renewed less often.
 
 The X3DH protocol guarantees strong forward security, authenticity and deniability (both parties can deny their participation).
+As it works in asynchronous settings, it is used to exchange keys when initiating sessions in messaging protocols (see Section~\ref{sec:rke} on Ratcheted Key Exchange).
 
 \begin{figure}[!ht]
     \centering
@@ -218,5 +231,3 @@ The X3DH protocol guarantees strong forward security, authenticity and deniabili
     \caption{X3DH key exchange.}
     \label{fig:ake:x3dh}
 \end{figure}
-
-\alert{further info in here: \url{https://github.com/charlie-j/fm-crypto-lib/blob/main/Notes/computational/main.pdf}}
