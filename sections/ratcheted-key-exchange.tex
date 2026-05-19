@@ -1,9 +1,14 @@
 \section{Ratcheted Key Exchange}
 \label{sec:rke}
 
-We have seen plenty forward secure key exchange protocols in the previous chapters, but there is another security guarantee that is desirable in practice:
-Post-compromise security~(PCS), which is the ability to recover from a compromise.
-We adapt Figure~\ref{fig:fs:sketch}, which showed the idea of forward security, to show the idea of a protocol that provides both forward and post compromise security (Figure~\ref{fig:rke:pcs_fs_overview}).
+The key exchange protocols presented in the previous sections offer forward security based on inefficient building blocks or interaction.
+Thereby, forward security means that the established symmetric key remains secure even if long-term keys of the communication partners were corrupted (later).
+
+Ratcheted Key Exchange~(RKE) is a tool that strengthens forward security guarantees and, additionally, offers
+post-compromise security~(PCS).
+In the time dimension, PCS can be considered the complement of forward security:
+it is the ability to recover from a previous corruption.
+We adapt Figure~\ref{fig:fs:sketch}, which showed the idea of forward security, to show the idea of a protocol that provides both forward and post-compromise security (Figure~\ref{fig:rke:pcs_fs_overview}).
 
 \begin{figure}[!ht]
     \centering
@@ -12,13 +17,14 @@ We adapt Figure~\ref{fig:fs:sketch}, which showed the idea of forward security, 
     \label{fig:rke:pcs_fs_overview}
 \end{figure}
 
-A way to achieve post compromise security are the so-called Ratcheted Key Exchange protocols~(RKE).
-In Figure~\ref{fig:rke:overview}, an abstract view on a two party RKE protocol is given.
-After the initial key exchange, both parties regularly update their keys in a Ratcheted Key Exchange step.
-Using the resulting key, a new message can be encrypted.
+To achieve post-compromise security, an RKE protocol lets both communication partners regularly generate ephemeral key pairs.
+Each resulting public key is shared with the partner, who can encapsulate fresh symmetric keys to the original sender.
+Using this encapsulated symmetric key, a new payload message can be encrypted.
+By continuously repeating this renewal and replacement of ephemeral key pairs, the effect of a temporary secret key corruption is limited to the period in which this secret key was used:
+from the time it was generated until the time it was replaced by the next generated key pair.
 
-For the steps different cryptographic building blocks are used.
-For example, X3DH might be used for the initial key exchange, the Signal Double Ratchet algorithm for the Ratcheted Key exchange step and AEAD for the encryption of the messages.
+In Figure~\ref{fig:rke:overview}, an abstract view on a two party RKE protocol is given.
+For the initial key exchange, one can use the X3DH protocol from Section~\ref{sec:AKE:X3DH}, Signal's Double Ratchet algorithm can be the instantiation of the Ratcheted Key Exchange, and AEAD can be used for the encryption of messages.
 
 \begin{figure}[!ht]
     \centering
