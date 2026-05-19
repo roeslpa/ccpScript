@@ -85,10 +85,16 @@ The adversary terminates with a guess~$b'$ for challenge bit~$b$.
     \item $\Ochall(i,s)\to k_{i,s,b}$:\hfill\makebox[\linewidth-\itemizeskip][l]{Either outputs real or random session key of instance~$s$ of party $i$}
 \end{itemize}
 
-\paragraph{Trivial winning conditions} The trivial attacks are listed in Figure~\ref{fig:ake:trivial}. 
+\paragraph{Trivial winning conditions}
+The trivial attacks are listed in Figure~\ref{fig:ake:trivial}. 
 Note that the names of the trivial attacks give the general strategy and that the provided pseudocode can sometimes be changed (e.g., by switching the order of $\Ochall$ and $\Oreveal$ in the first attack).
-The third attack in particular requires only that $\pk_j$ is the intended partner of $(i,s)$ and that $(i,s)$ has no session partners.
-An attacker against an~$\AKE$ is only considered successful if neither of these trivial attacks is performed.
+
+The third attack, in particular, requires only that $\pk_j$ is the intended partner of $(i,s)$ and that $(i,s)$ has no session partners;
+thereby, while the concrete Attack~3 in Figure~\ref{fig:ake:trivial} only covers a corrupted responder in a session, the attack is also trivial if the initiator of the session is corrupted.
+Nevertheless, an attack in which the corruption only happens \emph{after} the session terminates is non-trivial and, therefore, permitted.
+By permitting it as a non-trivial attack, our definition covers forward security.
+
+An attacker against an~$\AKE$ is only considered successful if neither of the listed trivial attacks is performed.
 Based on this, our informal security definition requires a secure $\AKE$ to provide authenticity and forward security.
 
 \begin{figure}[!ht]
