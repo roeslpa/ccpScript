@@ -189,9 +189,15 @@ This means that the protocol is forward secure w.r.t.\ exposures of senders and 
 Post-compromise security is only achieved for the sender, who is also hard to non-trivially impersonate.
 
 
-\paragraph{Construction} A construction for a unidirectional RKE protocol $\URKE$ is given in Figure~\ref{fig:urke:const}.
+\paragraph{Construction}
+A construction for a unidirectional RKE protocol $\URKE$ is given in Figure~\ref{fig:urke:const}.
+Using a KEM, this construction continuously encapsulates fresh symmetric keys to the receiver;
+these symmetric keys seed the generation of the next KEM key pair.
+Using a digital signature, each sent ciphertext as well as the next signature verification key is protected for authenticity.
 
-\alert{Intuitively, this construction continuously encapsulates fresh symmetric keys to the receiver}
+Since the sender only always has the public KEM encapsulation key in their local state, a corruption thereof does not leak information about past or future encapsulated keys.
+The seeded generation of key material has two purposes:
+It ensures forward security for the receiver, and it makes sure that, when sender and receiver process different ciphertexts (due to active attack against the sender-to-receiver ciphertexts), the key material of both communication participants is diverged and becomes incompatible.
 
 \begin{figure}[!ht]
     \centering
@@ -208,6 +214,7 @@ Post-compromise security is only achieved for the sender, who is also hard to no
 \end{figure}
 
 \subsection{Random Oracle Model}
+\alert{continue here}
 
 To analyze the security of the unidirectional RKE protocol $\URKE$, we use the random oracle model~(ROM).
 The random oracle model is a common abstraction in cryptography and models an ideal hash or one-way function.
