@@ -1,7 +1,7 @@
 \section{Ratcheted Key Exchange}
 \label{sec:rke}
 
-The key exchange protocols presented in the previous sections offer forward security based on inefficient building blocks or interaction.
+The key exchange protocols presented in the previous sections offer forward security based on inefficient building blocks or based on interaction.
 Thereby, forward security means that the established symmetric key remains secure even if long-term keys of the communication partners were corrupted (later).
 
 Ratcheted Key Exchange~(RKE) is a tool that strengthens forward security guarantees and, additionally, offers
@@ -20,11 +20,11 @@ We adapt Figure~\ref{fig:fs:sketch}, which showed the idea of forward security, 
 To achieve post-compromise security, an RKE protocol lets both communication partners regularly generate ephemeral key pairs.
 Each resulting public key is shared with the partner, who can encapsulate fresh symmetric keys to the original sender.
 Using this encapsulated symmetric key, a new payload message can be encrypted.
-By continuously repeating this renewal and replacement of ephemeral key pairs, the effect of a temporary secret key corruption is limited to the period in which this secret key was used:
-from the time it was generated until the time it was replaced by the next generated key pair.
+By continuously repeating this renewal and replacement of ephemeral key pairs, the effect of a temporary secret key corruption is limited to the period in which this secret key is used:
+from the time it is generated until the time it is replaced by the next generated key pair.
 
-In Figure~\ref{fig:rke:overview}, an abstract view on a two party RKE protocol is given.
-For the initial key exchange, one can use the X3DH protocol from Section~\ref{sec:AKE:X3DH}, Signal's Double Ratchet algorithm can be the instantiation of the Ratcheted Key Exchange, and AEAD can be used for the encryption of messages.
+In Figure~\ref{fig:rke:overview}, an abstraction of such a two party RKE key refreshing protocol, embedded in a larger communication channel, is provided.
+For the initial key exchange, one can use the X3DH protocol from Section~\ref{sec:AKE:X3DH}, Signal's Double Ratchet algorithm can be the instantiation of the Ratcheted Key Exchange itself, and AEAD can be used for the encryption of messages.
 
 \begin{figure}[!ht]
     \centering
@@ -34,13 +34,38 @@ For the initial key exchange, one can use the X3DH protocol from Section~\ref{se
 \end{figure}
 
 \paragraph{Types of RKE}
-\alert{PR: add history starting with Double Ratchet, then its analysis~\cite{JC:CCDGS20}, then unidirectional~\cite{C:BSJNS17}, then more~\cite{C:PoeRos18}}
-RKE protocols can be divided into three types, depending on the directions of communication they support.
-Bidirectional RKE protocols is the intuitive case, where full bidirectional communication is supported~(Figure~\ref{fig:RKE:bi}).
+The first three academic works on RKE contributed a security analyses of the actual Double Ratchet algorithm~\cite{JC:CCDGS20} and a definitional abstraction and simplification of the underlying principles~\cite{C:BSJNS17,C:PoeRos18}.
+In this script, we use this simplification for comprehensibility and, thereby, use the following syntax notion.
 
-Sesquidirectional RKE gives one party full functionality, while the other party can only send ``non-functional'' messages.
+\newcommand{\RKE}{\mathrm{RKE}}%
+\newcommand{\RKEinit}{\RKE.\mathrm{init}}%
+\newcommand{\RKEsnd}{\RKE.\mathrm{snd}}%
+\newcommand{\RKErcv}{\RKE.\mathrm{rcv}}%
+
+\paragraph{Syntax} An RKE protocol $\RKE=(\RKEinit, \RKEsnd, \RKErcv)$ has the following syntax:
+\begin{itemize}
+    \item $\RKEinit: \emptyset\tor\stsp\times\stsp$\\
+    Initializes both communication partners' secret, local states
+    \item $\RKEsnd: \stsp\tor\stsp\times\ksp\times\csp$\\
+    Sends a ciphertext $c\in\csp$ to the partner to establish a fresh symmetric key~$k\in\ksp$;
+    the protocol uses the ciphertext also to update the secret key material stored in local state~$\st\in\stsp$
+    \item $\RKErcv: \stsp\times\csp\to\stsp\times\ksp$\\
+    Processes ciphertext $c\in\csp$ compute the established symmetric key~$k\in\ksp$;
+    the ciphertext may also update secret key material stored in local state~$\st\in\stsp$
+\end{itemize}
+
+
+
+
+%\alert{PR: add history starting with Double Ratchet, then its analysis~\cite{JC:CCDGS20}, then unidirectional~\cite{C:BSJNS17}, then more~\cite{C:PoeRos18}}
+
+Among other dimensions, RKE protocols can be divided into three sub-types, depending on the communication setting they support.
+\emph{Bidirectional} RKE covers the standard case in which both session partners equally participate in the communication~(Figure~\ref{fig:RKE:bi}).
+This form of interaction is modeled by the syntax notion defined above.
+
+\emph{Sesquidirectional} RKE allows one party full functionality, while the other party can only send ``non-functional'' responses.
 Consider for example the ciphertext $c_3$ in Figure~\ref{fig:RKE:sesq}:
-It does not encapsulate a key, instead it should be used for efficiency or security (e.g. Bob can use this message to communicate fresh randomness to Alice to recover from earlier compromise).
+It does not encapsulate a key, instead it should be used for efficiency or security (e.g., Bob can use this message to communicate fresh randomness to Alice to recover from earlier compromise).
 Every Sesquidirectional RKE protocol can be transformed into a bidirectional RKE protocol, by using two instances of the Sesquidirectional RKE protocol.
 
 \begin{figure}[!ht]
@@ -60,14 +85,13 @@ Every Sesquidirectional RKE protocol can be transformed into a bidirectional RKE
     \caption{Interaction in bi- and sesquidirectional RKE protocols.}
 \end{figure}
 
-The third type of RKE protocols is unidirectional RKE, which only allows one party to send.
+The third, simplest type of RKE protocols is \emph{unidirectional} RKE, which only allows one party to send.
 For simplicity, this is the type of RKE we will focus on in the following.
 
 \subsection{Unidirectional RKE}
-
-An overview of the unidirectional RKE protocol is given in Figure~\ref{fig:rke:uni}.
-It should be noted that Bob is purely deterministic.
-He can not distribute fresh randomness, and therefore can not recover from corruptions.
+An overview of a unidirectional RKE protocol execution is given in Figure~\ref{fig:rke:uni}.
+As Bob always only receives ciphertexts from Alice, he can be considered purely deterministic.
+Therefore, as he can not share anything based on fresh randomness with Alice, he cannot recover from corruptions.
 
 \begin{figure}[!ht]
     \centering
@@ -149,16 +173,25 @@ He can not distribute fresh randomness, and therefore can not recover from corru
     \label{fig:urke:trivial}
 \end{figure}
 
-%this paragraph is not precise and understandable enough in my opinion
 \paragraph{Intuitive Security Goals} The security goal for unidirectional RKE protocols is to ensure that sender and receiver exposures are as harmless as possible.
-In particular, the sender state should only allow for \emph{immediate} impersonations, i.e. it should not reveal any (challenge) keys except the one received in the impersonation.
-The receiver state should only reveal future ``compatible'' (challenge) keys; an active attacker breaks ``compatibility''.
+This means that an exposure of the sender state should not leak information about symmetric keys established by the sender before or after that.
+Also, an exposure of the receiver state should not leak information about symmetric keys established before that.
 
-This means that the protocol is forward secure w.r.t. exposures of senders and receivers.
+Due to receiver's deterministic behavior, receiver state exposures trivially leak all keys established to them thereafter.
+There is one exceptions to this:
+If sender and receiver were out of sync when the latter was exposed, a receiver exposure must be harmless for keys established by the sender.
+
+Finally, the sender state should only allow for \emph{immediate} impersonations:
+If the sender state is exposed immediately before the adversary sends a validly forged ciphertext to the receiver, keys computed by the receiver thereafter are considered insecure.
+If, in contrast, such a valid forgery is sent to the receiver with an immediate prior sender exposure, the receiver's subsequent computed keys are required to be secure.
+
+This means that the protocol is forward secure w.r.t.\ exposures of senders and receivers.
 Post-compromise security is only achieved for the sender, who is also hard to non-trivially impersonate.
 
 
 \paragraph{Construction} A construction for a unidirectional RKE protocol $\URKE$ is given in Figure~\ref{fig:urke:const}.
+
+\alert{Intuitively, this construction continuously encapsulates fresh symmetric keys to the receiver}
 
 \begin{figure}[!ht]
     \centering
