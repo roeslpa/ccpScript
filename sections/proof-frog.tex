@@ -1,0 +1,44 @@
+\section{Computer-Aided Proofs}
+
+This section will give a brief excursion into computer-aided cryptography and automated provers.
+Beforehand, it is important to look at different adversarial models in cryptography, as different proof tools assume different types of adversaries.
+
+\subsection{Computationally Unbounded Adversaries}
+Computationally unbounded adversaries are unrestricted in their runtime, memory and computational power.
+That is, schemes that are secure in the presence of such adversaries are \emph{information-theoretically secure}
+and security proofs rely on statistical reasoning.
+
+One scheme secure against computationally unbounded adversaries is the \emph{One-time Pad}~(OTP).
+OTP is a symmetric encryption scheme, where messages, ciphertexts and keys have the same length.
+Encryption and decryption is then just the XOR of the key and the message or ciphertext.
+See Figure~\ref{fig:otp} for the pseudocode.
+
+OTP is information-theoretically secure in the sense that, if the key is truly random and used only to encrypt one message,
+no information about the message will be leaked by the ciphertext.
+Intuitively this is true, because the ciphertext is just the XOR of the message and a random bit-string (the key).
+
+\begin{figure}[!ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/otp_construction.tex}%
+        }%
+    }
+    \caption{%
+        The One-time Pad encryption scheme. The $\oplus$ operator denotes a bitwise \emph{XOR} operation.
+    }
+    \label{fig:otp}
+\end{figure}
+
+There also exist some MAC schemes that are secure in the presence of unbounded adversaries (\alert{Add Sources}).
+Statistical events, like collisions of random numbers, are also information-theoretically secure.
+
+Most cryptographic primitives however, are only secure in the presence of computationally bounded adversaries.
+
+\subsection{Computationally Bounded Adversaries}
+In contrast to computationally unbounded adversaries, bounded adversaries are restricted in their runtime and memory.
+In asymptotic cryptography, we speak of adversaries that run in polynomial time in the security parameter.
+These adversaries are still unbounded in their computation power, in the sense that they are as powerful as Turing machines.
+
+
