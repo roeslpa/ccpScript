@@ -41,4 +41,44 @@ In contrast to computationally unbounded adversaries, bounded adversaries are re
 In asymptotic cryptography, we speak of adversaries that run in polynomial time in the security parameter.
 These adversaries are still unbounded in their computation power, in the sense that they are as powerful as Turing machines.
 
+In this course, we have mainly looked at computationally bounded adversaries,
+as most cryptographic primitives and schemes are secure only against them.
+The idea of provable security is then, to relate the resources of the adversary to the resources of an attacker against an underlying scheme or assumption.
+If we have multiple steps, where we slightly change the game each time and show indistinguishability between the changes by the before mentioned technique,
+we speak of a \emph{sequence of games}.
+A sequence of games where each modification is identical (e.g., each game switches value $x$ to be randomly sampled some epoch $t$) is a \emph{hybrid argument}.
 
+It should be noted here, that unkeyed hash functions are not collision secure in the presence of computationally bounded adversaries:
+There always exists an adversary that has two values $x\not= x'$ hard coded, s.t. $H(x)=H(x')$ (a hash function maps from an infinite space to a finite one; there will always be collisions).
+In practice however, we assume that collisions are hard to find and replace the hash function with a truly random oracle, which constitutes the \emph{Random Oracle Model}~(ROM).
+
+\subsection{Symbolic Adversaries}
+Symbolic adversaries are a third type of adversaries, that are of special importance for some proof tools.
+They are unbounded in their runtime and memory, but can only execute a limited set of instructions.
+The idea is, that instead of treating the adversary as a black-box, we give it a set of operations it can execute and then give it some input symbols.
+One can think of the symbols as objects in object-oriented programming, in the sense that one can only operate on them with pre-defined functions.
+
+To define the symbols and operations, we define the grammar (what kind of expressions exist) and the derivation rules (what can be derived from expressions).
+Consider the following example:
+
+\noindent\begin{minipage}[t]{.5\linewidth}
+    \underline{Grammar:}\\
+    $M:= K\mid\enc(K, M)$\alert{Missing ``$\mid m$''?}
+\end{minipage}\hfill
+\begin{minipage}[t]{.5\linewidth}
+    \underline{Derivation Rules:}\\
+    $T\vdash K, m\implies T\vdash \enc(K, m)$\\
+    $T\vdash K, \enc(K, m)\implies T\vdash m$
+\end{minipage} 
+
+The grammar tells us, that each expression can be a $K$ or an $\enc(K, M)$, where $M$ is another expression.
+The derivation rules tell us, what operations we can perform on the expressions:
+E.g., if we can derive some $K$ and $m$, then we can also derive the encryption of $m$ with $K$.
+
+\alert{Add section about specific advantages of this method.}
+
+\paragraph{Limitations}
+Since we don't allow arbitrary adversaries (black-box adversaries), we have to specify all attack strategies.
+If secrets are reused in multiple primitives extra care has to be taken, as this is not automatically covered by the model.
+And unsurprisingly, if we model more complex schemes by providing more operations, the proof will grow more complex.
+ 
