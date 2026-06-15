@@ -42,6 +42,7 @@ In this script, we use this simplification for comprehensibility and, thereby, u
 \newcommand{\RKEsnd}{\RKE.\mathrm{snd}}%
 \newcommand{\RKErcv}{\RKE.\mathrm{rcv}}%
 
+\alert{continue here}
 \paragraph{Syntax} An RKE protocol $\RKE=(\RKEinit, \RKEsnd, \RKErcv)$ has the following syntax:
 \begin{itemize}
     \item $\RKEinit: \emptyset\tor\stsp\times\stsp$\\
@@ -196,8 +197,8 @@ these symmetric keys seed the generation of the next KEM key pair.
 Using a digital signature, each sent ciphertext as well as the next signature verification key is protected for authenticity.
 
 Since the sender only always has the public KEM encapsulation key in their local state, a corruption thereof does not leak information about past or future encapsulated keys.
-The seeded generation of key material has two purposes:
-It ensures forward security for the receiver, and it makes sure that, when sender and receiver process different ciphertexts (due to active attack against the sender-to-receiver ciphertexts), the key material of both communication participants is diverged and becomes incompatible.
+The seeded generation of KEM key pairs has two purposes:
+It ensures forward security for the receiver, and it makes sure that, when sender and receiver process different ciphertexts (due to an active attack against a sender-to-receiver ciphertext), the key material of both communication participants is diverged and becomes incompatible.
 
 \begin{figure}[!ht]
     \centering
@@ -214,10 +215,10 @@ It ensures forward security for the receiver, and it makes sure that, when sende
 \end{figure}
 
 \subsection{Random Oracle Model}
-\alert{continue here}
-
 To analyze the security of the unidirectional RKE protocol $\URKE$, we use the random oracle model~(ROM).
-The random oracle model is a common abstraction in cryptography and models an ideal hash or one-way function.
+The random oracle model is a commonly used idealization for hash or one-way function.
+Intuitively, this model says that the output of an (idealized) hash function looks entirely random and is unpredictable until that hash function was evaluated on the input that yields this output;
+moreover, this idealization models that knowing the algorithm description of a hash function does not yield an advantage in predicting the output (i.e., only a full evaluation would provide the output for an input).
 
 In the ``arrows-and-boxes'' style, the random oracle is shown in its own box instead of being called with $h\getsr \ROh$ (see Figure~\ref{fig:rom:overview}).
 Reduction and adversary interact with the random oracle just like they normally would.
@@ -248,6 +249,10 @@ It is important to keep in mind, that the random oracle is still part of the red
         \label{fig:rom:overview}
     \end{minipage}
 \end{figure}
+
+
+Clearly, real hash functions cannot provide the idealized guarantees of the random oracle model, and there is a list of more or less artificial examples that show the following:
+for  construction, proven secure in the random oracle model, uses a real hash function, the security guarantees do not hold
 
 \subsection{Security Proof of URKE in the ROM}
 
