@@ -91,9 +91,9 @@ Some well-known symbolic proof tools are \emph{Tamarin} \cite{TamarinBook} and \
 
 To write proofs for symbolic provers it is necessary to specify the building blocks and the construction via grammar and derivation rules.
 Modeling the adversary's interaction with the construction can be done with ``oracles''.
-To specify when the adversary wins, i.e.\ to specify insecure behaviour, we define an event, that is set to true in ``insecure branches'' of protocol executions.
+To specify when the adversary wins, i.e.\ to specify insecure behavior, we define an event, that is set to true in ``insecure branches'' of protocol executions.
 
-The prove tool then explores all possible derivations of the adversaries inputs to find out if they lead to the insecurity event.
+The proof tool then explores all possible derivations of the adversaries inputs to find out if they lead to the insecurity event.
 In such a case, an attack was found.
 If no derivations lead to the insecurity event and the exploration terminates, the protocol is secure (w.r.t.\ the grammar and derivation rules provided; the modeling can be incorrect!).
 It is also possible that exploration does not terminate, especially for complex protocols.
@@ -114,3 +114,45 @@ In contrast, ProofFrog proves security by verifying the indistinguishability of 
 While the language of ProofFrog is somewhat less expressive, it is very close to the pen-and-paper proofs from the lecture.
 
 \subsubsection{ProofFrog}
+As mentioned before, ProofFrog proves security by showing indistinguishability between a ``real'' and ``ideal'' or a ``left'' or ``right'' game.
+For some games, this is already very similar to the lecture. 
+Consider, for example, $\INDCCA$ security of symmetric encryption:
+The game, depending on bit $b$, encrypts either the ``left'' message $m_0$ or the ``right'' message $m_1$.
+For some games however, this is not quite as simple, and some work has to be done to transform the games.
+
+We will use the $\SUFCMA$ security of signatures as an example (Figure~\ref{fig:pf:sufcma}):
+\begin{figure}[ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/sig/sig_suf.tex}
+        }%
+    }
+    \caption{$\SUFCMA$ game for signature scheme $\SIG$.}
+    \label{fig:pf:sufcma}
+\end{figure}
+
+Here, the adversaries' goal is not to guess some decision bit $b$, but to create a forged signature.
+To transform this game into an ``ideal''-vs.-``real'' game, let us first think about what the ideal game should look like.
+Intuitively, the adversary wins the $\SUFCMA$ game if they can create a valid signature $\sig$ for a message $m$, s.t.\ 
+$\sig$ was never output by the signing oracle on query $m$.
+Or in other words, for a signature to be $\SUFCMA$ secure, only signatures created by the scheme should be accepted as valid signatures.
+And that idea gives us our ideal game:
+The game keeps track of all $(\sig, m)$ pairs from the signing oracle and answers the adversarial challenge query with 1, iff.\
+the signature is a signature output by the signing oracle for the challenge message.
+
+The real game just behaves like the signature scheme would, i.e.\ it just outputs real signatures and verification results.
+We use a bit $b$ that switches between the ideal and real games, which gives the pseudocode game-description from Figure~\ref{fig:pf:sufcmaIR}.
+
+\begin{figure}[ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/sig/sig_suf_IR.tex}
+        }%
+    }
+    \caption{$\SUFCMA$ game for signature scheme $\SIG$.}
+    \label{fig:pf:sufcmaIR}
+\end{figure}
