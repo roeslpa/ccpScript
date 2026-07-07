@@ -1,0 +1,181 @@
+\section{Computer-Aided Proofs}
+
+This section will give a brief excursion into computer-aided cryptography and automated provers.
+Beforehand, it is important to look at different adversarial models in cryptography, as different proof tools assume different types of adversaries.
+
+\subsection{Computationally Unbounded Adversaries}
+Computationally unbounded adversaries are unrestricted in their runtime, memory and computational power.
+That is, schemes that are secure in the presence of such adversaries are \emph{information-theoretically secure}
+and security proofs rely on statistical reasoning.
+
+One scheme secure against computationally unbounded adversaries is the \emph{One-time Pad}~(OTP).
+OTP is a symmetric encryption scheme, where messages, ciphertexts and keys have the same length.
+Encryption and decryption is then just the XOR of the key and the message or ciphertext.
+See Figure~\ref{fig:otp} for the pseudocode.
+
+OTP is information-theoretically secure in the sense that, if the key is truly random and used only to encrypt one message,
+no information about the message will be leaked by the ciphertext.
+Intuitively this is true, because the ciphertext is just the XOR of the message and a random bit-string (the key).
+
+\begin{figure}[!ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/otp_construction.tex}%
+        }%
+    }
+    \caption{%
+        The One-time Pad encryption scheme. The $\oplus$ operator denotes a bitwise \emph{XOR} operation.
+    }
+    \label{fig:otp}
+\end{figure}
+
+There also exist some MAC schemes that are secure in the presence of unbounded adversaries (\alert{Add Sources}).
+Statistical events, like collisions of random numbers, are also information-theoretically secure.
+
+Most cryptographic primitives however, are only secure in the presence of computationally bounded adversaries.
+
+\subsection{Computationally Bounded Adversaries}
+In contrast to computationally unbounded adversaries, bounded adversaries are restricted in their runtime and memory.
+In asymptotic cryptography, we speak of adversaries that run in polynomial time in the security parameter.
+These adversaries are still unbounded in their computation power, in the sense that they are as powerful as Turing machines.
+
+In this course, we have mainly looked at computationally bounded adversaries,
+as most cryptographic primitives and schemes are secure only against them.
+The idea of provable security is then, to relate the resources of the adversary to the resources of an attacker against an underlying scheme or assumption.
+If we have multiple steps, where we slightly change the game each time and show indistinguishability between the changes by the before mentioned technique,
+we speak of a \emph{sequence of games}.
+A sequence of games where each modification is identical (e.g., each game switches value $x$ to be randomly sampled some epoch $t$) is a \emph{hybrid argument}.
+
+It should be noted here, that unkeyed hash functions are not collision secure in the presence of computationally bounded adversaries:
+There always exists an adversary that has two values $x\not= x'$ hard coded, s.t. $H(x)=H(x')$ (a hash function maps from an infinite space to a finite one; there will always be collisions).
+In practice however, we assume that collisions are hard to find and replace the hash function with a truly random oracle, which constitutes the \emph{Random Oracle Model}~(ROM).
+
+\subsection{Symbolic Adversaries}
+Symbolic adversaries are a third type of adversaries, that are of special importance for some proof tools.
+They are unbounded in their runtime and memory, but can only execute a limited set of instructions.
+The idea is, that instead of treating the adversary as a black-box, we give it a set of operations it can execute and then give it some input symbols.
+One can think of the symbols as objects in object-oriented programming, in the sense that one can only operate on them with pre-defined functions.
+
+To define the symbols and operations, we define the grammar (what kind of expressions exist) and the derivation rules (what can be derived from expressions).
+Consider the following example:
+
+\noindent\begin{minipage}[t]{.5\linewidth}
+    \underline{Grammar:}\\
+    $M:= K\mid\enc(K, M)$
+\end{minipage}\hfill
+\begin{minipage}[t]{.5\linewidth}
+    \underline{Derivation Rules:}\\
+    $T\vdash k, m\implies T\vdash \enc(k, m)$\\
+    $T\vdash k, \enc(k, m)\implies T\vdash m$
+\end{minipage} 
+
+The grammar tells us, that each expression can be from a set $K$ or an encryption $\enc(K, M)$, where $M$ is another expression.
+The derivation rules tell us, what operations we can perform on the expressions:
+E.g., if we can derive some $k\in K$ and $m\in M$, then we can also derive the encryption of $m$ with $k$.
+
+\alert{Add section about specific advantages of this method.}
+
+\paragraph{Limitations}
+Since we don't allow arbitrary adversaries (black-box adversaries), we have to specify all attack strategies.
+If secrets are reused in multiple primitives extra care has to be taken, as this is not automatically covered by the model.
+And unsurprisingly, if we model more complex schemes by providing more operations, the proof will grow more complex.
+ 
+\subsection{Automated Proofs}
+We can now talk about the different types of automated provers. A good overview can be found in the systemation of knowledge by Barbosa et al.\ \cite{SP:BBBBCL21}.
+
+\subsubsection{Automated Symbolic Proofs}
+Symbolic provers show security for symbolic adversaries. 
+Some well-known symbolic proof tools are \emph{Tamarin} \cite{TamarinBook} and \emph{ProVerif} \cite{ProVerifBook}.
+
+To write proofs for symbolic provers it is necessary to specify the building blocks and the construction via grammar and derivation rules.
+Modeling the adversary's interaction with the construction can be done with ``oracles''.
+To specify when the adversary wins, i.e.\ to specify insecure behavior, we define an event, that is set to true in ``insecure branches'' of protocol executions.
+
+The proof tool then explores all possible derivations of the adversaries inputs to find out if they lead to the insecurity event.
+In such a case, an attack was found.
+If no derivations lead to the insecurity event and the exploration terminates, the protocol is secure (w.r.t.\ the grammar and derivation rules provided; the modeling can be incorrect!).
+It is also possible that exploration does not terminate, especially for complex protocols.
+
+A number of well-known protocols have been analyzed with symbolic proof tools: TLS 1.3 \cite{CCS:CHHSM17}, Noise \cite{USENIX:GHSJCB20}, Signal \cite{EUROSP:KobBhaBla17} and others.
+
+\subsubsection{Automated Computational Proofs}
+Automated computational provers show security for computationally bounded adversaries by finding (or verifying) sequences of games.
+Some notable provers are \emph{Easy Crypt}, \emph{CryptoVerif} and \emph{ProofFrog} \alert{Add links or citations for urls?}.
+EasyCrypt allows for complex cryptographic reasoning and finds proofs via some small hardcoded logical transitions.
+CryptoVerif and ProofFrog are closer to this lecture, in that they use standard game hops.
+
+CryptoVerif starts in a ``Real-vs.-Random'' game and ends in a game that the adversary cannot break.
+Roughly speaking, the adversary should have ``less advantage'' in the next step.
+CryptoVerif can automatically search for a suitable chain of modifications to create the sequence of games.
+
+In contrast, ProofFrog proves security by verifying the indistinguishability of game hops, that start in a real world and end in an ideal/random world.
+While the language of ProofFrog is somewhat less expressive, it is very close to the pen-and-paper proofs from the lecture.
+
+\subsubsection{ProofFrog}
+As mentioned before, ProofFrog \cite{prooffrog} proves security by showing indistinguishability between a ``real'' and ``ideal'' or a ``left'' or ``right'' game.
+For some games, this is already very similar to the lecture. 
+Consider, for example, $\INDCCA$ security of symmetric encryption:
+The game, depending on bit $b$, encrypts either the ``left'' message $m_0$ or the ``right'' message $m_1$.
+For some games however, this is not quite as simple, and some work has to be done to transform the games.
+
+We will use the $\SUFCMA$ security of signatures as an example (Figure~\ref{fig:pf:sufcma}):
+\begin{figure}[ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/sig/sig_suf.tex}
+        }%
+    }
+    \caption{$\SUFCMA$ game for signature scheme $\SIG$.}
+    \label{fig:pf:sufcma}
+\end{figure}
+
+Here, the adversaries' goal is not to guess some decision bit $b$, but to create a forged signature.
+To transform this game into an ``ideal''-vs.-``real'' game, let us first think about what the ideal game should look like.
+Intuitively, the adversary wins the $\SUFCMA$ game if they can create a valid signature $\sig$ for a message $m$, s.t.\ 
+$\sig$ was never output by the signing oracle on query $m$.
+Or in other words, for a signature to be $\SUFCMA$ secure, only signatures created by the scheme should be accepted as valid signatures.
+And that idea gives us our ideal game:
+The game keeps track of all $(\sig, m)$ pairs from the signing oracle and answers the adversarial challenge query with 1, iff.\
+the signature is a signature output by the signing oracle for the challenge message.
+
+The real game just behaves like the signature scheme would, i.e.\ it just outputs real signatures and verification results.
+We use a bit $b$ that switches between the ideal and real games, which gives the pseudocode game-description from Figure~\ref{fig:pf:sufcmaIR}.
+
+\begin{figure}[ht]
+    \centering
+    \nicoresetlinenr%
+    \fbox{%
+        \scalebox{\codescalefactor}{%
+            \input{figures/sig/sig_suf_IR.tex}
+        }%
+    }
+    \caption{$\SUFCMA$ game for signature scheme $\SIG$.}
+    \label{fig:pf:sufcmaIR}
+\end{figure}
+
+But how does ProofFrog show that the two games are indistinguishable (for a given signature scheme)?
+Roughly speaking, ProofFrog starts in the real world and then step-by-step substitutes code snippets with code from underlying primitives or assumptions.
+
+In Figure~\ref{fig:pf:strategy}, we show how such a substitution could look like:
+We want to show that the games $\mathrm{Real}_\mathrm{Const}$ and $\mathrm{Random}_\mathrm{Const}$ are indistinguishable, 
+where $\mathrm{Const}$ is a construction that uses a building block $\mathrm{BB}$.
+Internally, ProofFrog substitutes the relevant construction code with the building block code.
+We then write a reduction, that turns every adversary against the construction into an adversary against the building block.
+ProofFrog can then substitute the code of the real game for the building block with the code of the random game.
+\alert{ToDo: Explain this a bit more.}
+
+\begin{figure}[ht]
+    \centering
+    \nicoresetlinenr%
+    \input{figures/pf_subs.tex}
+    \caption{ProofFrog substitution path for games $\mathrm{Real}_\mathrm{Const}$ and $\mathrm{Random}_\mathrm{Const}$, where $\mathrm{Const}$ is a construction that uses a building block $\mathrm{BB}$.}
+    \label{fig:pf:strategy}
+\end{figure}
+
+\paragraph{Advantages of ProofFrog} 
+As a tool, ProofFrog helps with the simplification and canonicalization of definitions, constructions and proofs.
+It also makes proofs more rigorous, as it proves equivalence via string comparison.

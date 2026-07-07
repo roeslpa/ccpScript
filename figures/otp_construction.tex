@@ -1,0 +1,27 @@
+%!TEX root=../main.tex
+\markersetlen{ndL}{100pt}%
+\markersetlen{ndM}{100pt}%
+\markersetlen{ndR}{100pt}%
+\begin{tabular}[t]{lll}
+    \nicodemusbox{\markerlenndL}{%
+        \textbf{Proc} $\OTP.\gen$
+        \begin{nicodemus}
+            \item $k\getsr\{0,1\}^l$
+            \item Return $k$
+        \end{nicodemus}%
+    }%
+    &\nicodemusbox{\markerlenndM}{%
+        \textbf{Proc} $\OTP.\enc(k, m)$
+        \begin{nicodemus}
+            \item $c\gets k\oplus m$
+            \item Return $c$
+        \end{nicodemus}%
+    }%
+    &\nicodemusbox{\markerlenndR}{%
+        \textbf{Proc} $\OTP.\dec(k, c)$
+        \begin{nicodemus}
+            \item $m\gets k\oplus c$
+            \item Return $m$
+        \end{nicodemus}%
+    }%
+\end{tabular}%

@@ -76,6 +76,9 @@
 \colorlet{greenb}{green!80!black}
 \colorlet{redb}{red!90!black}
 
+% simple environment for comments of the style "// foobar"
+\newcommand{\codecomment}[1]{\textcolor{gray!90}{// #1}}
+
 
 \newcommand{\algbox}[2]{\fbox{\parbox{#1}{#2}}}
 \newcommand{\arrbox}[2]{\parbox{#1}{\centering#2}}
@@ -247,6 +250,7 @@
 \newcommand{\AKE}{\mathrm{AKE}}
 \newcommand{\URKE}{\mathrm{URKE}}
 \newcommand{\HIBE}{\mathrm{HIBE}}
+\newcommand{\OTP}{\mathrm{OTP}}
 
 \newcommand{\AEADgen}{\AEAD.\mathrm{gen}}
 \newcommand{\AEADenc}{\AEAD.\mathrm{enc}}

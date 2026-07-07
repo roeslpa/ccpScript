@@ -1,15 +1,15 @@
-%!TEX root=../main.tex
+%!TEX root=../../main.tex
 \markersetlen{ndL}{110pt}%
 \markersetlen{ndR}{120pt}%
 \newcommand{\MS}{\mathit{MS}}%
 \begin{tabular}[t]{ll}
     \nicodemusbox{\markerlenndL}{%
-        \textbf{Game} $\SUFCMA_{\SIG}(\advA)$
+        \textbf{Game} $\SUFCMA_{\SIG}^b(\advA)$
         \begin{nicodemus}
             \item $\MS\gets\emptyset$
             \item $(\sk,\vk)\getsr\SIGgen$
-            \item Invoke $\advA(\vk)$
-            \item Stop with~$0$
+            \item $b'\getsr\advA(\vk)$
+            \item Stop with~$b'$
         \end{nicodemus}%
         \medskip
         
@@ -24,10 +24,11 @@
     \nicodemusbox{\markerlenndR}{%
         \textbf{Oracle} $\Ovfy(m,\sig)$
         \begin{nicodemus}
-            \item $b\gets\SIGvfy(k,m,\sig)$
-            \item If $(m,\sig)\notin\MS\land b=\T$:
-            \item \quad Stop with~$1$
-            \item Return $b$
+            \item If $b=0$:\quad\codecomment{real-world}
+            \item \quad $d\gets\SIGvfy(\vk, m, \sig)$
+            \item Else:\quad\codecomment{ideal-world}
+            \item \quad $d\gets((m, \sig)\in\MS)$
+            \item Return $d$
         \end{nicodemus}%
     }%
 \end{tabular}%
