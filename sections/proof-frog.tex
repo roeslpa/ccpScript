@@ -156,3 +156,26 @@ We use a bit $b$ that switches between the ideal and real games, which gives the
     \caption{$\SUFCMA$ game for signature scheme $\SIG$.}
     \label{fig:pf:sufcmaIR}
 \end{figure}
+
+But how does ProofFrog show that the two games are indistinguishable (for a given signature scheme)?
+Roughly speaking, ProofFrog starts in the real world and then step-by-step substitutes code snippets with code from underlying primitives or assumptions.
+
+In Figure~\ref{fig:pf:strategy}, we show how such a substitution could look like:
+We want to show that the games $\mathrm{Real}_\mathrm{Const}$ and $\mathrm{Random}_\mathrm{Const}$ are indistinguishable, 
+where $\mathrm{Const}$ is a construction that uses a building block $\mathrm{BB}$.
+Internally, ProofFrog substitutes the relevant construction code with the building block code.
+We then write a reduction, that turns every adversary against the construction into an adversary against the building block.
+ProofFrog can then substitute the code of the real game for the building block with the code of the random game.
+\alert{ToDo: Explain this a bit more.}
+
+\begin{figure}[ht]
+    \centering
+    \nicoresetlinenr%
+    \input{figures/pf_subs.tex}
+    \caption{ProofFrog substitution path for games $\mathrm{Real}_\mathrm{Const}$ and $\mathrm{Random}_\mathrm{Const}$, where $\mathrm{Const}$ is a construction that uses a building block $\mathrm{BB}$.}
+    \label{fig:pf:strategy}
+\end{figure}
+
+\paragraph{Advantages of ProofFrog} 
+As a tool, ProofFrog helps with the simplification and canonicalization of definitions, constructions and proofs.
+It also makes proofs more rigorous, as it proves equivalence via string comparison.

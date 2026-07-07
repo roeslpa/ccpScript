@@ -1,0 +1,21 @@
+%!TEX root=../main.tex
+% Tabular environment for the substitution visualization.
+% The "const", "X\\BB\\Z", ... all share one row in the table to keep them vertically centered
+\begin{tabular}{cccc@{\hskip 1em}c@{\hskip 1em}cccc} % one column per content and one per "=" sign. Add some space between middle column and the left and right "=".
+    \setlength{\tabcolsep}{20pt}
+    \underline{Game $\mathrm{Real}_\mathrm{Const}$} && \underline{Game $\mathrm{Real}_\mathrm{Const}$} 
+    && \underline{Reduction} && \underline{Game $\mathrm{Random}_\mathrm{Const}$}
+    && \underline{Game $\mathrm{Random}_\mathrm{Const}$}\\
+    A&&A&&A&&A&&A\\
+    B&&B&&B&&B&&B\\
+    Const & = & \begin{tabular}{c}X\\BB\\Z\end{tabular} & = &\framebox[3cm]{\parbox{3cm}{\centering Input from Real/Random BB}} &
+     = & \begin{tabular}{c}X\\Sampled Output\\Z\end{tabular} & = & Sampled Output\\
+    D && D && D && D && D\\
+\end{tabular}\\[10pt]
+\begin{tabular}{ccc}
+    \multicolumn{3}{c}{Assumption for Building Block:}\\
+    \underline{Game $\mathrm{Real}_\mathrm{BB}$} &$\approx$& \underline{Game $\mathrm{Random}_\mathrm{BB}$}\\
+    X && X\\
+    BB && Sampled Output\\
+    Z && Z\\
+\end{tabular}
