@@ -63,17 +63,17 @@ Consider the following example:
 
 \noindent\begin{minipage}[t]{.5\linewidth}
     \underline{Grammar:}\\
-    $M:= K\mid\enc(K, M)$\alert{Missing ``$\mid m$''?}
+    $M:= K\mid\enc(K, M)$
 \end{minipage}\hfill
 \begin{minipage}[t]{.5\linewidth}
     \underline{Derivation Rules:}\\
-    $T\vdash K, m\implies T\vdash \enc(K, m)$\\
-    $T\vdash K, \enc(K, m)\implies T\vdash m$
+    $T\vdash k, m\implies T\vdash \enc(k, m)$\\
+    $T\vdash k, \enc(k, m)\implies T\vdash m$
 \end{minipage} 
 
-The grammar tells us, that each expression can be a $K$ or an $\enc(K, M)$, where $M$ is another expression.
+The grammar tells us, that each expression can be from a set $K$ or an encryption $\enc(K, M)$, where $M$ is another expression.
 The derivation rules tell us, what operations we can perform on the expressions:
-E.g., if we can derive some $K$ and $m$, then we can also derive the encryption of $m$ with $K$.
+E.g., if we can derive some $k\in K$ and $m\in M$, then we can also derive the encryption of $m$ with $k$.
 
 \alert{Add section about specific advantages of this method.}
 
@@ -114,7 +114,7 @@ In contrast, ProofFrog proves security by verifying the indistinguishability of 
 While the language of ProofFrog is somewhat less expressive, it is very close to the pen-and-paper proofs from the lecture.
 
 \subsubsection{ProofFrog}
-As mentioned before, ProofFrog proves security by showing indistinguishability between a ``real'' and ``ideal'' or a ``left'' or ``right'' game.
+As mentioned before, ProofFrog \cite{prooffrog} proves security by showing indistinguishability between a ``real'' and ``ideal'' or a ``left'' or ``right'' game.
 For some games, this is already very similar to the lecture. 
 Consider, for example, $\INDCCA$ security of symmetric encryption:
 The game, depending on bit $b$, encrypts either the ``left'' message $m_0$ or the ``right'' message $m_1$.
