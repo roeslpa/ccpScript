@@ -2,13 +2,13 @@
 \label{sec:rke}
 
 The key exchange protocols presented in the previous sections offer forward security based on inefficient building blocks or based on interaction.
-Thereby, forward security means that the established symmetric key remains secure even if long-term keys of the communication partners were corrupted (later).
+Thereby, forward security means that the established symmetric key remains secure even if long-term keys of the communication partners were corrupted (\emph{later}).
 
 Ratcheted Key Exchange~(RKE) is a tool that strengthens forward security guarantees and, additionally, offers
 post-compromise security~(PCS).
 In the time dimension, PCS can be considered the complement of forward security:
-it is the ability to recover from a previous corruption.
-We adapt Figure~\ref{fig:fs:sketch}, which showed the idea of forward security, to show the idea of a protocol that provides both forward and post-compromise security (Figure~\ref{fig:rke:pcs_fs_overview}).
+it is the ability to recover from a \emph{previous} corruption.
+We adapt Figure~\ref{fig:fs:sketch}, which showed the idea of forward security, to show the idea of a protocol that provides both forward \emph{and} post-compromise security (Figure~\ref{fig:rke:pcs_fs_overview}).
 
 \begin{figure}[!ht]
     \centering
@@ -24,7 +24,7 @@ By continuously repeating this renewal and replacement of ephemeral key pairs, t
 from the time it is generated until the time it is replaced by the next generated key pair.
 
 In Figure~\ref{fig:rke:overview}, an abstraction of such a two party RKE key refreshing protocol, embedded in a larger communication channel, is provided.
-For the initial key exchange, one can use the X3DH protocol from Section~\ref{sec:AKE:X3DH}, Signal's Double Ratchet algorithm can be the instantiation of the Ratcheted Key Exchange itself, and AEAD can be used for the encryption of messages.
+For the initial key exchange, one can, for example, use the X3DH protocol from Section~\ref{sec:AKE:X3DH}, Signal's Double Ratchet algorithm can be the instantiation of the Ratcheted Key Exchange itself, and AEAD can be used for the encryption of payload messages.
 
 \begin{figure}[!ht]
     \centering
@@ -42,8 +42,8 @@ In this script, we use this simplification for comprehensibility and, thereby, u
 \newcommand{\RKEsnd}{\RKE.\mathrm{snd}}%
 \newcommand{\RKErcv}{\RKE.\mathrm{rcv}}%
 
-\alert{continue here}
-\paragraph{Syntax} An RKE protocol $\RKE=(\RKEinit, \RKEsnd, \RKErcv)$ has the following syntax:
+
+\paragraph{Syntax} An RKE protocol is a tuple algorithms $\RKE=(\RKEinit, \RKEsnd, \RKErcv)$ with local state space~$\stsp$, key space~$\ksp$, and ciphertext space~$\csp$ such that:
 \begin{itemize}
     \item $\RKEinit: \emptyset\tor\stsp\times\stsp$\\
     Initializes both communication partners' secret, local states
@@ -60,11 +60,11 @@ In this script, we use this simplification for comprehensibility and, thereby, u
 
 %\alert{PR: add history starting with Double Ratchet, then its analysis~\cite{JC:CCDGS20}, then unidirectional~\cite{C:BSJNS17}, then more~\cite{C:PoeRos18}}
 
-Among other dimensions, RKE protocols can be divided into three sub-types, depending on the communication setting they support.
+To simplify the notion of RKE, one can gradually limit the communication settings that it supports as follows.
 \emph{Bidirectional} RKE covers the standard case in which both session partners equally participate in the communication~(Figure~\ref{fig:RKE:bi}).
-This form of interaction is modeled by the syntax notion defined above.
+This form of interaction is modeled by the syntax defined above.
 
-\emph{Sesquidirectional} RKE allows one party full functionality, while the other party can only send ``non-functional'' responses.
+\emph{Sesquidirectional} RKE lets one party participate without limitations  and full functionality, while the other party can only send ``non-functional'' responses.
 Consider for example the ciphertext $c_3$ in Figure~\ref{fig:RKE:sesq}:
 It does not encapsulate a key, instead it should be used for efficiency or security (e.g., Bob can use this message to communicate fresh randomness to Alice to recover from earlier compromise).
 Every Sesquidirectional RKE protocol can be transformed into a bidirectional RKE protocol, by using two instances of the Sesquidirectional RKE protocol.
