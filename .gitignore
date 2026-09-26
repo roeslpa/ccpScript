@@ -1,6 +1,9 @@
 ##.vscode folder
 .vscode
 
+## language selection file
+.ltex-language
+
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
