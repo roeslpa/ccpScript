@@ -1,0 +1,125 @@
+% !TeX root = ..\..\main.tex
+
+% colour code: Alice's data in blues, Bob's data in oranges (colour-blind safe)
+\definecolor{colEkA}{RGB}{0,90,160}
+\definecolor{colEkB}{RGB}{86,170,225}
+\definecolor{colCA}{RGB}{220,140,0}
+\definecolor{colCB}{RGB}{200,70,0}
+
+\begin{tikzpicture}[font=\small, y=1.3cm,
+    party/.style={font=\bfseries},
+    lifeline/.style={draw=black!35, line width=.6pt},
+    comp/.style={draw=black!25, fill=black!3, rounded corners=2pt, align=left, font=\footnotesize, inner sep=3pt},
+    msg/.style={-Stealth, line width=.9pt},
+    lbl/.style={font=\footnotesize, above, sloped, inner sep=1.5pt},
+  ]
+  % every message drops by .5 from sender to receiver; lost messages end at 45% with a cross
+  % triggers (ML-KEM Braid): Alice switches from ek_1 to ek_2 on the first c_1 chunk;
+  % Bob sends c_2 once he has all of ek_2 and Alice acknowledged c_1
+  \def\W{6}
+  \node[party] (A) at (0,0) {Alice};
+  \node[party] (B) at (\W,0) {Bob};
+  \draw[lifeline] (A) -- (0,-8.7);
+  \draw[lifeline] (B) -- (\W,-8.7);
+
+  \node[comp, anchor=north east] at (-0.25,-0.45) {$(\dk,\ek)\getsr\KEMgen$\\$(\ek_1^1,\dots,\ek_1^l)\gets\ECchunk(\ek_1)$\\$(\ek_2^1,\dots,\ek_2^n)\gets\ECchunk(\ek_2)$};
+
+  % ek_1: Alice only sends ek_1 chunks until she receives a c_1 chunk
+  \draw[msg, colEkA] (0,-1.0) -- node[lbl]{$\ek_1^1$} (\W,-1.5);
+  \draw[msg, colEkA] (0,-1.5) -- ($(0,-1.5)!.45!(\W,-2.0)$) node[inner sep=0pt]{\lostmark};
+  \draw[msg, colEkA] (0,-2.0) -- node[lbl]{$\ek_1^l$} (\W,-2.5);
+  \node[comp, anchor=north west] at (\W+0.25,-2.3) {$\ek_1\gets\ECcomp(\ek_1^1,\dots,\ek_1^l)$\\$(\st,c_1)\getsr\KEM.\mathrm{enc}'_1(\ek_1)$\\$(c_1^1,\dots,c_1^m)\gets\ECchunk(c_1)$};
+
+  % c_1: the first chunk tells Alice that Bob has ek_1
+  \draw[msg, colCA] (\W,-3.2) -- node[lbl]{$c_1^1$} (0,-3.7);
+  \node[font=\footnotesize\itshape, text=black!55, anchor=east, align=right] at (-0.25,-3.75) {first $c_1$ chunk received:\\switch to sending $\ek_2$};
+
+  % redundant chunks are not drawn; braces mark how long each party keeps sending
+  \draw[decorate, decoration={brace, amplitude=4pt, mirror}, black!40] (-0.12,-1.4) -- (-0.12,-3.5)
+    node[midway, left=5pt, font=\footnotesize, text=black!50, align=right] {Alice keeps sending\\$\ek_1$ chunks};
+  \draw[decorate, decoration={brace, amplitude=4pt}, black!40] (\W+0.12,-3.25) -- (\W+0.12,-5.8)
+    node[midway, right=5pt, font=\footnotesize, text=black!50, align=left] {Bob keeps sending\\$c_1$ chunks};
+
+  % ek_2 and c_1 in parallel
+  \draw[msg, colEkB] (0,-3.9) -- node[lbl, pos=.3]{$\ek_2^1$} (\W,-4.4);
+  \draw[msg, colCA] (\W,-3.7) -- ($(\W,-3.7)!.45!(0,-4.2)$) node[inner sep=0pt]{\lostmark};
+  \draw[msg, colCA] (\W,-4.3) -- node[lbl]{$c_1^m$} (0,-4.8);
+  \node[comp, anchor=north east] at (-0.25,-4.65) {$c_1\gets\ECcomp(c_1^1,\dots,c_1^m)$};
+
+  % from now on, Alice's messages acknowledge c_1
+  \draw[msg, colEkB] (0,-5.0) -- ($(0,-5.0)!.45!(\W,-5.5)$) node[inner sep=0pt]{\lostmark};
+  \draw[msg, colEkB] (0,-5.6) -- node[lbl]{$\ek_2^n$} (\W,-6.1);
+  \node[comp, anchor=north west] at (\W+0.25,-5.9) {$\ek_2\gets\ECcomp(\ek_2^1,\dots,\ek_2^n)$\\$(k,c_2)\gets\KEM.\mathrm{enc}'_2(\st,\ek_2)$\\$(c_2^1,\dots,c_2^o)\gets\ECchunk(c_2)$};
+
+  % c_2: only after all of ek_2 and the acknowledgment of c_1
+  \draw[msg, colCB] (\W,-6.8) -- node[lbl]{$c_2^1$} (0,-7.3);
+  \draw[msg, colCB] (\W,-7.3) -- ($(\W,-7.3)!.45!(0,-7.8)$) node[inner sep=0pt]{\lostmark};
+  \draw[msg, colCB] (\W,-7.8) -- node[lbl]{$c_2^o$} (0,-8.3);
+  \node[comp, anchor=north east] at (-0.25,-8.1) {$c_2\gets\ECcomp(c_2^1,\dots,c_2^o)$\\$k\gets\KEM.\mathrm{dec}'(\dk,c_1,c_2)$};
+\end{tikzpicture}
+
+% ---------------------------------------------------------------------
+% Old version (one-to-one translation of the handwritten figure):
+% 
+% \begin{tikzpicture}
+%   % picture is (mostly) drawn from top to bottom depending on position of object on the left side (Alices side)
+%   \node (A) at (0,0) {\textbf{Alice}};
+%   \node (B) at (4,0) {\textbf{Bob}};
+%   
+%   % grid: (A1)..(A11) under Alice, (B1)..(B11) under Bob; labels are only for visualization
+%   \foreach \i in {1,...,15} {
+%     \coordinate (A\i) at (0, -.5*\i);
+%     \coordinate (B\i) at ($(4, -.5*\i)-(0, 0.5)$);
+%     % \node[font=\scriptsize, text=gray] at (A\i) {A\i};
+%     % \node[font=\scriptsize, text=gray] at (B\i) {B\i};
+%   }
+% 
+%   % Send ec_1 to Bob in many chunks
+%   % overlay: excluded from the bounding box, so the figure is centered between Alice and Bob
+%   \node[overlay, align=left, anchor=east] (A_C1) at (A1) {$(\ek_1^1, \dots, \ek_1^l)\gets\ECchunk(\ek_1)$};
+%   \draw[->] (A2) -- (B2) node[midway, above] {$\ek_1^1$};
+%   \node at (A3) {$\vdots$};
+%   \draw[->|] (A4) -- ($(A4)!.5!(B4)$);
+%   \node at (A5) {$\vdots$};
+%   \draw[->] (A6) -- (B6) node[midway, above] {$\ek_1^l$};
+%   \node[overlay, anchor=west, align=left] at (B6) {
+%     $\ek_1\gets\ECcomp(\ek_1^1,\dots, \ek_1^l)$\\
+%     $(\st, c_1)\getsr\KEMenc'(\ek_1)$\\
+%     $(c_1^1,\dots,c_1^m)\gets\ECchunk(c_1)$
+%   };
+% 
+%   % Send ek_2 in chunks to Bob
+%   \node[overlay, anchor=east] at (A7) {$(\ek_2^1,\dots,\ek_2^l)\gets\ECchunk(\ek_2)$};
+%   \draw[->] (A7) -- (B7) node[midway, above] {$\ek_2^1$};
+%   \node at (A8) {$\vdots$};
+%   \draw[] (A9) edge[out=0, in=180, ->] node[pos=0.25, above] {$ek_2^n$} (B9);
+% 
+%   % Send encapsulation c to Alice
+%   \draw[] (A10) edge[out=0, in=180, <-] node[pos=0.75, above] {$c_1^1$} (B8);
+%   \draw[->|] (B10) -- ($(A12)!.5!(B10)$);
+%   \node[] at (B11) {$\vdots$};
+%   \draw[->] (B12) -- (A14) node[midway, above] {$c_1^m$};
+%   \node[overlay, anchor=west, align=left] at (B6) {
+%     $\ek_1\gets\ECcomp(\ek_1^1,\dots, \ek_1^l)$\\
+%     $(\st, c_1)\getsr\KEMenc'(\ek_1)$\\
+%     $(c_1^1,\dots,c_1^m)\gets\ECchunk(c_1)$
+%   };
+% 
+%   % \draw[->] (0,-.5) -- (4,-.5) node[midway,above] {$g^{a_1}$};
+%   % \draw[->] (0,-1) -- (4,-1) node[midway,above] {$g^{a_1}$};
+%   % \draw[->] (0,-1.5) -- (2,-1.5) node[midway,above] {$g^{a_1}$};
+%   % %For next node: align=left to tell TikZ to align text in node left if there is a line break
+%   % %anchor=west to place the nodes left (west) anchor at (4,-2) --> node should not be centered on (4,-2)
+%   % \node[align=left, anchor=west] (B_RT1) at (4, -2) {Round Trip\\$\rk\gets\KDF(\rk, g^{a_1b_1})$}; 
+%   % \draw[] (0,-2) edge[out=0, in=180, ->] node[pos=0.25, above] {$g^{a_1}$} (4,-2.5); %bend arrow with [out=0, in=180]
+%   % %This note is anchored at north east, so the arrow points to the upper right corner 
+%   % %(Since the node is quite high it is otherwise not clear which arrow is meant to point to it)
+%   % \node[align=left, anchor=north east] (A_RT1) at (0, -2.5) {Round Trip\\$\rk\gets\KDF(\rk, g^{a_1b_1})$\\$\rk\gets\KDF(\rk, g^{a_2b_1})$};
+%   % \draw[] (0, -2.5) edge[out=0, in=180, <-] node[pos=0.75, above] {$g^{b_1}$} (B_RT1);
+%   % \draw[->] (0,-4) -- (2, -4) node[midway,above] {$g^{a_2}$};
+%   % \node[align=left, anchor=north west] (B_RT2) at (4, -5) {Round Trip\\$\rk\gets\KDF(\rk, g^{a_2b_1})$\\$\rk\gets\KDF(\rk, g^{a_2b_2})$};
+%   % \draw[] (0, -4.5) edge[out=0, in=180, ->] node[pos=0.25, above] {$g^{a_2}$} (4, -5);
+%   % \draw[] (0, -5) edge[out=0, in=180, <-] node[pos=0.75, above] {$g^{b_1}$} (4, -4.5);
+%   % \draw[<-] (0, -6.5) -- (4, -6.5) node[midway,above] {$g^{b_2}$};
+% \end{tikzpicture}
+% 

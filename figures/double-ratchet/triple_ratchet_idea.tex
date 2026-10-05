@@ -1,0 +1,18 @@
+% !TeX root=../../main.tex
+
+\begin{tikzpicture}
+  \node (A) at (0,0) {\textbf{Alice}};
+  \node (B) at (4,0) {\textbf{Bob}};
+
+  % Send ek to Bob
+  \node[anchor=north] (KGen1) at (A.south) {$(\dk, \ek)\getsr\KEMgen$};
+  \draw[->] (0, -1) -- (4, -1) node[midway, above] {$\ek$};
+
+  % create encapsulation and send to Alice
+  \node[anchor=center] (Enc1) at (4, -1.5) {$(k, c)\getsr\KEMenc(\ek)$};
+  \draw[->] (4, -2) -- (0, -2) node[midway, above] {$c$};
+
+  % decapsulate
+  \node at (0, -2.5) {$k\gets\KEMdec(\dk, c)$};
+\end{tikzpicture}
+

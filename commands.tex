@@ -251,6 +251,7 @@
 \newcommand{\URKE}{\mathrm{URKE}}
 \newcommand{\HIBE}{\mathrm{HIBE}}
 \newcommand{\OTP}{\mathrm{OTP}}
+\newcommand{\EC}{\mathrm{EC}}
 
 \newcommand{\AEADgen}{\AEAD.\mathrm{gen}}
 \newcommand{\AEADenc}{\AEAD.\mathrm{enc}}
@@ -303,3 +304,11 @@
 \newcommand{\HIBEenc}{\HIBE.\mathrm{enc}}
 \newcommand{\HIBEdec}{\HIBE.\mathrm{dec}}
 \newcommand{\HIBEdel}{\HIBE.\mathrm{del}}
+
+\newcommand{\ECchunk}{\EC.\mathrm{chunk}}
+\newcommand{\ECcomp}{\EC.\mathrm{compose}}
+
+% red cross marking a lost message (used in the triple-ratchet figure and its caption)
+\DeclareRobustCommand{\lostmark}{%
+  \tikz[baseline=-0.6ex]\node[cross out, draw=red!70!black, line width=1pt,
+                              minimum size=5pt, inner sep=0pt]{};}

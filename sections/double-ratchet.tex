@@ -34,3 +34,50 @@ Since the message key is not used to derive new key material, it can be stored o
 Chain keys are deleted once the next chain key is derived.
 This gives the symmetric ratchet immediate forward security.
 
+\paragraph{Triple Ratchet} 
+In 2025, Signal introduced the \emph{Sparse Post Quantum Ratchet}~(SPQR) \cite{EPRINT:DJKPS25}, which enhances the protocol's security against quantum-computing capable adversaries.
+More concretely, SPQR achieves post-quantum forward secrecy~(FS) and post-compromise security~(PCS) (See Figure~\ref{fig:rke:pcs_fs_overview} for a reminder).
+
+This is necessary, because the Signal Double Ratchet bases its FS and PCS on Diffie-Hellman key exchanges.
+But DHKE are not quantum-resistant:
+A quantum adversary could recover the Diffie-Hellman keys from network traffic and a once-corrupted messaging session will never ``heal''.
+
+The Sparse Post Quantum Ratchet sits on top of the existing Double Ratchet protocol, and mixes in post-quantum secure secrets with the Double Ratchet secrets.
+The resulting protocol is the Triple Ratchet.
+The general idea of the SPQR can be seen in Figure~\ref{fig:double-ratchet:triple-ratchet-idea}:
+A post-quantum secure KEM is used to negotiate a shared key between both parties.
+To get PCS, this key would then be renegotiated periodically.
+
+\begin{figure}[!ht]
+    \centering
+    \input{figures/double-ratchet/triple_ratchet_idea.tex}
+    \caption{Basic idea of the SPQR using a post-quantum secure KEM.}\label{fig:double-ratchet:triple-ratchet-idea}
+\end{figure}
+
+This basic approach suffers from the problem, that the size of PQ-KEM encapsulation keys~($\ek$) and encapsulations~($c$) is too large; ca.\ 1kB vs. the 32B for normal Diffie-Hellman.
+Keep in mind, that we want to renegotiate our keys periodically, but attaching a fresh encapsulation to every message would create a big overhead.
+One solution could be to only update the post-quantum secret every $i$-th message, which is done in e.g.\ iMessage.
+If this frequency is too low however, this introduces new problems, as an adversary can simply drop every $i$-th message and stop the key from being renegotiated.
+
+The SPQR solves this problem, by using \emph{erasure codes}:
+Erasure codes allow information to be encoded in $n$ chunks and guarantee that the information can be reconstructed from any large enough subset of these chunks.
+With erasure codes, we can send our encapsulation key and encapsulations over in smaller chunks over multiple messages, and we might get a protocol flow as shown in Figure~\ref{fig:double-ratchet:triple-ratchet}:
+Alice wants to establish a PQ-secret with Bob, so she creates a KEM key pair $(\dk_1, \ek_1)$ and attaches the $\ek_1$ chunks to the messages she sends to Bob.
+During transmission, messages can get lost or arrive out order, but as long as Bob receives a large enough subset of distinct chunks, he can reconstruct the encapsulation key $\ek_1$.
+
+As soon as Bob has seen enough $ek_1$ chunks, he creates an encapsulation $c_1$, chunks it, and sends the chunks to Alice.
+Here we use that ML-KEM allows us to split encapsulation keys and encapsulations into two parts:
+$\KEMgen$ outputs a two-component encapsulation key $\ek=(\ek_1, \ek_2)$, where $|\ek_1| = \qty{64}{\byte}$ and $|\ek_2|\approx \qty{1}{\kibi\byte}$.
+Similarly, $c$ can be split into two components $|c_1|=\qty{960}{\byte}$ and $|c_2|=\qty{128}{\byte}$.
+This makes for short ``waiting times'', where only one party sends, because we send the smaller components then.
+The bigger components $\ek_2$ and $c_1$ get sent almost in parallel.
+
+When Alice receives the first $c_1$ chunk, she stops sending $\ek_1$ chunks and starts sending $\ek_2$ chunks.
+Bob responds with the $c_2$ chunks and Alice can reconstruct $c_2$ and decapsulate it to recover the key $k$.
+The key is then mixed in with the chain keys of the Double Ratchet to derive the message encryption keys.
+
+\begin{figure}
+   \centering
+   \input{figures/double-ratchet/triple_ratchet.tex}
+   \caption{SPQR with erasure codes $\EC$. A \lostmark{} symbolizes a lost message; redundant chunks are omitted.}\label{fig:double-ratchet:triple-ratchet}
+\end{figure}
