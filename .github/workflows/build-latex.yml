@@ -7,9 +7,15 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build_latex:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Set up Git repository
         uses: actions/checkout@v4
@@ -26,8 +32,26 @@ jobs:
           name: PDF
           path: main.pdf
 
+      - name: Update rolling "latest" release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # First run only: point the tag at an empty commit so the auto-attached
+          # "Source code" archives are empty instead of a stale snapshot of main.
+          if ! gh release view latest >/dev/null 2>&1; then
+            empty_commit=$(git -c user.name="github-actions[bot]" \
+              -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+              commit-tree "$(git mktree </dev/null)" -m "Placeholder for the rolling PDF release; see main for the source")
+            git tag latest "$empty_commit"
+            git push origin latest
+            gh release create latest --prerelease --title "Latest build" --notes ""
+          fi
+          gh release edit latest --notes "Automatically built from ${GITHUB_SHA::7} on $(date -u '+%Y-%m-%d %H:%M UTC')."
+          gh release upload latest main.pdf --clobber
+
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: github.ref_type == 'tag'
         with:
           files: main.pdf
